@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const OpenAI = require("openai");
+const { logger } = require("./resolvers/logger");
 
 // Apollo Server 4. The v2 `apollo-server-express` package is end-of-life; its
 // ApolloServer applied itself to Express and installed its own subscription
@@ -83,12 +84,7 @@ const GameSubstituteItem = require("./models/GameSubstituteItem");
 const GameShopSubstitute = require("./models/GameShopSubstitute");
 
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  })
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB is Connected"))
   .catch((err) => console.error(err));
 
@@ -298,7 +294,7 @@ const server = new ApolloServer({
   });
 
   httpServer.listen(PORT, () => {
-    console.log(`Server ready at http://localhost:${PORT}/graphql`);
-    console.log(`Subscription ready at ws://localhost:${PORT}/graphql`);
+    logger.info(`Server ready at http://localhost:${PORT}/graphql`);
+    logger.info(`Subscription ready at ws://localhost:${PORT}/graphql`);
   });
 })();

@@ -45,10 +45,7 @@ const errName = (r) => r.errors && r.errors[0] && r.errors[0].name;
 const errMsg = (r) => (r.errors && r.errors[0] && r.errors[0].message) || "";
 
 (async () => {
-  await mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true, useCreateIndex: true,
-    useUnifiedTopology: true, useFindAndModify: false,
-  });
+  await mongoose.connect(process.env.MONGO_URI);
 
   // --- seed ---------------------------------------------------------------
   await Resident.deleteMany({ residentName: { $in: [A, B] } });

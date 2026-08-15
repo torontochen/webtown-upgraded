@@ -16,12 +16,12 @@ Running record of the staged upgrade, phase by phase.
 | 1c — Query guards (PII and billable endpoints) | ✅ Done | `e9a5def` |
 | 2 — Config, tooling, lint, CI | ✅ Done | `000c998` |
 | 2.5 — Live verification + deferred bug fixes | ✅ Done | `d4c92e6` |
-| 3a — Apollo Server 4, graphql-ws, error migration | ✅ Done | this commit |
-| 3b — Mongoose 8, resolver split, logging | Not started | |
+| 3a — Apollo Server 4, graphql-ws, error migration | ✅ Done | `334e63e` |
+| 3b — Mongoose 8, resolver split, logging | ✅ Done | this commit |
 | 4 — Client modernization (Vite, Vue 3) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-Run `npm run verify` after any change — lint, 61 tests, and a production build.
+Run `npm run verify` after any change — lint, 66 tests, and a production build.
 Tests use Node's built-in runner; no test framework dependency.
 
 `npm run test:e2e` additionally verifies the guards (22 checks) and
@@ -537,6 +537,75 @@ Apollo **Client** 2 stack (`apollo-client`, `apollo-cache-inmemory`,
 
 ---
 
+## Phase 3b — Mongoose 8, resolver split, logging ✅
+
+### Mongoose 5 → 8
+
+Surveying first showed the migration was far smaller than feared: **no
+callback-style model calls**, none of the removed methods (`.update()`,
+`.count()`, `.remove()`), and `mongoose-beautiful-unique-validation` turned out
+to be referenced only in a comment — an unused dependency, now removed.
+
+The actual work was the four connection options removed in Mongoose 6/7
+(`useNewUrlParser`, `useCreateIndex`, `useUnifiedTopology`, `useFindAndModify`),
+which Mongoose 8 rejects rather than ignores. Stripped from **59 sites**.
+
+The per-tenant `createConnection` path — 56 call sites, the riskiest part —
+was verified separately against a real tenant database: a vendor catalog query
+returns its 7 real items. The Node URL deprecation warning is also gone.
+
+### Correction: "1,617 console.log calls"
+
+The Phase 0 audit reported 1,617 `console.log` calls. **That number counted
+commented-out code, which is the overwhelming majority.** The live server-side
+total was **27** — 17 of them in `Subscription.js`, logging a line every time
+any client opened any subscription.
+
+At that size, pulling in pino and its dependency tree costs more than it
+returns, so `resolvers/logger.js` is a ~30-line leveled logger providing what
+was actually missing: levels, a threshold, and timestamps. `LOG_LEVEL` defaults
+to `info`; the subscription chatter is now `debug`, so it is silent in
+production without losing errors. Swapping in pino later is a one-file change.
+
+All 27 call sites converted.
+
+### Resolver split
+
+`Mutation.js` (3,800 lines, 59 resolvers) and `Query.js` (1,900 lines, 61
+resolvers) are now domain modules re-assembled by a barrel:
+
+| | Modules | Largest |
+|---|---|---|
+| `resolvers/mutations/` | auth, resident, guild, order, flyer, vendor, messaging, city | order.js (1,265) |
+| `resolvers/queries/` | availability, session, reference, guild, storefront, resident, vendorops, flyer, ai | storefront.js (512) |
+
+The shared header (imports plus `createToken`, `formatAmount`, and friends)
+moved to a `_shared.js` per side, and each module imports only the helpers it
+actually uses.
+
+**What made this safe to do mechanically:** `applyPolicy` already fails at boot
+if the resolver map and the policy table disagree, so a resolver lost or
+duplicated by the split could not start the server. That caught the one real
+problem — `getAllItemsCatalog` is indented with three spaces rather than two, so
+the partitioner did not treat it as a boundary and it was absorbed into the
+preceding block. It stayed syntactically valid and present, but landed in the
+wrong module; moved to `vendorops`.
+
+`test/structure.test.js` now locks the invariants: no resolver in two modules
+(the barrel spread would silently pick one), the barrels match the policy tables
+exactly, every resolver is a function, and no module requires the barrel back.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **66 unit tests**, production build.
+- Live Atlas: **22/22 guard checks + 4/4 subscription checks**, unchanged
+  through both the Mongoose upgrade and the split.
+- Per-tenant `createConnection` confirmed returning real data.
+- Vulnerabilities 151 → **150**; critical 23 → 22.
+
+
+---
+
 ## Open items and judgement calls
 
 Things a future session (or reviewer) should know.
@@ -559,11 +628,13 @@ Things a future session (or reviewer) should know.
 
 ### Known gaps
 
-- **Subscriptions are still unguarded.** Phases 1a–1c covered queries and
-  mutations. `resolvers/Subscription.js` publishes guild chat and message
-  events to any connected socket. Phase 3a confirmed the transport carries
-  auth (`connectionParams` reaches the context), so the guards can now be
-  applied the same way — this is the largest remaining security gap.
+- **Subscriptions are deliberately left unguarded.** `resolvers/Subscription.js`
+  publishes guild chat and message events to any connected socket. Phase 3a
+  confirmed the transport carries auth (`connectionParams` reaches the context),
+  so the policy layer could be applied the same way. **The project owner decided
+  on 2026-08-15 not to, on the grounds that this is a demo.** Recorded here so
+  the gap is not mistaken for an oversight — it must be closed before any real
+  deployment.
 - **Identity keys are writable through profile updates by design elsewhere.**
   Renaming is now blocked on both profile mutations, but if a rename feature is
   ever wanted it must also migrate the per-tenant database and every stored
@@ -575,10 +646,10 @@ Things a future session (or reviewer) should know.
 - **Signup availability checks are user-enumeration oracles** (`checkEmail`,
   `checkResidentName`, …). That is inherent to a "is this taken?" check and the
   signup form needs them. Rate limiting is the right control, not auth.
-- **142 npm vulnerabilities** remain; structural, addressed in Phases 3–5.
-- **Apollo Server 2** warns that `graphql-upload` is CSRF-vulnerable → Phase 3.
-- **Mongoose 5** emits a Node URL deprecation warning → Phase 3.
-- **1,617 `console.log` calls** across `src/` and `resolvers/` → Phase 3.
+- **150 npm vulnerabilities** remain, 22 critical; now concentrated in the
+  Vue 2 / webpack 4 / puppeteer 10 client stack → Phases 4–5.
+- **Client-side `console.log` calls remain** in `src/`. Server-side is done
+  (Phase 3b); the browser ones are dev noise and are Phase 4's concern.
 - **19 event buses** in `main.js` — hard blocker for Vue 3 → Phase 4.
 - **Bundle is 3.59 MiB** (2.2 MiB vendor chunk), no code splitting → Phase 4.
 

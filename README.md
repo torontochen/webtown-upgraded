@@ -43,7 +43,7 @@ cp variables.env.example variables.env   # then fill in real values
 - [x] **Phase 2** — Config, tooling, lint, CI
 - [x] **Phase 2.5** — Live verification against Atlas; deferred bug fixes
 - [x] **Phase 3a** — Apollo Server 4, graphql-ws, error migration
-- [ ] **Phase 3b** — Mongoose 8, resolver split into domains, structured logging
+- [x] **Phase 3b** — Mongoose 8, resolver split into domains, structured logging
 - [ ] **Phase 4** — Client modernization (Vite, event-bus removal, Vue 3)
 - [ ] **Phase 5** — Dependency cleanup
 

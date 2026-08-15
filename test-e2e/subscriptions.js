@@ -43,10 +43,7 @@ async function gql(query, token) {
 }
 
 (async () => {
-  await mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true, useCreateIndex: true,
-    useUnifiedTopology: true, useFindAndModify: false,
-  });
+  await mongoose.connect(process.env.MONGO_URI);
   await Resident.deleteMany({ residentName: NAME });
   await new Resident({
     residentName: NAME, email: `${NAME}@example.invalid`, password: PASS,
