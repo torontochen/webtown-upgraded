@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const puppeteer = require("puppeteer");
+const { tenantUri } = require("./tenantUri");
 // const path = require('path');
 const fs = require('fs');
 // const moment = require("moment");
@@ -51,9 +52,7 @@ module.exports = {
   checkItemCode: async (_, {vendor, itemCode}, {}) => {
     const newVendor = vendor.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      newVendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newVendor);
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
       useCreateIndex: true,
@@ -167,9 +166,7 @@ module.exports = {
    getAllItemsCatalog: async (_, { businessTitle }, {}) => {
      const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
       useCreateIndex: true,
@@ -268,9 +265,7 @@ module.exports = {
     const newVendor = vendor.replace(/\s/g, "")
 
     const MONGO_URI =
-    process.env.MONGO_URI_PREFIX +
-    newVendor  +
-    process.env.MONGO_URI_SUFFIX;
+    tenantUri(newVendor);
 
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -373,9 +368,7 @@ module.exports = {
   getGuildChatMessages: async (_, { guildFullName }, { Resident, Guild }) => {
     const newGuildFullName = guildFullName.replace(/\s/g, "")
     const MONGO_URI =
-        process.env.MONGO_URI_PREFIX +
-        newGuildFullName +
-        process.env.MONGO_URI_SUFFIX;
+        tenantUri(newGuildFullName);
       const newConn = await mongoose.createConnection(MONGO_URI, {
         useNewUrlParser: true,
         useCreateIndex: true,
@@ -417,9 +410,7 @@ module.exports = {
     // console.log(guildFullName)
     const newGuildFullName = guildFullName.replace(/\s/g, "")
     const MONGO_URI =
-        process.env.MONGO_URI_PREFIX +
-        newGuildFullName +
-        process.env.MONGO_URI_SUFFIX;
+        tenantUri(newGuildFullName);
       const newConn = await mongoose.createConnection(MONGO_URI, {
         useNewUrlParser: true,
         useCreateIndex: true,
@@ -471,9 +462,7 @@ module.exports = {
     const vendor = businessTitle.replace(/\s/g, "")
     // console.log('vendor in getItemCatalog', businessTitle)
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(subcategory)
     // console.log(businessTitle)
     const newConn = await mongoose.createConnection(MONGO_URI, {
@@ -561,9 +550,7 @@ module.exports = {
   getProductRatings: async (_, { vendor }, {Resident} ) => {
     const newVendor = vendor.replace(/\s/g, "")
     const MONGO_URI =
-    process.env.MONGO_URI_PREFIX +
-    newVendor  +
-    process.env.MONGO_URI_SUFFIX;
+    tenantUri(newVendor);
 
   const newConn = await mongoose.createConnection(MONGO_URI, {
     useNewUrlParser: true,
@@ -675,9 +662,7 @@ module.exports = {
     const  newResident = revisedResident.replace(/\./g, "")
     // console.log(newResident)
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      newResident +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newResident);
 
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -756,9 +741,7 @@ module.exports = {
 
     const modelShoppingCart = newResident + "_" + "ShoppingCart";
     const MONGO_URI =
-    process.env.MONGO_URI_PREFIX +
-     newResident +
-    process.env.MONGO_URI_SUFFIX;
+    tenantUri(newResident);
 
     // try {
     //   mongoose.connect(MONGO_URI, {
@@ -797,9 +780,7 @@ module.exports = {
 
     const newVendorName = vendorName.replace(/\s/g, "")
     const MONGO_URI_vendor =
-      process.env.MONGO_URI_PREFIX +
-      newVendorName +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newVendorName);
     // console.log(MONGO_URI)
     const newConn_vendor = await mongoose.createConnection(MONGO_URI_vendor, {
       useNewUrlParser: true,
@@ -854,9 +835,7 @@ module.exports = {
   getSketchList: async (_, { businessTitle }, {}) => {
     const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -882,9 +861,7 @@ module.exports = {
   getFlyerList: async (_, { businessTitle }, {}) => {
     const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -914,9 +891,7 @@ module.exports = {
   getTemplateList: async (_, { businessTitle }, {}) => {
     const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -948,9 +923,7 @@ module.exports = {
     // console.log('resident', resident)
     const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1063,9 +1036,7 @@ module.exports = {
     // console.log('select template' + Date.now().toString());
     const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1102,9 +1073,7 @@ module.exports = {
     // console.log(Date.now().toString());
     const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1140,9 +1109,7 @@ module.exports = {
   getSingleItemRating: async (_, {vendor, itemCode}, {Resident}) => {
     const newVendor = vendor.replace(/\s/g, "")
       const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      newVendor  +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newVendor);
 
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1184,9 +1151,7 @@ module.exports = {
   getSingleCoupon: async(_, {vendor, flyerId, couponId}, {}) => {
     const newVendor = vendor.replace(/\s/g, "")
     const MONGO_URI =
-    process.env.MONGO_URI_PREFIX +
-    newVendor +
-    process.env.MONGO_URI_SUFFIX;
+    tenantUri(newVendor);
   // console.log(MONGO_URI)
   const newConn = await mongoose.createConnection(MONGO_URI, {
     useNewUrlParser: true,
@@ -1382,9 +1347,7 @@ module.exports = {
   getVendorFlyers: async(_, {vendor}, {}) => {
     const newVendor = vendor.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-       newVendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newVendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1416,9 +1379,7 @@ module.exports = {
     const newVendor= vendor.replace(/\s/g, "")
 
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      newVendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newVendor);
 
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1470,9 +1431,7 @@ module.exports = {
     const newVendor= vendor.replace(/\s/g, "")
 
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      newVendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newVendor);
 
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1599,9 +1558,7 @@ module.exports = {
     const newVendor= vendor.replace(/\s/g, "")
 
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      newVendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(newVendor);
 
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1620,9 +1577,7 @@ module.exports = {
   getVendorPromotionEvents: async(_, {vendor},{}) => {
         const newVendor = vendor.replace(/\s/g, "")
        const MONGO_URI =
-        process.env.MONGO_URI_PREFIX +
-        newVendor +
-        process.env.MONGO_URI_SUFFIX;
+        tenantUri(newVendor);
 
       const newConn = await mongoose.createConnection(MONGO_URI, {
         useNewUrlParser: true,
@@ -1646,9 +1601,7 @@ module.exports = {
     // console.log('newVendor', newVendor)
 
     const MONGO_URI =
-    process.env.MONGO_URI_PREFIX +
-    newVendor  +
-    process.env.MONGO_URI_SUFFIX;
+    tenantUri(newVendor);
 
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,
@@ -1729,9 +1682,7 @@ module.exports = {
     const newVendor = vendor.replace(/\s/g, "")
     // const newResident = resident.replace(/\s/g, "")
     const MONGO_URI_Vendor =
-    process.env.MONGO_URI_PREFIX +
-    newVendor +
-    process.env.MONGO_URI_SUFFIX;
+    tenantUri(newVendor);
   // console.log(subcategory)
   // console.log(businessTitle)
     const vendorConn = await mongoose.createConnection(MONGO_URI_Vendor, {
@@ -1867,9 +1818,7 @@ module.exports = {
     // console.log('select template' + Date.now().toString());
     const vendor = businessTitle.replace(/\s/g, "")
     const MONGO_URI =
-      process.env.MONGO_URI_PREFIX +
-      vendor +
-      process.env.MONGO_URI_SUFFIX;
+      tenantUri(vendor);
     // console.log(MONGO_URI)
     const newConn = await mongoose.createConnection(MONGO_URI, {
       useNewUrlParser: true,

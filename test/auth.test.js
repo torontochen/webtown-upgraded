@@ -90,14 +90,20 @@ test("the account-takeover mutations are no longer reachable anonymously", () =>
 // applyPolicy wiring
 // ---------------------------------------------------------------------------
 
-test("applyPolicy blocks a guarded resolver from running when anonymous", () => {
+// Guarded resolvers are wrapped in an async function (ownership and role checks
+// hit the database), so guard failures arrive as rejections rather than sync
+// throws. GraphQL surfaces both identically.
+test("applyPolicy blocks a guarded resolver from running when anonymous", async () => {
   let ran = false;
   const guarded = applyPolicy(
     { doThing: () => { ran = true; } },
     { doThing: RESIDENT },
     "Mutation"
   );
-  assert.throws(() => guarded.doThing(null, {}, anonCtx, {}), /must be signed in/i);
+  await assert.rejects(
+    () => guarded.doThing(null, {}, anonCtx, {}),
+    /must be signed in/i
+  );
   assert.equal(ran, false, "resolver body must not execute");
 });
 
@@ -110,14 +116,14 @@ test("applyPolicy lets a public resolver run with no token", () => {
   assert.equal(guarded.signin(null, {}, anonCtx, {}), "token");
 });
 
-test("applyPolicy injects the principal as context.auth", () => {
+test("applyPolicy injects the principal as context.auth", async () => {
   let seen;
   const guarded = applyPolicy(
     { doThing: (_p, _a, ctx) => { seen = ctx.auth; } },
     { doThing: RESIDENT },
     "Mutation"
   );
-  guarded.doThing(null, {}, residentCtx, {});
+  await guarded.doThing(null, {}, residentCtx, {});
   assert.equal(seen.email, "r@x.com");
 });
 

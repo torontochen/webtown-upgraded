@@ -36,10 +36,11 @@ cp variables.env.example variables.env   # then fill in real values
 
 - [x] **Phase 0** — Separate working copy, repo hygiene, secrets to env, **build restored**
 - [x] **Phase 1a** — Authentication guards on all 59 mutations, token expiry, CORS, upload limits
-- [ ] **Phase 1b** — Server-derived identity (ownership) + roles for privileged mutations
+- [x] **Phase 1b** — Server-derived identity, roles, connection-string hardening
 - [ ] **Phase 2** — Config, tooling, lint, CI
 - [ ] **Phase 3** — Server modernization (Apollo 4, Mongoose 8, resolver split)
 - [ ] **Phase 4** — Client modernization (Vite, event-bus removal, Vue 3)
 - [ ] **Phase 5** — Dependency cleanup
 
-See `UPGRADE.md` for the detail of what changed in each phase.
+See [PROJECT_NOTES.md](PROJECT_NOTES.md) for the full phase-by-phase record,
+open items, and the judgement calls made along the way.
