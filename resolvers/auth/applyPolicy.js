@@ -47,11 +47,13 @@ function applyPolicy(resolverMap, policy, label) {
   const resolverNames = Object.keys(resolverMap);
   const policyNames = Object.keys(policy);
 
+  const policyFile = `${label.toLowerCase()}Policy.js`;
+
   const unguarded = resolverNames.filter((n) => !(n in policy));
   if (unguarded.length) {
     throw new Error(
       `[auth] ${label}: no access policy for ${unguarded.length} resolver(s): ` +
-        `${unguarded.join(", ")}. Add an entry to mutationPolicy.js — the ` +
+        `${unguarded.join(", ")}. Add an entry to ${policyFile} — the ` +
         `default is deny, so this must be explicit.`
     );
   }

@@ -12,13 +12,14 @@ Running record of the staged upgrade, phase by phase.
 |---|---|---|
 | 0 — Working copy, hygiene, restored build | ✅ Done | `ae40ab7` |
 | 1a — Authentication guards on all mutations | ✅ Done | `5c0bf65` |
-| 1b — Ownership, roles, connection-string hardening | ✅ Done | this commit |
+| 1b — Ownership, roles, connection-string hardening | ✅ Done | `95b0bd8` |
+| 1c — Query guards (PII and billable endpoints) | ✅ Done | this commit |
 | 2 — Config, tooling, lint, CI | Not started | |
 | 3 — Server modernization (Apollo 4, Mongoose 8) | Not started | |
 | 4 — Client modernization (Vite, Vue 3) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-Run `npm test` after any change — 42 tests, Node's built-in runner, no extra
+Run `npm test` after any change — 55 tests, Node's built-in runner, no extra
 dependencies.
 
 ---
@@ -228,18 +229,72 @@ uniform pattern; only commented-out remnants were left behind.
 
 ---
 
+## Phase 1c — Query guards ✅
+
+**Goal:** the same policy treatment for the 61 queries, which Phase 1 had left
+entirely open.
+
+### Two real disclosures closed
+
+1. **`getResidentList`** returned `residentName`, `firstName` and `lastName` for
+   **every resident** to any anonymous caller — a full dump of the user base's
+   real names. It has **no caller anywhere in `src/`**, so it is dead code.
+   Locked to vendors and flagged for deletion in Phase 5.
+
+2. **`getAIResponse`** passed a client-supplied message array straight to
+   OpenAI, unauthenticated. Anyone who found the endpoint could bill the
+   project's API key without limit. Now requires a signed-in principal.
+
+Also scoped to their owner: resident order history and shopping carts, vendor
+orders / sales / settlement / checkout data, vendor design assets (sketches,
+flyers, templates, catalog), and guild chat (membership-checked).
+
+### The binding constraint: app boot
+
+`src/main.js` dispatches **15 queries from the root `created()` hook, before
+anyone signs in**. Guarding any of them would break the app on load for
+anonymous visitors. `getCurrentResident` / `getCurrentVendor` are the same case
+— they already return `null` when there is no `currentUser`, which is how the
+client decides whether to render a signed-in UI.
+
+There is a test that reads `src/main.js`, extracts the dispatched action names,
+and asserts every one is still `PUBLIC`. If a future change guards one, the
+suite fails rather than the app breaking at runtime.
+
+Final split across 61 queries: **40 public, 2 authenticated, 5 resident,
+14 vendor**.
+
+### The fail-closed check earned its keep
+
+Wiring the query table surfaced `getAllItemsCatalog`, which my inventory grep
+had missed. The server refused to boot until it was classified, rather than
+shipping it unguarded. It turned out to be vendor-only (three vendor components
+call it) and is now owner-scoped.
+
+### Verification
+
+55 tests. Live against a running server:
+
+| Request | Result |
+|---|---|
+| Anonymous `getResidentList` | `AuthenticationError` |
+| Anonymous `getAIResponse` | `AuthenticationError` |
+| Anonymous `getCurrentResident` | `{"data":{"getCurrentResident":null}}` — boot path intact |
+| Anonymous `getPets` | Reaches the database, not the guard |
+| Resident token → `getVendorSalesInfo` | `ForbiddenError` |
+
+---
+
 ## Open items and judgement calls
 
 Things a future session (or reviewer) should know.
 
 ### Deliberate decisions
 
-1. **Guild management is gated on `guildLeader`, not the `rank` field.**
-   `guildRank` is `[1,2,3,4]` in the client, joiners are set to `1`, and there
-   is no label mapping anywhere in the codebase — so which end is senior is
-   genuinely ambiguous. Guessing wrong would let brand-new members kick people.
-   If officers should also manage members, it is a one-line change in
-   `mutationPolicy.js`. **This is a product decision, not a technical one.**
+1. **Guild management is leader-only** — gated on `Guild.guildLeader`, not the
+   numeric `rank` field. **Confirmed by the project owner on 2026-08-15:** only
+   the leader may manage members. (`guildRank` is `[1,2,3,4]` with joiners at
+   `1` and no label mapping anywhere, so rank ordering was ambiguous regardless.)
 
 2. **`gainLoseSilver` is only half-constrained.** `winner` is pinned to the
    caller so it can only credit yourself; `loser` cannot be derived from a token
@@ -252,9 +307,16 @@ Things a future session (or reviewer) should know.
 
 ### Known gaps
 
-- **Queries are still unguarded.** Phase 1 scoped to mutations. Several queries
-  return PII and should get the same policy treatment — this is the most
-  valuable remaining security work.
+- **Subscriptions are still unguarded.** Phases 1a–1c covered queries and
+  mutations. `resolvers/Subscription.js` is small (3.4 KB) but publishes guild
+  chat and message events; it should get the same treatment.
+- **`getSelectedFlyerClientView` is authenticated but not owner-pinned.** It
+  records a flyer read against `resident`, and vendors preview their own flyers
+  through the same query, so pinning to the caller would break preview. Closing
+  anonymous access removed the abuse path that mattered.
+- **Signup availability checks are user-enumeration oracles** (`checkEmail`,
+  `checkResidentName`, …). That is inherent to a "is this taken?" check and the
+  signup form needs them. Rate limiting is the right control, not auth.
 - **142 npm vulnerabilities** remain; structural, addressed in Phases 3–5.
 - **Apollo Server 2** warns that `graphql-upload` is CSRF-vulnerable → Phase 3.
 - **Mongoose 5** emits a Node URL deprecation warning → Phase 3.
