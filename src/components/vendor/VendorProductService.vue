@@ -473,10 +473,8 @@ export default {
         switch (this.categorySeleted) {
           case "product":
             return this.productSubCategory;
-            break;
           case "service":
             return this.serviceSubCategory;
-            break;
           default:
             return this.category;
         }

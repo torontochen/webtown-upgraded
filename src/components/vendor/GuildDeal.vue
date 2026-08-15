@@ -462,7 +462,6 @@ export default {
             postedDeal: [],
             postedDealLevels: null,
             postedDealNo: null,
-            postedDealNo: null,
             dateFrom: null,
             dealCate: [],
             dealCondition: ["More Than (less than next level)"],

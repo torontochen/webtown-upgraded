@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # The dependency tree predates npm's strict peer resolution, so the
+      # legacy resolver is required. This matches the documented local setup.
+      - name: Install
+        run: npm ci --legacy-peer-deps
+
+      # Fails on errors only. Warnings are the documented legacy backlog —
+      # see PROJECT_NOTES.md. --max-warnings is deliberately not set to 0.
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      # Uses .env.production. No secrets are needed: the build only reads
+      # VUE_APP_* values, which are public by definition.
+      - name: Build
+        run: npm run build
+
+      # Reports without failing the job — the remaining advisories are
+      # structural and come down in Phases 3-5.
+      - name: Audit (report only)
+        run: npm audit --audit-level=critical || true

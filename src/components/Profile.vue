@@ -1019,6 +1019,14 @@ export default {
       this.mailPostalCode = val
     }
   },
+  // KNOWN DEFECT — do not "tidy" this away without testing.
+  // This empty created() is a duplicate of the real created() hook at line 681.
+  // In JS the last key wins, so this stub has been shadowing the real hook and
+  // the component's initialisation has never run. Deleting this line is very
+  // likely the correct fix, but it activates ~40 lines of code that have been
+  // dead since the file was written, so it needs a run against a live database
+  // before being changed. See PROJECT_NOTES.md.
+  // eslint-disable-next-line no-dupe-keys
   created() {},
 
   methods: {

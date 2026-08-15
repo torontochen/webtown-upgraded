@@ -1,0 +1,7 @@
+dist/
+node_modules/
+public/
+src/assets/
+package-lock.json
+*.handlebars
+*.gql

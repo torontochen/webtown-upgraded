@@ -806,7 +806,6 @@ export default {
         (businessAddress) =>
           !!businessAddress || "Business address is required",
       ],
-      businessHours: [],
       businessTitle: "",
       businessTitleEdit: false,
       businessTitleRules: [

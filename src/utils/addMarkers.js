@@ -63,7 +63,7 @@ export default function addMarkers(
             pixelOffset: new google.maps.Size(0, 50)
           });
           markerCluster.addListener("mouseover", function (e) {
-            infowindow1.open(resultsMap, e.latLng);
+            infowindow1.open(map, e.latLng);
             console.log("spark");
             //console.log(infowindow.getPosition());
           });

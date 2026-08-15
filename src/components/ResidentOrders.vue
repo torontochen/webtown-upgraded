@@ -302,6 +302,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 import moment from 'moment';
 import { mapGetters } from "vuex";
 import OrderItemDetails from "./OrderItemDetails.vue";

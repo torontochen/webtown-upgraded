@@ -45,6 +45,25 @@ import gql from "graphql-tag";
   // console.log(fingerPrint);
 })();
 
+// GraphQL endpoints.
+//
+// These were hardcoded localhost URLs with the production ones commented out
+// beside them, swapped by hand at deploy time — which is what the last two
+// commits in the original repo were doing.
+//
+// Development sets both explicitly in .env.development, because the client runs
+// on :8080 and the API on :4000. Production leaves them unset and falls back to
+// the origin serving the page, which matches the co-hosted deployment. Override
+// either one in .env.production if the API moves to its own host.
+const GRAPHQL_HTTP_URI =
+  process.env.VUE_APP_GRAPHQL_HTTP || `${window.location.origin}/graphql`;
+
+const GRAPHQL_WS_URI =
+  process.env.VUE_APP_GRAPHQL_WS ||
+  `${window.location.protocol === "https:" ? "wss" : "ws"}://${
+    window.location.host
+  }/graphql`;
+
 // export const eventBus_signout = new Vue()
 export const eventBus_profile = new Vue();
 export const eventBus_vendorParlour = new Vue();
@@ -232,8 +251,7 @@ const wsLink = ApolloLink.from([
   requestLink,
 
   new WebSocketLink({
-    // uri: `wss://boundary-faf8da99353c.herokuapp.com/graphql`,
-    uri: `ws://localhost:4000/graphql`,
+    uri: GRAPHQL_WS_URI,
     options: {
       reconnect: true,
       connectionParams: () => {
@@ -293,8 +311,7 @@ const httpLink = ApolloLink.from([
 
   // Create file upload link
   new createUploadLink({
-    // uri: `https://boundary-faf8da99353c.herokuapp.com/graphql`,
-    uri: `http://localhost:4000/graphql`,
+    uri: GRAPHQL_HTTP_URI,
     credentials: "include",
   }),
 ]);

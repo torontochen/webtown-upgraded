@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 import gmapsInit from "../utils/gmaps";
 // import addMarkers from "../utils/addMarkers";
 import markerClusterer from "@google/markerclusterer";

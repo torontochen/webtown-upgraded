@@ -11,7 +11,12 @@
     "server": "nodemon server.js",
     "production": "vue-cli-service serve --mode production",
     "dev": "concurrently --names \"server,client\" \"npm run server --silent\" \"npm run client --silent\"",
-    "test": "node --test test/"
+    "test": "node --test test/",
+    "lint": "eslint . --ext .js,.vue",
+    "lint:fix": "eslint . --ext .js,.vue --fix",
+    "format": "prettier --write \"**/*.{js,vue,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,vue,json,md}\"",
+    "verify": "npm run lint && npm test && npm run build"
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.2",
@@ -80,10 +85,15 @@
     "@vue/cli-plugin-babel": "^4.3.0",
     "@vue/cli-plugin-pwa": "^4.3.0",
     "@vue/cli-service": "^4.3.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-vue": "^9.33.0",
     "material-design-icons-iconfont": "^5.0.1",
+    "prettier": "^3.9.6",
     "sass": "~1.32.13",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-vuetify": "^2.0.5",
+    "vue-eslint-parser": "^9.4.3",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.4.3"
   },

@@ -166,13 +166,10 @@ export default {
       switch (this.memberShip){
         case 'Silver':
           return 199
-          break
         case 'Gold':
           return 599
-          break
         case 'Platinum':
           return 1599
-          break
         default:
           return 0
       }

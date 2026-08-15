@@ -1177,6 +1177,7 @@
 
 <script>
 
+import _ from "lodash";
 import { mapGetters } from "vuex";
 import ImageResize from "quill-image-resize-module";
 import moment from "moment";

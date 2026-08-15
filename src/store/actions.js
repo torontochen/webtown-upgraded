@@ -639,7 +639,7 @@ commitGuildDeals: ({commit}, payload) => {
     .query({
       query: GET_REWARD_ITEMS
     })
-    .then(({date}) => {
+    .then(({data}) => {
       commit("setRewardItems", data.getRewardItems)
     })
     .catch((err) => {

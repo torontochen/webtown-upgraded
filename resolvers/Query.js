@@ -808,7 +808,7 @@ module.exports = {
     // });
     // const modelName = newVendorName + "_" + "ItemCatalog";
     // const ItemCatalog = newConn.model(modelName, ItemCatalogSchema);
-    catalogItem = await ItemCatalog.findOne({itemCode: item.itemCode})
+    const catalogItem = await ItemCatalog.findOne({itemCode: item.itemCode})
     // .exec((itemCatalog) => console.log(itemCatalog))
     // console.log(catalogItem)
     return {

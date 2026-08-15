@@ -4110,7 +4110,7 @@ mounted() {
         if (flyer.flyerId == this.activeFlyerSelected.flyerId) {
           array.splice(i, 1);
 
-          this.resident.stashedFlyers.push({vendor: flyer.vendor,
+          this.resident.stashedFlyers.push({
                         flyerId: flyer.flyerId,
                         flyerTitle: flyer.flyerTitle,
                         flyerType: flyer.flyerType,

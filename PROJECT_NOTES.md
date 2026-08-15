@@ -13,14 +13,14 @@ Running record of the staged upgrade, phase by phase.
 | 0 — Working copy, hygiene, restored build | ✅ Done | `ae40ab7` |
 | 1a — Authentication guards on all mutations | ✅ Done | `5c0bf65` |
 | 1b — Ownership, roles, connection-string hardening | ✅ Done | `95b0bd8` |
-| 1c — Query guards (PII and billable endpoints) | ✅ Done | this commit |
-| 2 — Config, tooling, lint, CI | Not started | |
+| 1c — Query guards (PII and billable endpoints) | ✅ Done | `e9a5def` |
+| 2 — Config, tooling, lint, CI | ✅ Done | this commit |
 | 3 — Server modernization (Apollo 4, Mongoose 8) | Not started | |
 | 4 — Client modernization (Vite, Vue 3) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-Run `npm test` after any change — 55 tests, Node's built-in runner, no extra
-dependencies.
+Run `npm run verify` after any change — lint, 55 tests, and a production build.
+Tests use Node's built-in runner; no test framework dependency.
 
 ---
 
@@ -282,6 +282,101 @@ call it) and is now owner-scoped.
 | Anonymous `getCurrentResident` | `{"data":{"getCurrentResident":null}}` — boot path intact |
 | Anonymous `getPets` | Reaches the database, not the guard |
 | Resident token → `getVendorSalesInfo` | `ForbiddenError` |
+
+---
+
+## Phase 2 — Config, tooling, lint, CI ✅
+
+**Goal:** a meaningful automated gate, and no more editing source to deploy.
+
+### Deploy-by-comment removed
+
+`src/main.js` had the GraphQL HTTP and WebSocket URLs hardcoded to localhost
+with the production URLs commented out beside them — the last two commits in the
+original repo (`ready to deploy on heroku` → `back to development status`) were
+doing exactly that swap by hand.
+
+Both now come from `VUE_APP_*`:
+
+- `.env.development` sets them explicitly, because the client runs on :8080 and
+  the API on :4000.
+- `.env.production` leaves them **unset on purpose**. `main.js` falls back to
+  the origin serving the page, which matches the co-hosted deployment this app
+  used. An initial version pointed at a placeholder host, which would have
+  shipped a silently broken production build.
+
+Verified: the production bundle contains no `localhost` reference.
+
+### ESLint — tuned to find bugs, not style
+
+A conventional "recommended" config produced 281 findings on a 50k-line codebase
+written without a linter. A gate that noisy gets ignored, which is worse than no
+gate. The config keeps genuine-defect rules as **errors** and demotes style and
+pervasive legacy patterns to warnings.
+
+**Result: 0 errors, 162 warnings.** CI fails on errors only.
+
+### Real bugs the linter found and fixed
+
+| Bug | Impact |
+|---|---|
+| `resolvers/Query.js` — `catalogItem` assigned without `const` inside a `.map()` | Implicit **global**. Under concurrent requests two users could read each other's `photo` and `taxRate` |
+| `src/store/actions.js` — `.then(({date}) => ... data.getRewardItems)` | Typo: destructured `date`, referenced `data`. **`getRewardItems` threw every time** |
+| `src/utils/addMarkers.js` — `infowindow1.open(resultsMap, …)` | `resultsMap` does not exist; the parameter is `map`. ReferenceError on marker-cluster hover |
+| 5 components used `_` (lodash) with no import, and it is not global | ReferenceError on those paths |
+| 3 duplicate object keys with identical values | Dead code |
+| 5 `break` statements after `return` | Dead code |
+
+### Real bugs found and deliberately NOT fixed
+
+These change runtime behaviour and **cannot be validated without a live
+database**. Each is marked in-code with an explanation, and the rules are
+warnings so the build stays green:
+
+1. **`src/components/Profile.vue`** — `created()` is declared twice: a real hook
+   at line 681 and an empty stub at 1022. Last key wins, so **the real
+   `created()` has never run**. Deleting the stub is almost certainly correct,
+   but it activates code dead since the file was written.
+2. **`src/components/vendor/FlyerCoupon.vue:2168` and `:2200`** — `if ((this.pageNo = 1))`
+   is an assignment, not a comparison. Always truthy, and it mutates `pageNo`.
+3. **`src/components/vendor/HtmlConverter.vue:1255`** — same pattern.
+4. **`resolvers/Mutation.js:1514`, `:1729`, `resolvers/Query.js:704`** —
+   `{$first: '$orderItems'} ? {$first: '$orderItems'} : {$push: …}` in Mongo
+   aggregation pipelines. The condition is an object literal, so always truthy
+   and the `$push` branch is unreachable.
+5. **`src/App.vue:1491`** — an `else if` whose condition is already covered by an
+   earlier branch, so it can never execute.
+
+**These are the highest-value items to work through once Atlas is available.**
+
+### Prettier
+
+Configured with `.prettierrc.json` and wired to `npm run format`, but
+**deliberately not applied across the codebase**. Reformatting ~50k lines would
+produce a diff that buries every real change made in Phases 0–2 and makes
+`git blame` useless. Format files as they are touched.
+
+### CI
+
+`.github/workflows/ci.yml` — Node 20, `npm ci --legacy-peer-deps`, then lint →
+test → build, plus a report-only audit. No secrets required: the build reads
+only `VUE_APP_*`, which are public by definition.
+
+### New scripts
+
+| Script | Purpose |
+|---|---|
+| `npm run verify` | lint + test + build — the same gate CI runs |
+| `npm run lint` / `lint:fix` | ESLint |
+| `npm run format` / `format:check` | Prettier |
+
+### Dependency note
+
+`npm audit fix` (non-breaking) applied. The count moved 142 → **155**, because
+adding ESLint and Prettier brought their own transitive advisories. **Critical
+stayed at 23** — the remaining advisories are structural (Apollo 2, Vue 2,
+puppeteer 10) and come down in Phases 3–5, not from tooling changes.
+
 
 ---
 

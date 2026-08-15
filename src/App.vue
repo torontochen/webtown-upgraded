@@ -1482,7 +1482,12 @@ export default {
           this.$store.dispatch("getGuildChatMessages", {
             guildFullName: newValue.guild.guildFullName,
           });
+          // KNOWN DEFECT: this condition is already covered by an earlier
+          // branch, so it can never execute. Whether the earlier branch or this
+          // one carries the intended behaviour needs a live run to determine.
+          // See PROJECT_NOTES.md.
         } else if (
+          // eslint-disable-next-line no-dupe-else-if
           newValue.guild &&
           oldValue.guild &&
           newValue.guild.guildFullName != oldValue.guild.guildFullName
