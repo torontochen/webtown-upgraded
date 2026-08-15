@@ -1187,15 +1187,14 @@ import gmapsInit from "../../utils/gmaps";
 // import addMarkers from "../utils/addMarkers";
 import markerClusterer from "@google/markerclusterer";
 
-import { now } from "moment";
 import QRCode from "qrcode";
 
 
 import HtmlConverter from "./HtmlConverter.vue";
 import FlyerCoupon from "./FlyerCoupon.vue";
-import InputTable from "./InputTable";
+import InputTable from "./InputTable.vue";
 import { hobbies, religions, favoriteFood } from "../../assets/constData"
-import CustomDialog from "../CustomDialog";
+import CustomDialog from "../CustomDialog.vue";
 import {
   eventBus_editElement,
   eventBus_addPage,

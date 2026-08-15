@@ -1,5 +1,18 @@
 import Vue from "vue";
-import Vuetify from "vuetify/lib";
+// Full build, not "vuetify/lib".
+//
+// `vuetify/lib` exports the plugin but registers no components — vuetify-loader
+// was responsible for auto-importing each one it found in a template, and that
+// loader is webpack-only with no Vuetify 2 equivalent for Vite. Without it every
+// <v-row>, <v-icon>, <v-btn> resolves to "Unknown custom element" and the page
+// renders as unstyled HTML.
+//
+// The full build registers all components up front. The cost is smaller than it
+// looks: the webpack build was already emitting ~648 kB of Vuetify CSS, so
+// a-la-carte was buying very little here. Component styling comes from
+// src/scss/vuetify.scss, which compiles Vuetify's sass with this project's
+// variable overrides.
+import Vuetify from "vuetify";
 // import 'font-awesome/css/font-awesome.min.css'
 // import "@fortawesome/fontawesome-free/css/all.css";
 // import "@mdi/font/css/materialdesignicons.css";

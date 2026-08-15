@@ -35,7 +35,7 @@ const {
   GuildChatSchema,
   ProductRatingSchema 
 } = require("../Schema");
-const { LOGO_BASE64 } = require("../../src/assets/constDataServer");
+const { LOGO_BASE64 } = require("../../src/assets/constDataServer.json");
 const sizeOf = require("object-sizeof");
 const { cityhallUpdated } = require("../Subscription");
 const { match } = require("assert");

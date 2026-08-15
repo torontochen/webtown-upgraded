@@ -9,8 +9,8 @@ import Checkout from '../components/Checkout.vue'
 import ResidentOrders from '../components/ResidentOrders.vue'
 import SignupVendor from '../components/vendor/SignupVendor.vue'
 import VendorInterface from '../components/VendorInterface.vue'
-import SingleCatalogItem from '../components/SingleCatalogItem'
-import ShoppingCart from '../components/ShoppingCart'
+import SingleCatalogItem from '../components/SingleCatalogItem.vue'
+import ShoppingCart from '../components/ShoppingCart.vue'
 import VendorFlyers from '../components/vendor/VendorFlyers.vue'
 import VendorProductService from '../components/vendor/VendorProductService.vue'
 import VendorGallery from '../components/vendor/VendorGallery.vue'
@@ -21,7 +21,7 @@ import VendorMembership from '../components/vendor/VendorMembership.vue'
 import GuildDealsFulfillment from '../components/vendor/GuildDealsFulfillment.vue'
 import VendorProfile from '../components/vendor/VendorProfile.vue'
 import GuildDeal from '../components/vendor/GuildDeal.vue'
-import ManageGuildDeals from '../components/vendor/ManageGuildDeals'
+import ManageGuildDeals from '../components/vendor/ManageGuildDeals.vue'
 import AuthGuard from "../AuthGuard";
 
 const originalPush = VueRouter.prototype.push;
@@ -203,7 +203,9 @@ const routes = [
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  // vue-cli injected process.env.BASE_URL; Vite has no `process` in the browser
+  // and exposes the equivalent as import.meta.env.BASE_URL (default "/").
+  base: import.meta.env.BASE_URL,
   routes
 })
 

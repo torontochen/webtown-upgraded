@@ -739,7 +739,10 @@ import OrderItemDetails from '../OrderItemDetails.vue'
 
 import Events from '../Events.vue'
 import { GET_CURRENT_VENDOR, GET_VENDOR_ORDERS } from '../../queries/queries_query';
-import { READ_MESSAGE, CHANGE_ORDER_STATUS, CONFIRM, FULFILL} from '../../queries/queries_mutation';
+// CHANGE_ORDER_STATUS was removed: its definition in queries_mutation.js, its
+// use below, and the schema field are all commented out. Rollup errors on an
+// import of a non-existent export where webpack silently gave undefined.
+import { READ_MESSAGE, CONFIRM, FULFILL} from '../../queries/queries_mutation';
 import _ from 'lodash'
 
 

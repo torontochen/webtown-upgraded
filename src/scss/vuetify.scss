@@ -1,0 +1,16 @@
+// Vuetify 2 styles, compiled from source so the SASS variable overrides below
+// still apply.
+//
+// vue-cli-plugin-vuetify used to pick `src/scss/variables.scss` up by
+// convention and hand it to vuetify-loader, which is webpack-only. Under Vite
+// the entry point is explicit: main.js imports this file. Without it the
+// Montserrat font override silently reverts to Vuetify's Roboto default.
+//
+// The `~` prefix in the old import was webpack syntax; Vite resolves bare
+// package specifiers directly.
+$body-font-family: "Montserrat", sans-serif;
+$heading-font-family: $body-font-family;
+$btn-active-opacity: 0.05;
+$btn-toggle-btn-opacity: 0.4;
+
+@import "vuetify/src/styles/main.sass";

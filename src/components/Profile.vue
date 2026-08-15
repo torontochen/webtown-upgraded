@@ -579,8 +579,8 @@ import _ from "lodash"
 
 import { CHECK_RESIDENTNAME } from "../queries/queries_query.js";
 import gmapsInit from "../utils/gmaps";
-import CustomDialog from "./CustomDialog";
-import AvatarCropper from "./AvatarCropper";
+import CustomDialog from "./CustomDialog.vue";
+import AvatarCropper from "./AvatarCropper.vue";
 import { eventBus_profile } from "../eventBus";
 import { hobbies, religions, favoriteFood } from "../assets/constData";
 

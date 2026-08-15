@@ -107,7 +107,13 @@ module.exports = {
       parser: "vue-eslint-parser",
     },
     {
-      files: ["test/**/*.js"],
+      files: ["test/**/*.js", "test-e2e/**/*.js"],
+      env: { node: true },
+    },
+    {
+      // vite.config.mjs is ESM in a CommonJS package.
+      files: ["*.mjs"],
+      parserOptions: { sourceType: "module" },
       env: { node: true },
     },
   ],
