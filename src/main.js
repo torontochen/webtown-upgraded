@@ -64,25 +64,6 @@ const GRAPHQL_WS_URI =
     window.location.host
   }/graphql`;
 
-// export const eventBus_signout = new Vue()
-export const eventBus_profile = new Vue();
-export const eventBus_vendorParlour = new Vue();
-export const eventBus_editElement = new Vue();
-export const eventBus_addPage = new Vue();
-export const eventBus_preview = new Vue();
-export const eventBus_saveSketch = new Vue();
-export const eventBus_appendHook = new Vue();
-export const eventBus_saveTemplate = new Vue();
-export const eventBus_saveFlyer = new Vue();
-export const eventBus_stashFlyer = new Vue();
-export const eventBus_feedPet = new Vue();
-export const eventBus_actionPanel = new Vue();
-export const eventBus_toggleMapPosition = new Vue();
-export const eventBus_pickVendor = new Vue();
-export const eventBus_searchVendor = new Vue();
-export const eventBus_sortPromotionEvents = new Vue();
-export const eventBus_crackEgg = new Vue();
-export const eventBus_closeSignUp = new Vue();
 
 // Register Global Component
 Vue.use(VueApollo);

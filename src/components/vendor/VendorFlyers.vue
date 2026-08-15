@@ -1204,7 +1204,7 @@ import {
   eventBus_appendHook,
   eventBus_saveTemplate,
   eventBus_saveFlyer,
-} from "../../main";
+} from "../../eventBus";
 import {GET_TARGET_DISTRIBUTE_RESIDENT} from '../../queries/queries_query'
 
 

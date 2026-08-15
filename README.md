@@ -44,7 +44,9 @@ cp variables.env.example variables.env   # then fill in real values
 - [x] **Phase 2.5** — Live verification against Atlas; deferred bug fixes
 - [x] **Phase 3a** — Apollo Server 4, graphql-ws, error migration
 - [x] **Phase 3b** — Mongoose 8, resolver split into domains, structured logging
-- [ ] **Phase 4** — Client modernization (Vite, event-bus removal, Vue 3)
+- [x] **Phase 4a-i** — Event buses replaced; first browser verification
+- [ ] **Phase 4a-ii** — Vite migration
+- [ ] **Phase 4b/4c** — Vue 3 + Vuetify 3; Pinia + Apollo Client 3
 - [ ] **Phase 5** — Dependency cleanup
 
 See [PROJECT_NOTES.md](PROJECT_NOTES.md) for the full phase-by-phase record,

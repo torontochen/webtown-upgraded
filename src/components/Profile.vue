@@ -581,10 +581,10 @@ import { CHECK_RESIDENTNAME } from "../queries/queries_query.js";
 import gmapsInit from "../utils/gmaps";
 import CustomDialog from "./CustomDialog";
 import AvatarCropper from "./AvatarCropper";
-import { eventBus_profile } from "../main.js";
+import { eventBus_profile } from "../eventBus";
 import { hobbies, religions, favoriteFood } from "../assets/constData";
 
-// import { eventBus_signout } from "../main.js";
+// import { eventBus_signout } from "../eventBus";
 
 export default {
   name: "Profile",

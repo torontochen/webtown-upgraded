@@ -84,8 +84,13 @@ module.exports = {
     // Vuetify 2's slot syntax trips this rule; the app renders correctly.
     "vue/valid-v-slot": ["warn", { allowModifiers: true }],
 
-    // Vue 2 filter syntax edge cases. The build compiles these fine.
-    "vue/no-parsing-error": "warn",
+    // Promoted to error in Phase 4a. The eight existing violations were not
+    // "edge cases" at all — a formatter had rewritten hyphenated filter names
+    // as subtraction, e.g. `{{ x | format-int-amount }}` became
+    // `{{ x | (format - int - amount) }}`, so those filters silently never ran
+    // and raw values rendered in the UI. All eight are fixed; as an error this
+    // now blocks the build if a formatter reintroduces it.
+    "vue/no-parsing-error": "error",
 
     // Real anti-patterns, but pervasive in the legacy components and fixing
     // them changes runtime behaviour — so they are warnings with a written

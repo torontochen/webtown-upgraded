@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
       <span class="text-subtitle-1 primary--text"
         >Vendor Page Visited:
-        {{ vendor.homePageVisit | (format - int - amount) }}</span
+        {{ vendor.homePageVisit | format-int-amount }}</span
       >
       <v-spacer></v-spacer>
       <v-row
@@ -647,7 +647,7 @@
                         <v-spacer /><v-card-subtitle
                           class="text-caption text-center"
                           >up to
-                          {{ event.dateTo | (convert - date) }}</v-card-subtitle
+                          {{ event.dateTo | convert-date }}</v-card-subtitle
                         ><v-spacer />
                       </v-row>
                       <v-fade-transition>
@@ -971,7 +971,7 @@ import {
   eventBus_searchVendor,
   eventBus_sortPromotionEvents,
   eventBus_closeSignUp,
-} from "../main.js";
+} from "../eventBus";
 import { mapGetters } from "vuex";
 import router from "../router/router";
 import Observer from "vue-intersection-observer";

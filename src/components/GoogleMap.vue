@@ -10,7 +10,7 @@ import _ from "lodash";
 import gmapsInit from "../utils/gmaps";
 // import addMarkers from "../utils/addMarkers";
 import markerClusterer from "@google/markerclusterer";
-import { eventBus_pickVendor } from "../main.js"
+import { eventBus_pickVendor } from "../eventBus"
 // import addMarker from "../utils/addMarker";
 export default {
   name: "gooogleMap",

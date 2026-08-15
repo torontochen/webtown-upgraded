@@ -2513,7 +2513,7 @@ import { ALLY_GUILD,
           CRACK_EGG } from "../queries/queries_mutation"
 import MemberLocationMap from "@/components/MemberLocationMap.vue";
 
-import { eventBus_feedPet, eventBus_stashFlyer, eventBus_crackEgg } from "../main";
+import { eventBus_feedPet, eventBus_stashFlyer, eventBus_crackEgg } from "../eventBus";
 import _ from "lodash";
 import moment from "moment"
 // import { mdiHandCoin } from '@mdi/js';

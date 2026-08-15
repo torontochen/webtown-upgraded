@@ -17,11 +17,13 @@ Running record of the staged upgrade, phase by phase.
 | 2 — Config, tooling, lint, CI | ✅ Done | `000c998` |
 | 2.5 — Live verification + deferred bug fixes | ✅ Done | `d4c92e6` |
 | 3a — Apollo Server 4, graphql-ws, error migration | ✅ Done | `334e63e` |
-| 3b — Mongoose 8, resolver split, logging | ✅ Done | this commit |
+| 3b — Mongoose 8, resolver split, logging | ✅ Done | `0213d4c` |
+| 4a-i — Event buses removed; first browser verification | ✅ Done | this commit |
+| 4a-ii — Vite migration | Not started | |
 | 4 — Client modernization (Vite, Vue 3) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-Run `npm run verify` after any change — lint, 66 tests, and a production build.
+Run `npm run verify` after any change — lint, 77 tests, and a production build.
 Tests use Node's built-in runner; no test framework dependency.
 
 `npm run test:e2e` additionally verifies the guards (22 checks) and
@@ -606,6 +608,77 @@ exactly, every resolver is a function, and no module requires the barrel back.
 
 ---
 
+## Phase 4a-i — Event buses removed, and the first browser run ✅
+
+### Event buses
+
+19 `new Vue()` instances declared in and exported from `main.js`, with 79
+`$emit` sites, 31 listeners and 24 `$off` calls across 13 components. Two
+problems: **Vue 3 removes `$on`/`$off`/`$emit` from instances**, and components
+imported them from `../main`, which imports `App.vue`, which imports `main.js`
+— a circular import.
+
+`src/eventBus.js` replaces them with a framework-agnostic emitter exposing the
+same API, so **all ~110 call sites are unchanged** — only the import path moved.
+`eventBus_signout` was dropped: declared, never emitted, never listened to.
+
+**Why not Vuex, as the original plan said.** With the code in front of us that
+was the wrong trade. These 79 emits drive imperative UI behaviour — open this
+dialog, append this hook, re-render that flyer page — not shared state.
+Reshaping them into mutations is a redesign with real regression risk in flows
+that cannot be exercised without a browser, and it is not what unblocks Vue 3.
+Removing the dependency on Vue *instances* is. This does exactly that and
+nothing else; migrating individual buses to real state is now an incremental
+job that can happen one bus at a time.
+
+The emitter deliberately reproduces Vue 2's semantics, including the sharp edge
+that a bare `$off()` clears every listener for every event — relied on in 22
+places. Eleven tests lock that behaviour, plus two migration invariants (no Vue
+-instance buses remain; nothing imports a bus from `main.js`).
+
+### The first time the app was actually run in a browser
+
+Across Phases 0–3 the client was only ever *built*, never loaded. Running it
+against the live API immediately exposed a real, user-visible bug.
+
+**Eight filter expressions had been mangled by a formatter.** At some point
+`{{ x | format-int-amount }}` had been rewritten as
+`{{ x | (format - int - amount) }}` — the hyphenated filter name read as
+subtraction. Vue then resolved an empty filter name and evaluated `format`,
+`int` and `amount` as undefined properties, so **the filter never ran and the
+raw value rendered**. The city treasury displayed as `2320618`, and a news item
+read `at 1671047474940`.
+
+Confirmed pre-existing: the same eight lines are byte-identical in
+`../webtown-master`. All eight repaired — the header now reads `2,320,618` and
+the news item `at December 14th 2022, 8:19:50 pm`.
+
+**`vue/no-parsing-error` is now an error, not a warning.** It had been flagging
+exactly these eight sites since Phase 2, dismissed in the notes as "Vue 2 filter
+syntax edge cases. The build compiles these fine." That was wrong — they were
+silent rendering bugs. As an error it blocks the build if a formatter
+reintroduces the pattern, which is a live risk because `npm run format` would
+do precisely that.
+
+### Browser verification
+
+With `npm run dev` against live Atlas: app renders, all 15 boot queries return
+200 from Apollo 4, images and vendor data load, no Vue warnings remain.
+
+One unexplained console error persists — `Uncaught SyntaxError: Unexpected
+token '<'` with no corresponding failed network request. It does not affect
+rendering or data loading and is present regardless of these changes; not
+diagnosed.
+
+### Not done in this phase
+
+**The Vite migration.** 4a was scoped as "Vite + event buses"; only the event
+buses are done. See the open items below for what Vite will involve — it is
+tracked as 4a-ii.
+
+
+---
+
 ## Open items and judgement calls
 
 Things a future session (or reviewer) should know.
@@ -625,6 +698,23 @@ Things a future session (or reviewer) should know.
 3. **`callGroupPurchase` has no owner field** — it publishes a News item to all
    clients and carries no vendor reference. Authenticated-vendor-only, but any
    vendor can publish. Worth a product look.
+
+### Phase 4a-ii — what the Vite migration still needs
+
+Surveyed but not attempted. The known work:
+
+- **Vuetify 2 a-la-carte.** `vuetify-loader` is webpack-only and there is no
+  Vuetify 2 equivalent for Vite. Either import Vuetify in full (larger bundle)
+  or find a community plugin. **This is the main unknown.**
+- **PWA**: `vue-cli-plugin-pwa` → `vite-plugin-pwa`.
+- **Quill**: the `webpack.ProvidePlugin` shim for `window.Quill` needs an
+  explicit assignment in `main.js` instead.
+- **Env vars**: `process.env.VUE_APP_*` → `import.meta.env.VITE_*`, touching
+  `.env.development`, `.env.production` and `main.js`.
+- **index.html** moves to the project root and references the entry directly.
+- **Bonus**: the two graphql 16 workarounds added in Phase 3a
+  (`transpileDependencies` and the `graphql$` CJS alias) both disappear — Vite
+  handles that ESM natively.
 
 ### Known gaps
 
@@ -650,7 +740,8 @@ Things a future session (or reviewer) should know.
   Vue 2 / webpack 4 / puppeteer 10 client stack → Phases 4–5.
 - **Client-side `console.log` calls remain** in `src/`. Server-side is done
   (Phase 3b); the browser ones are dev noise and are Phase 4's concern.
-- **19 event buses** in `main.js` — hard blocker for Vue 3 → Phase 4.
+- **One unexplained browser console error**: `Uncaught SyntaxError: Unexpected
+  token '<'`, no failed network request, no functional impact. Not diagnosed.
 - **Bundle is 3.59 MiB** (2.2 MiB vendor chunk), no code splitting → Phase 4.
 
 ### Conventions established

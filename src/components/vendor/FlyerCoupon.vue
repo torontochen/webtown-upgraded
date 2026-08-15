@@ -575,7 +575,7 @@ import {
   eventBus_appendHook,
   eventBus_saveTemplate,
   eventBus_saveFlyer,
-} from "../../main";
+} from "../../eventBus";
 
 export default {
   components: {

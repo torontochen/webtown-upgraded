@@ -167,7 +167,7 @@
 
 <script>
 import {mapGetters} from "vuex"
-import { eventBus_actionPanel } from "../main";
+import { eventBus_actionPanel } from "../eventBus";
 import _ from "lodash"
 
 export default {

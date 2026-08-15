@@ -231,7 +231,7 @@ import Events from "./Events.vue"
 import Customer from "./Customer.vue"
 import Gallery from "./Gallery.vue"
 import OtherInfo from "./OtherInfo.vue"
-import { eventBus_actionPanel } from "../main";
+import { eventBus_actionPanel } from "../eventBus";
 
 export default {
     components: {
