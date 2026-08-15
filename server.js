@@ -33,20 +33,28 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const app = express();
+
+// Body/upload size ceiling. Previously 50 MB on the body parsers and 10 GB on
+// the upload field, which made memory exhaustion trivial to trigger.
+const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES) || 10 * 1024 * 1024;
+const BODY_LIMIT = `${Math.ceil(MAX_UPLOAD_BYTES / (1024 * 1024))}mb`;
+
 app.use(
   express.urlencoded({
-    limit: "50mb",
-    parameterLimit: 100000,
+    limit: BODY_LIMIT,
+    parameterLimit: 1000,
     extended: true,
   })
 );
 app.use(
   express.json({
-    limit: "50mb",
+    limit: BODY_LIMIT,
   })
 );
-// app.use(cors());
 const PORT = process.env.PORT || 4000;
+// Where the browser app lives; used for post-email-verification redirects that
+// were previously hardcoded to localhost with the prod URL commented beside it.
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:8080";
 
 const transporter = nodemailer.createTransport({
   service: process.env.MAIL_SERVICE || "gmail",
@@ -131,21 +139,29 @@ mongoose
 
 exports.defaultConnection = mongoose.connection;
 
-// Verify JWT Token from client side
+// Verify JWT Token from client side.
+//
+// This is deliberately permissive: a missing, malformed, or expired token
+// yields `null` rather than throwing. Enforcement lives in the resolver guards
+// (resolvers/auth/), which is where the per-operation policy is.
+//
+// It used to throw. That made context creation fail for *every* operation when
+// a stale token was present — including signinResident/signinVendor — so a user
+// holding an expired token could not sign back in. Now that tokens actually
+// expire (see createToken* in resolvers/Mutation.js), that path would be hit
+// routinely.
 const getUser = async (token) => {
-  // console.log("toke in getUser" + token);
-  // await console.log(jwt.vertify(token, process.env.SECRET))
+  if (!token) return null;
 
-  if (token) {
-    const newToken = token.replace("Bearer ", "");
-    try {
-      // console.log(jwt.verify(token, process.env.SECRET));
-      return await jwt.verify(newToken, process.env.SECRET);
-    } catch (err) {
-      throw new AuthenticationError(
-        "Your Token is invalid, Please sign in again"
-      );
-    }
+  const newToken = token.replace("Bearer ", "");
+  if (!newToken) return null;
+
+  try {
+    return await jwt.verify(newToken, process.env.SECRET);
+  } catch (err) {
+    // Expired or tampered-with. Treat as anonymous; guards will reject any
+    // operation that needs a principal.
+    return null;
   }
 };
 // const getVendor = async token => {
@@ -166,14 +182,31 @@ const getUser = async (token) => {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  // Was maxFieldSize: 10000000000 (10 GB), which made memory exhaustion a
+  // one-request affair. MAX_UPLOAD_BYTES defaults to 10 MB.
   uploads: {
-    maxFieldSize: 10000000000,
+    maxFieldSize: MAX_UPLOAD_BYTES,
+    maxFileSize: MAX_UPLOAD_BYTES,
     maxFiles: 10,
   },
-  formatError: (error) => ({
-    name: error.name,
-    message: error.message.replace("Context creation failed:", ""),
-  }),
+  // Apollo wraps resolver errors, so `error.name` is always "GraphQLError" by
+  // the time it reaches here — the original class is only recoverable from
+  // extensions.code. The client (src/main.js) keys its automatic sign-out off
+  // `err.name === "AuthenticationError"`, so without this mapping an expired
+  // token would surface as a generic error and the user would sit in a broken
+  // signed-in state instead of being returned to the sign-in screen.
+  formatError: (error) => {
+    const code = error.extensions && error.extensions.code;
+    const nameByCode = {
+      UNAUTHENTICATED: "AuthenticationError",
+      FORBIDDEN: "ForbiddenError",
+    };
+    return {
+      name: nameByCode[code] || error.name,
+      code,
+      message: error.message.replace("Context creation failed:", ""),
+    };
+  },
   context: async ({ req, connection }) => {
     // console.log("req.headers " + req.headers);
     // console.log("req.body " + req.body);
@@ -218,42 +251,42 @@ const server = new ApolloServer({
   },
 });
 
-//Set up Cors
-//Comment out for production
-const whitelist = ["http://localhost:8080", "http://192.168.0.12:4000"];
+// CORS. The whitelist comes from CORS_WHITELIST (comma-separated) so dev and
+// prod no longer differ by edited source.
+//
+// The previous rule also passed when `origin === undefined`, which is every
+// non-browser client — curl, scripts, anything without an Origin header. That
+// made the whitelist decorative. Requests with no Origin are not subject to the
+// same-origin policy in the first place, so allowing them buys nothing; they
+// are now rejected in production and permitted only in development, where
+// GraphQL Playground and local tooling need them.
+const whitelist = (process.env.CORS_WHITELIST || "http://localhost:8080")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
 
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1) {
-//       callback(null, true)
-//     } else {
-//       callback(new Error('Not allowed by CORS'))
-//     }
-//   },
-// }
-
-//Comment out for production
+const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
   credentials: true,
-  origin: function(origin, callback) {
-    // console.log(origin);
-    if (origin === undefined || whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
+  origin: function (origin, callback) {
+    if (!origin) {
+      return isProduction
+        ? callback(new Error("Not allowed by CORS"))
+        : callback(null, true);
     }
+    if (whitelist.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
   },
 };
-
-// const server = createServer(app);
-// apolloServer.applyMiddleware({ app });
 
 server.applyMiddleware({
   app,
   cors: corsOptions,
   bodyParserConfig: {
-    limit: "100mb",
+    limit: BODY_LIMIT,
   },
 });
 
@@ -288,8 +321,7 @@ app.get("/:emailToken", async (req, res) => {
         base64: LOGO_BASE64,
       });
     }
-    return res.redirect("http://localhost:8080/signin");
-    // return res.redirect("https://boundary-faf8da99353c.herokuapp.com/signin");
+    return res.redirect(`${CLIENT_ORIGIN}/signin`);
   } else {
     try {
       // const id = jwt.verify(req.params.token, process.env.SECRET);
@@ -312,8 +344,7 @@ app.get("/:emailToken", async (req, res) => {
         base64: LOGO_BASE64,
       });
     }
-    return res.redirect("http://localhost:8080/signinvendor");
-    // return res.redirect("https://boundary-faf8da99353c.herokuapp.com/signinvendor");
+    return res.redirect(`${CLIENT_ORIGIN}/signinvendor`);
   }
 });
 

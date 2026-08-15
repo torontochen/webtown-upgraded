@@ -1,33 +1,18 @@
-const Query = require('./Query')
-const Mutation = require('./Mutation')
-const Subscription = require('./Subscription')
-// const _ = require("lodash");
-// import _ from "lodash"
+const Query = require("./Query");
+const Mutation = require("./Mutation");
+const Subscription = require("./Subscription");
 
+const { applyPolicy } = require("./auth/applyPolicy");
+const { MUTATION_POLICY } = require("./auth/mutationPolicy");
 
+// Every mutation is wrapped with its access guard here rather than inline in
+// Mutation.js. Keeping the policy in one table makes the whole authorization
+// surface reviewable at a glance, and applyPolicy throws at startup if any
+// mutation is missing an entry — so the default is deny, not allow.
 module.exports = {
-  // Queries
   Query,
 
-  // mutation
-  Mutation,
+  Mutation: applyPolicy(Mutation, MUTATION_POLICY, "Mutation"),
 
-
-  // subscription
   Subscription,
-
-  // GuildMessageData: {
-  //   __resolveType: obj => {
-  //     if (obj.text) {
-  //       return 'TextMessage'
-  //     }
-
-  //     if (obj.emoji) {
-  //       return 'EmojiMessage'
-  //     }
-      
-  //     return null
-  //   }
-  // }
-
 };

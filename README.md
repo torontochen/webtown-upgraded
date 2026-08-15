@@ -27,6 +27,7 @@ cp variables.env.example variables.env   # then fill in real values
 | `npm run server` | API only, on `PORT` (default 4000), with nodemon |
 | `npm run client` | Vue dev server on :8080 |
 | `npm run build` | Production build into `dist/` |
+| `npm test` | Auth/policy tests (Node's built-in runner, no extra deps) |
 
 - GraphQL endpoint: `http://localhost:4000/graphql`
 - Subscriptions: `ws://localhost:4000/graphql`
@@ -34,7 +35,8 @@ cp variables.env.example variables.env   # then fill in real values
 ## Upgrade progress
 
 - [x] **Phase 0** — Separate working copy, repo hygiene, secrets to env, **build restored**
-- [ ] **Phase 1** — Authentication / authorization on all mutations
+- [x] **Phase 1a** — Authentication guards on all 59 mutations, token expiry, CORS, upload limits
+- [ ] **Phase 1b** — Server-derived identity (ownership) + roles for privileged mutations
 - [ ] **Phase 2** — Config, tooling, lint, CI
 - [ ] **Phase 3** — Server modernization (Apollo 4, Mongoose 8, resolver split)
 - [ ] **Phase 4** — Client modernization (Vite, event-bus removal, Vue 3)

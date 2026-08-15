@@ -39,6 +39,14 @@ const DOWNLOAD_DIR = "./download";
 
 // Create-token function
 
+// Token lifetimes. `createToken*WithFP` previously called jwt.sign with no
+// `expiresIn` at all, so tokens issued on the remembered-device path were valid
+// forever — a leaked one could never age out. Both paths now expire; the
+// remembered path just gets a longer window.
+const TOKEN_EXPIRES_IN = process.env.TOKEN_EXPIRES_IN || "480h";
+const TOKEN_EXPIRES_IN_REMEMBERED =
+  process.env.TOKEN_EXPIRES_IN_REMEMBERED || "30d";
+
 const createTokenWithFP = (resident, secret) => {
   const { residentName, email } = resident;
   return jwt.sign(
@@ -47,7 +55,10 @@ const createTokenWithFP = (resident, secret) => {
       email,
       tokenSign: "resident",
     },
-    secret
+    secret,
+    {
+      expiresIn: TOKEN_EXPIRES_IN_REMEMBERED,
+    }
   );
 };
 
@@ -76,7 +87,10 @@ const createVendorTokenWithFP = (vendor, secret) => {
       email,
       tokenSign: "vendor",
     },
-    secret
+    secret,
+    {
+      expiresIn: TOKEN_EXPIRES_IN_REMEMBERED,
+    }
   );
 };
 
@@ -3010,7 +3024,7 @@ module.exports = {
 
       const token = fingerPrint
         ? createTokenWithFP(resident, process.env.SECRET)
-        : createToken(resident, process.env.SECRET, "480h");
+        : createToken(resident, process.env.SECRET, TOKEN_EXPIRES_IN);
       // console.log(token);
       return {
         token,
@@ -3043,7 +3057,7 @@ module.exports = {
       );
       const token = fingerPrint
         ? createVendorTokenWithFP(vendor, process.env.SECRET)
-        : createVendorToken(vendor, process.env.SECRET, "480h");
+        : createVendorToken(vendor, process.env.SECRET, TOKEN_EXPIRES_IN);
       // console.log(token)
       return {
         token,
