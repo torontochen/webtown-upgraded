@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+  <!-- <link rel="icon" type="image/png" href="/favicon.ico" /> -->
+  <!-- <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.png" /> -->
+  <title>Webtown</title>
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,300" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,500,700,400,600,300,900" rel="stylesheet" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" crossorigin="anonymous" />
+  <!-- <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css" rel="stylesheet" /> -->
+  <!-- <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet"> -->
+  <script src="/node_modules/quill-image-resize-module/image-resize.min.js"></script>
+  <style>
+    /* customize quill font */
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    input {
+    -webkit-user-select: text; /* Chrome, Opera, Safari */
+    -moz-user-select: text; /* Firefox 2+ */
+    -ms-user-select: text; /* IE 10+ */
+    user-select: text; /* Standard syntax */
+}
+
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=""]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=""]::before {
+      content: "Default";
+    }
+
+
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before {
+      content: "Arial";
+      font-family: "Arial";
+    }
+
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before {
+      content: "Verdana";
+      font-family: "Verdana";
+    }
+
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="tahoma"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="tahoma"]::before {
+      content: "Tahoma";
+      font-family: "Tahoma";
+    }
+
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="garamond"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="garamond"]::before {
+      content: "Garamond";
+      font-family: "Garamond";
+    }
+
+    /* customize quill font size */
+
+
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=""]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=""]::before {
+      content: 'default';
+    }
+
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="0.75em"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="0.75em"]::before {
+      content: 'Small';
+      font-size: .75em;
+    }
+
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="1.5em"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="1.5em"]::before {
+      content: 'Large';
+      font-size: 1.2em;
+    }
+
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="2.5em"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="2.5em"]::before {
+      content: 'Huge';
+      font-size: 1.6em;
+    }
+
+    .ql-snow .ql-picker.ql-size .ql-picker-label .ql-active::before {
+      font-size: 1em !important;
+    }
+
+    div.ql-editor {
+      min-height: 200px !important;
+      height: 300px !important;
+    }
+
+    button.gm-ui-hover-effect {
+   visibility: hidden;
+    }
+
+    .gm-ui-hover-effect {
+        display: none !important;
+    }
+  </style>
+</head>
+
+<body style="background-color: white;">
+  <noscript>
+    <strong>We're sorry but cybertown doesn't work properly without JavaScript
+      enabled. Please enable it to continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+  <!-- <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.4.2/mapbox-gl-geocoder.min.js"> -->
+  <!-- </script> -->
+
+  <!-- <link rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.4.2/mapbox-gl-geocoder.css"
+    type="text/css" /> -->
+</body>
+
+</html>

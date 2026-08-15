@@ -1,0 +1,1858 @@
+# Enum Type Definition
+enum RedeemType {
+  CASH_VALUE
+  CASH_DISCOUNT
+  PERCENTAGE_DISCOUNT
+  COMBO_CASH_VALUE
+}
+
+# type TextMessage {
+#   text: String
+# }
+
+# type EmojiMessage {
+#   emoji: String
+# }
+
+
+# union GuildMessageData = TextMessage | EmojiMessage
+
+# enum GuildMessageDataType {
+#   TextMessage
+#   EmojiMessage
+# }
+
+
+# Input Type Definition
+input AIPromptInput {
+  role: String
+  content: String
+}
+
+input BusinessHourInput {
+  weekDay: String
+  time: String
+}
+
+input CouponValueInput {
+  valueType: RedeemType
+  amount: Float
+  couponId: String
+  couponTitle: String
+  itemsBound: [ItemsBoundInput]
+  oneTimeUsage: Boolean
+  minimalAmount: Float
+  minimalQty: Int
+  isForExceedance: Boolean
+  isForAllItems: Boolean
+}
+
+input DealTitleInput {
+  title: String
+  flyerId: String
+  couponId: String
+  oneTimeUsage: Boolean
+}
+
+input DistributeFlyerInput {
+  businessTitle: String
+  businessCategory: String
+  logo: String
+  flyerId: String
+  flyerTitle: String
+  flyerType: String
+  dateFrom: String
+  dateTo: String
+  crossBoundary: Boolean
+  quantityDistributed: Int
+}
+
+
+
+
+input FlyerTemplateInput {
+  templatePages: [PageSavedInput]
+  templatePages_C: [PageSavedInput]
+  templateId: String!
+  templateTagName: String!
+  templateType: String!
+  backgroundColor: String
+  width: Float
+  height: Float
+  backgroundColor_C: String
+  width_C: Float
+  height_C: Float
+  businessTitle: String
+}
+
+input FlyerPageElementInput {
+  htmlInner: String
+  htmlOuter: String
+  htmlOuterStyle: String
+  x: Float
+  y: Float
+  w: Float
+  h: Float
+  id: String
+}
+
+input FlyerUpdateInput {
+  flyerId: String
+  dateFrom: String
+  dateTo: String
+  couponValue: [CouponValueInput]
+  totalPages: Int
+  setUp: Boolean
+  businessTitle: String
+}
+
+input GuildDealLevelInput {
+  guildDealCondition: String
+  guildDealAmount: Float
+  rewardItemsSelected: [String]
+  rewardAmount: Float
+}
+
+input GuildDealsCommitedInput {
+  guildDealIds: [ID]
+  guildFullName: String
+}
+
+input GuildDealsInput {
+  vendor: String
+  vendorLogo: String
+  vendorCategory: [String]
+  guildDealType: String
+  dealRedeemTerm: String
+  specificItemList: [String]
+  guildDealLevels: [GuildDealLevelInput]
+  dateFrom: String
+  dateTo: String
+}
+
+
+input GuildMessageInput {
+  author: String
+  data: String
+  type: String
+  date: String
+  nickName: String
+} 
+
+input ItemsBoundInput {
+  itemCode: String
+  description: String
+  unit: String
+  quantity: Int
+}
+
+
+input ItemInput {
+  subcategory: String
+  itemCode: String
+  specification: String
+  event: String
+  description: String
+  unit: String
+  photo: String
+  rate: Float
+  promoRate: Float
+  rewardSilver: Int
+  active: Boolean
+  taxRate: Float
+}
+
+
+input ItemCatalogInput {
+  itemDetailed: [ItemInput]
+  businessTitle: String
+}
+
+input OrderItemsInput {
+  itemCode: String
+  quantity: Int
+  itemTotal: Float
+}
+
+input DealSearchInput {
+  orderItems: [OrderItemsInput]
+  resident: String
+  vendor: String 
+  time: String
+}
+
+input PageSavedInput {
+  flyerPageElements: [FlyerPageElementInput]
+  nodeId: String!
+}
+
+input PreviewInput {
+  id: String
+  previewString: String
+}
+
+input PromotionEventInput {
+  vendor: ID
+  vendorName: String
+  eventType: String
+  eventPhoto: String
+  eventTitle: String
+  eventInstruction: String
+  promotionItems: [String]
+  dateFrom: String
+  dateTo: String
+  postOnPortal: Boolean
+}
+
+input RewardItemInChestInput {
+  itemName: String
+  quantity: Float
+}
+
+input SalesOrderItemInput {
+  itemCode: String
+  description: String
+  unit: String
+  unitPrice: Float
+  rewardSilver: Int
+  quantity: Int
+  vendor: String
+  dealPrice: Float,
+  taxRate: Float,
+  discount: Float
+}
+
+input SketchPagesInput {
+  sketchPages: [PageSavedInput]
+  sketchPages_C: [PageSavedInput]
+  flyerId: String!
+  flyerTitle: String!
+  type: String!
+  backgroundColor: String
+  width: Float
+  height: Float
+  backgroundColor_C: String
+  width_C: Float
+  height_C: Float
+  businessTitle: String
+  setUp: Boolean
+  distributed: Boolean
+  couponPages: [PreviewInput]
+  flyerPage_C: [PreviewInput]
+}
+
+input SubstituteItemInput {
+  shopItemCode: String
+  shopItemName: String
+  substituteItemCode: String
+  substituteItemName: String
+  vendorItemCode: String
+  vendorItemPrice: Float
+}
+
+input TargetDistributeInput {
+  residentList: [String]
+  businessTitle: String
+  businessCategory: String
+  logo: String
+  flyerId: String
+  flyerTitle: String
+  flyerType: String
+  dateFrom: String
+  dateTo: String
+  crossBoundary: Boolean
+  quantityDistributed: Int
+}
+
+input ValueDiscountListInput {
+  itemCode: String
+  dealPrice: Float
+}
+
+# Regular Type Definition
+
+type ActiveFlyer {
+  businessTitle: String
+  logo: String
+  businessCategory: String
+  vendorActiveFlyer: [SingleActiveFlyer]
+}
+
+type AddedFlyer {
+  businessTitle: String
+  businessCategory: String
+  flyerId: String
+  flyerTitle: String
+  flyerType: String
+  dateFrom: String
+  dateTo: String
+  promoInfo: String
+  targetDistribute: Boolean
+  crossBoundary: Boolean
+}
+
+type AddedMonsterChest {
+  vendor: String
+  promotionItemTitle: String
+  promotionItemId: String
+  promotionType: String
+  rewardItems: [RewardItemInChest]
+}
+
+type AIResponse {
+  message: String
+}
+
+type Ally {
+  guildFullName: String
+  request: Boolean
+}
+
+type AmountTransfered {
+  amount: Int
+}
+
+type Avatar {
+  avatar: String
+}
+
+type BusinessHour {
+  weekDay: String
+  time: String
+}
+
+type BusinessTitleCheck {
+  businessTitleVal: Boolean
+}
+
+type BusinessItem {
+  item: String!
+}
+
+type CrackEgg {
+  silver: Int
+}
+
+type CityHall {
+  treasure: Int
+  population: Int 
+  might: Int
+  metro: String
+  governor: String
+}
+
+type Contribution {
+  name: String
+  nickName: String
+  amount: Int
+}
+
+type CustomerRating {
+  resident: String
+  customerName: String
+  customerAvatar: String
+  rating: Float
+  comments: String
+  time: String
+  vendor: String
+}
+
+
+
+
+type CouponValue {
+  valueType: RedeemType
+  amount: Float
+  couponId: String
+  couponTitle: String
+  itemsBound: [ItemBound]
+  oneTimeUsage: Boolean
+  minimalAmount: Float
+  minimalQty: Int
+  isForExceedance: Boolean
+  isForAllItems: Boolean
+}
+
+type DealFulfillmentRecord {
+  guild: String
+  purchaseAmount: Float
+}
+
+type DealTitle {
+  title: String
+  flyerId: String
+  couponId: String
+  oneTimeUsage: Boolean
+}
+
+
+
+type EmailCheck {
+  emailVal: Boolean!
+}
+
+type EventCategory {
+  eventName: String
+}
+
+type ExistingCustomer {
+  customer: String
+  location: String
+  purchaseTimes: Int
+  totalPurchaseAmount: Float
+  dateLastTimePurchase: String
+}
+
+type FlyerPageElement {
+  htmlInner: String
+  htmlOuter: String
+  htmlOuterStyle: String
+  x: Float
+  y: Float
+  w: Float
+  h: Float
+  id: String
+}
+
+type FlyerPages {
+  _id: ID
+  sketchPages: [PageSaved]
+  sketchPages_C: [PageSaved]
+  flyerId: String
+  flyerTitle: String
+  type: String
+  backgroundColor: String
+  backgroundColor_C: String
+  width: Float
+  height: Float
+  width_C: Float
+  height_C: Float
+  origin: String
+}
+
+
+type FlyerRead {
+  vendor: String
+  flyerId: String
+}
+
+type File {
+  id: ID!
+  filename: String!
+  mimetype: String!
+  encoding: String!
+}
+
+type FileDir {
+  fileDir: String
+}
+
+type FingerPrintSaved {
+  fingerPrintIsSaved: Boolean
+}
+
+type Fulfilled {
+  note: String
+}
+
+type GameProp {
+  itemCode: String
+  itemName: String
+  picture:  String
+}
+
+type GameSubstitute {
+  itemCode: String
+  itemName: String
+  picture: String
+}
+
+type GameShopSubstitute {
+  shopItemCode: String
+  shopItemName: String
+  substituteItemCode: String
+  substituteItemName: String
+  vendorItemCode: String
+  vendorItemPrice: Float
+  vendor: String
+}
+
+type GeoLocation {
+  Lat: Float
+  Lng: Float
+  Username: String
+  Guild: String
+  SilverInPocket: Int
+  nickName: String
+}
+
+type GalleryFile {
+  photoList: [String]
+}
+
+
+type Guild {
+  _id: ID
+  guildFullName: String
+  guildShortName: String
+  guildLeader: String
+  guildScores: Int
+  guildLevel: Int
+  guildMembers: [GuildMember]
+  guildSilver: Int
+  contractedVendors: [String]
+  guildLeaderRemun: Float
+  guildPurchase: [String]
+  guildPost: String
+  guildLogo: String
+  applicants: [String]
+  perk: Float
+  allies: [Ally]
+  contributionRatio: Float
+  leaderBenefit: Float
+  currentMonthContribution: [Contribution]
+  previousMonthContribution: [Contribution]
+  isRulingGuild: Boolean
+}
+
+type GuildAllied {
+  guildFullName: String
+  guildShortName: String
+  guildScores: Int
+  guildLevel: Int
+  guildMembers: Int
+  guildPost: String
+  guildLogo: String
+}
+
+type GuildChatMessage {
+  author: String
+  data: String
+  type: String
+  date: String
+  nickName: String
+} 
+
+type GuildChat {
+  guildFullName: String
+  message: GuildChatMessage
+  residentName: String
+  residentAvatar: String
+  rank: String
+}
+
+type GuildInfoAfterAdded {
+  idAdded: ID
+  guilds: [Guild]
+}
+
+type GuildUpdateInfo {
+    guildFullName: String
+    guildShortName: String
+    guildLogo: String
+    guildPost: String
+    perk: Float
+    contributionRatio: Float
+}
+
+type GuildDealLevel {
+  guildDealCondition: String
+  guildDealAmount: Float
+  rewardItemsSelected: [String]
+  rewardAmount: Float
+}
+
+type GuildDeal {
+  _id: ID
+  vendor: String
+  vendorLogo: String
+  vendorCategory: [String]
+  guildDealType: String
+  dealRedeemTerm: String
+  specificItemList: [String]
+  guildDealLevels: [GuildDealLevel]
+  dateFrom: String
+  dateTo: String
+  active: Boolean
+  dealNo: String
+  dealFulfillmentRecords: [DealFulfillmentRecord]
+}
+
+type GuildDealTransaction {
+  transactionId: String
+  resident: String
+  purchaseAmount: Float
+  date: String
+  vendor: String
+}
+
+type GuildDealStatus {
+  specificItemList: [String]
+  guildDealLevels: [GuildDealLevel]
+  guildDealId: ID
+  vendor: String
+  vendorLogo: String
+  dateFrom: String
+  dateTo: String
+  guildDealType: String
+  redeemTerm: String
+  dealNo: String
+  transactions: [GuildDealTransaction]
+}
+
+type GuildLogo {
+  logoString: String
+}
+
+type GuildMember {
+  name: String
+  nickName: String
+  avatar: String
+  rank: Int
+  might: Int
+  lat: Float
+  lng: Float
+  lastRewardDate: String
+}
+
+type GuildMemberPromoted{
+  name: String
+  newRank: Int
+}
+
+type GuildMemberRewarded{
+  name: String
+  silverAmount: Int
+}
+
+type GuildMemberKicked{
+  name: String
+}
+
+type GuildNameCheck {
+  guildNameIsOk: Boolean
+}
+
+type IsItemCodeOk {
+  ok: Boolean
+}
+
+type ItemBound {
+  itemCode: String
+  description: String
+  unit: String
+  quantity: Int
+}
+
+type Item {
+  subcategory: String
+  itemCode: String
+  description: String
+  specification: String
+  unit: String
+  photo: String
+  rate: Float
+  rewardSilver: Int
+  promoRate: Float
+  active: Boolean
+  taxRate: Float
+  event: String
+}
+
+type LeaderShipTransfered {
+  isTransfered: Boolean
+}
+
+type Message {
+  sender: String
+  receiver: String
+  time: String
+  text: String
+  receiverType: String
+  fullName: String
+  title: String
+  guild: String
+  isRead: Boolean
+}
+
+type MessageRead {
+  sender: String
+  receiver: String
+  guild: String
+  time: String
+}
+
+type MetroSpec {
+  residentInsideBoundary: Int
+  residentOutsideBoundary: Int
+}
+
+type MonsterChestSaved {
+  saved: Boolean
+}
+
+type MonsterChestItem {
+  vendor: String
+  promotionItemTitle: String
+  promotionItemId: String
+  promotionType: String
+  rewardItems: [RewardItemInChest]
+}
+
+type News {
+  newsTitle: String
+  headLine: String
+  date: String
+}
+
+type NewsPool {
+  headline: String
+}
+
+
+type OrderStatus {
+  vendor: String
+  resident: String
+  orderNo: String
+  content: String
+  isConfirmed: Boolean
+  isCanceled: Boolean
+  isUnderDispute: Boolean
+}
+
+type OrderStatusChanged {
+  resident: String, 
+  vendor: String
+  orderNo: String, 
+  content: String, 
+  isUnderDispute: Boolean,
+  isConfirmed: Boolean,
+  isCanceled: Boolean
+}
+
+
+type PageSaved {
+  flyerPageElements: [FlyerPageElement!]
+  nodeId: String!
+}
+
+type Pet {
+  _id: ID!
+  petName: String!
+  petImage: String
+  petImgUrl: String
+  petPerformance: String
+}
+
+type PickupAddress {
+  vendor: String
+  address: String
+}
+
+type PostalCodeRevised {
+  postalCode: String
+  initialLat: Float
+  initialLng: Float
+}
+
+
+type PromotionEvent {
+  vendor: String
+  vendorUnitNo: String
+  vendorStreetNo: String
+  vendorStreetName: String
+  vendorCity: String
+  vendorState: String
+  vendorCountry: String
+  vendorCategory: [String]
+  vendorPhone: String
+  vendorEmail: String
+  vendorLogo: String
+  vendorRating: Float
+  eventType: String
+  eventPhoto: String
+  eventTitle: String
+  eventInstruction: String
+  promotionItems: [String]
+  dateFrom: String
+  dateTo: String
+  lat: Float
+  lng: Float
+  eventId: String
+}
+
+type Preview {
+  id: String
+  previewString: String
+}
+
+type ProductCategory {
+  category: String
+  items: [String]
+}
+
+type ProductRating {
+  resident: String
+  customerName: String
+  customerAvatar: String
+  rating: Float
+  comments: String
+  # reply: String
+  time: String
+  itemCode: String
+  vendor: String
+}
+
+type PetExpSilModified {
+  petExperience: Int
+  silverCoins: Int
+  flyerId: String
+}
+
+type PetExpSilStashModified {
+  petExperience: Int
+  silverCoins: Int
+  flyerId: String
+  stashedFlyers: [StashedFlyer]
+}
+
+type PrepaidVendorItem {
+  resident: String 
+  vendor: String 
+  vendorItemCode: String
+  vendorItemPrice: Float
+  quantity: Int
+  date: String
+}
+
+type QuitGuildInfo {
+  residentName: String
+  nickName: String
+}
+
+type Resident {
+  _id: ID!
+  email: String!
+  residentName: String
+  nickName: String
+  firstName: String
+  lastName: String
+  password: String!
+  might: Int
+  country: String
+  mailStrAddress: String
+  mailCity: String
+  mailState: String
+  mailCountry: String
+  mailPostalCode: String
+  postalCode: String!
+  avatarPic: String
+  pet: Pet
+  petLevel: String
+  petExperience: Int
+  profileFilled: Boolean
+  currentWish: String
+  hobbies: [String]
+  belief: String
+  favoriteFood: [String]
+  flyersRead: [String]
+  watchList: [String]
+  receiveOnlineFlyer: Boolean
+  gender: String
+  emailVerified: Boolean
+  goldCoins: Int
+  silverCoins: Int
+  silverRecords: [ResidentSilverRecord]
+  birthday: String
+  guild: Guild
+  guildOwned: ID
+  initialLat: Float
+  initialLng: Float
+  stashedFlyers: [StashedFlyer]
+  flyersFedToPet: [String]
+  propertyTax: Float
+  messages: [Message]
+  guildMessages: [Message]
+  systemMessages: [Message]
+  usedCoupons: [UsedCoupon]
+  targetFlyers: [SingleTargetFlyer]
+}
+
+type ResidentListItem{
+  residentName: String
+  firstName: String
+  lastName: String
+}
+
+type ResidentSilverRecord {
+  date: String
+  orderNo: String
+  vendor: String
+  amountSpand: Int
+}
+
+type ResidentSilverUpdated {
+  resident: String
+  silver: Int
+}
+
+type ResidentNameCheck {
+  residentNameVal: Boolean
+}
+
+type ResidentOrder {
+  date: String
+  orderNo: String
+  vendor: String
+  resident: String
+  deliveryType: String
+  customerName: String
+  deliveryAddress: String
+  pickupAddress: String
+  totalAmount: Float
+  totalDiscount: Float
+  shipping: Float
+  paymentMethod: String
+  impending: Boolean
+  finalizeInfo: String
+  isGameSubstitueBuy: Boolean
+  dealsTitle: [DealTitle]
+  totalRewardSilver: Int
+  silverSpand: Int
+  isFood: Boolean
+  isUnderDispute: Boolean
+  isCanceled: Boolean
+  isConfirmed: Boolean
+  disputeInfo: String
+  tax: Float
+  orderItems: [ResidentOrderItem]
+  note: String
+}
+
+type ResidentOrderItem {
+  itemCode: String
+  description: String
+  quantity: Int
+  unitPrice: Float
+  taxRate: Float
+  photo: String
+}
+
+type ResidentTargeted {
+  locations: [TargetLocations]
+  residentList: [String]
+  number: Int
+}
+
+type RestCategory {
+  items: [String]
+}
+
+type RewardItemInChest {
+  itemName: String
+  quantity: Float
+}
+
+type RewardItem {
+  itemName: String
+  icon: String
+}
+
+type SalesData {
+  orders: Int
+  sales: Float
+}
+
+type SalesInfo {
+  dailySales: SalesData
+  monthToDateSales: [SalesData]
+  yearToDateSales: [SalesData]
+}
+
+type SavedFlyer {
+  _id: ID
+  sketchPages: [PageSaved]
+  sketchPages_C: [PageSaved]
+  flyerId: String!
+  flyerTitle: String!
+  type: String!
+  backgroundColor: String!
+  width: Float
+  height: Float
+  backgroundColor_C: String!
+  width_C: Float
+  height_C: Float
+  dateFrom: String
+  dateTo: String
+  quantityDistributed: Int
+  vendor: String
+  quantityRedeemed: Int
+  quantityRead: Int
+  salesGenerated: Float
+  redeemed: Int
+  totalPages: Int
+  couponValue: [CouponValue]
+  setUp: Boolean
+  distributed: Boolean
+  couponPages: [Preview]
+  flyerPage_C: [Preview]
+}
+
+type SavedFlyerList {
+  flyerId: String!
+  flyerTitle: String!
+  type: String!
+  setUp: Boolean!
+  distributed: Boolean!
+  crossBoundary: Boolean
+  targetDistribute: Boolean
+}
+
+
+
+type ServiceCategory {
+  category: String
+  items: [String]
+}
+
+type ShoppingCartItem {
+  itemCode: String
+  vendorName: String
+  vendorLogo: String
+  vendorLat: Float
+  vendorLng: Float
+  deliveryFees: Float
+  maxDeliveryDistance: Float
+  description: String
+  quantity: Int
+  rewardSilver: Int
+  photo: String
+  rate: Float
+  promoRate: Float
+  taxRate: Float
+}
+
+type ShopSubstituteItem {
+  vendor: String
+  shopItemCode: String
+  shopItemName: String
+  substituteItemCode: String
+  substituteItemName: String
+  vendorItemCode: String
+  vendorItemPrice: Float
+}
+
+
+type SingleActiveFlyer {
+  flyerId: String
+  flyerTitle: String
+  flyerType: String
+  dateFrom: String
+  dateTo: String
+  promoInfo: String
+  crossBoundary: Boolean
+  targetDistribute: Boolean
+}
+
+type SingleTargetFlyer{
+  businessTitle: String
+  businessCategory: String
+  logo: String
+  flyerId: String
+  flyerTitle: String
+  flyerType: String
+  dateFrom: String
+  dateTo: String
+  promoInfo: String
+  crossBoundary: Boolean
+  targetDistribute: Boolean
+}
+
+type SingleFlyerView {
+  vendor: String
+  flyerId: String
+  couponId: String
+  base64: String
+  width: Float
+  height: Float
+  flyerType: String
+  couponType: String
+  flyerTitle: String
+  couponTitle: String
+}
+
+type SingleItemRating {
+  itemCode: String
+  averageRating: Float
+  customerRatings: [CustomerRating]
+}
+
+type SigninToken {
+  token: String!
+  confirmed: Boolean
+}
+
+type SigninVendorToken {
+  token: String!
+  confirmed: Boolean
+}
+
+type SignupToken {
+  emailSent: Boolean
+}
+
+type SignupVendorToken {
+  emailSent: Boolean
+}
+
+type SilverChanged {
+  amount: Float
+}
+
+type SketchList {
+  flyerId: String!
+  flyerTitle: String!
+  type: String!
+}
+
+type SoughtDeal {
+  flyerId: String
+  couponId: String
+  oneTimeUsage: Boolean
+  valueType: String
+  amount: Float
+  itemCode: String
+  couponTitle: String
+  flyerTitle: String
+  minimalAmount: Float
+  minimalQty: Int
+  isForExceedance: Boolean
+  isForAllItems: Boolean
+}
+
+type Stashed {
+  isStashed: Boolean
+}
+
+type StashedFlyer {
+  vendor: String
+  flyerId: String
+  flyerTitle: String
+  flyerType: String
+  dateFrom: String
+  dateTo: String
+  promoInfo: String
+  logo: String
+  targetDistribute: Boolean
+}
+
+type SubstituteItemsSaved {
+  isSaved : Boolean
+}
+
+type TargetLocations {
+  lat: Float
+  lng: Float
+}
+
+type TemplateList {
+  templateId: String!
+  templateTagName: String!
+  templateType: String!
+}
+
+type Token {
+  token: String!
+}
+
+type UpdateOfShpCat {
+  itemCode: String
+  quantity: Int
+}
+
+type UsedCoupon {
+  flyerId: String
+  couponId: String
+}
+
+type Vendor {
+  _id: ID!
+  tagline: String
+  businessTitle: String!
+  email: String!
+  password: String!
+  businessUnitNo: String
+  businessStreetNo: String
+  businessStreetName: String
+  businessCity: String
+  businessState: String
+  businessCountry: String
+  businessPostalCode: String
+  businessPhone: [String!]
+  businessHours: [BusinessHour]
+  businessFax: String
+  businessEmail: String
+  existingCustomerList: [ExistingCustomer]
+  logo: String
+  rating: Float
+  businessCategory: [String!]
+  goldCoins: Int
+  silverCoins: Int
+  aboutUs: String
+  emailVerified: Boolean
+  website: String
+  deliveryFees: Float
+  maxDeliveryDistance: Float
+  photoList: [String]
+  boundaryCharge: Float
+  messages: [Message]
+  crossBoundaryBusiness: Boolean
+  homePageVisit: Int
+  lat: Float
+  lng: Float
+}
+
+type VendorCheckOutInfos {
+  lat: Float
+  lng: Float
+  deliveryFees: Float
+  maxDeliveryDistance: Float
+}
+
+
+type VendorInterface {
+  _id: ID
+  tagline: String
+  businessTitle: String
+  businessUnitNo: String
+  businessStreetNo: String
+  businessStreetName: String
+  businessCity: String
+  businessState: String
+  businessCountry: String
+  businessPostalCode: String
+  businessPhone: [String!]
+  businessHours: [BusinessHour]
+  businessFax: String
+  businessEmail: String
+  lat: Float
+  lng: Float
+  logo: String
+  businessCategory: [String!]
+  aboutUs: String
+  website: String
+  deliveryFees: Float
+  maxDeliveryDistance: Float
+  photoList: [String]
+  vendorPromotionEvents: [VendorPromotionEvent]
+  itemCatalog: [Item]
+  customerRatings: [CustomerRating]
+}
+
+type VendorEmailCheck {
+  vendorEmailVal: Boolean
+}
+
+type VendorListItem {
+  vendor: String
+}
+
+type VendorOrder {
+  date: String
+  orderNo: String
+  tax: Float
+  totalAmount: Float
+  totalDiscount: Float
+  shipping: Float
+  deliveryType: String
+  customerName: String
+  deliveryAddress: String
+  pickupAddress: String
+  dealsTitle: [DealTitle]
+  resident: String
+  vendor: String
+  isFulfilled: Boolean
+  fulfillNote: String
+  paymentMethod: String
+  isUnderDispute: Boolean
+  isCanceled: Boolean
+  isConfirmed: Boolean
+  disputeInfo: String
+  orderItems: [VendorOrderItem]
+  note: String
+}
+
+type VendorOrderItem {
+  itemCode: String
+  description: String
+  quantity: Int
+  unitPrice: Float
+  taxRate: Float
+  
+}
+
+
+
+
+type VendorPromotionEvent {
+  eventType: String
+  eventPhoto: String
+  eventTitle: String
+  eventInstruction: String
+  promotionItems: [String]
+  dateFrom: String
+  dateTo: String
+  postOnPortal: Boolean
+}
+
+type VendorSearchResult {
+    vendorStreetNo: String 
+    vendorStreetName: String 
+    vendorCity: String 
+    vendorState: String 
+    vendorCountry: String
+    vendorPhone: [String]
+    vendorEmail: String
+    vendorRating: Float
+    vendor: String 
+    vendorLogo: String
+    vendorCategory: [String]
+    lat: Float
+    lng: Float
+}
+
+type VendorSettlementRecord {
+  date: String
+  vendor: String
+  salesOrderNo: String
+  purchaseOrderNo: String
+  totalAmount: Float
+  totalDiscount: Float
+  tax: Float
+  boundaryGold: Float
+  paymentMethod: String
+  boundaryPayable: Float
+  amountPaidByCustomer: Float
+  amountPaidToBoundary: Float
+}
+
+type welfareDistributed {
+  distributed: Boolean
+}
+
+# Query
+type Query {
+  checkEmail(email: String!): EmailCheck
+  checkVendorEmail(vendorEmail: String!): VendorEmailCheck
+  checkResidentName(residentName: String!, nickName: String): ResidentNameCheck
+  checkBusinessTitle(businessTitle: String!): BusinessTitleCheck
+  checkGuildName(guildName: String!, nameType: String): GuildNameCheck
+  checkItemCode(vendor: String, itemCode: String): IsItemCodeOk
+  checkSavedFingerPrint(fingerPrint: String): FingerPrintSaved
+  getActiveFlyer: [ActiveFlyer]
+  getAIResponse( prompt: [AIPromptInput]): AIResponse
+  getAllItemsCatalog(businessTitle: String!, time: String): [Item]
+  getAllGuilds: [Guild]
+  getAllGuildDeals: [GuildDeal]
+  getCityHall: CityHall
+  getCurrentResident: Resident
+  getCurrentVendor: Vendor
+  getCustomerRatings (vendor: String): [CustomerRating]
+  getFlyerList(businessTitle: String!): [SavedFlyerList!]
+  getGamePropList: [GameProp]
+  getGameSubstituteList: [GameSubstitute]
+  getGameShopSubstitute: GameShopSubstitute
+  getGeoLocation(residentName: String!): GeoLocation
+  getGuildLogos: [GuildLogo]
+  getGuildDealsStatus(guildFullName: String): [GuildDealStatus]
+  getGuildChatMessages(guildFullName: String): [GuildChat]
+  getItemCatalog(
+    subcategory: String
+    businessTitle: String
+  ): [Item]
+  getMonsterChest: [MonsterChestItem]
+  getNews: [News]
+  getNewsPool: [NewsPool]
+  getPets: [Pet]
+  getEventCategory: [EventCategory]
+  getPickupAddress(vendorName:String): PickupAddress
+  getProductCategory: [ProductCategory!]
+  getProductRatings(vendor: String): [ProductRating]
+  getPromotionEvents: [PromotionEvent]
+  getRewardItems: [RewardItem]
+  getRestaurantCategory: RestCategory!
+  getResidentList: [ResidentListItem]
+  getResidentOrders(resident: String): [ResidentOrder]
+  getMetroSpec: MetroSpec
+  getShoppingCart(resident: String): [ShoppingCartItem]
+  getSelectedFlyerClientView(
+    flyerId: String!
+    businessTitle: String!
+    resident: String
+    time: String
+  ): [SingleFlyerView]
+  getSelectedSketch(
+    flyerId: String!
+    businessTitle: String!
+    time: String
+  ): FlyerPages!
+  getSelectedTemplate(
+    templateId: String!
+    businessTitle: String!
+    time: String
+  ): FlyerPages!
+  getSketchList(businessTitle: String!): [SketchList!]
+  getServiceCategory: [ServiceCategory!]
+  getSingleItemRating(vendor: String, itemCode: String): SingleItemRating
+  getSingleCoupon(vendor: String, flyerId: String, couponId: String): CouponValue
+  getTargetDistributeResident(
+    age: [Int]
+    gender: String
+    religion: String
+    hobbies: [String]
+    favoriteFood: [String]
+    regions: [String]
+    distance: Int
+    wishList: String
+    wishChecked: Boolean
+    vendorLat: Float
+    vendorLng: Float
+  ): ResidentTargeted
+  getTemplateList(businessTitle: String!): [TemplateList!]
+  # getVendorCustomerRatings(vendor: String): [CustomerRating]
+  getVendorCheckoutInfos(vendor: String): VendorCheckOutInfos
+  getVendorFlyers(vendor: String): [SavedFlyer]
+  getVendorGuildDeals(vendor: String!): [GuildDeal]
+  getVendorList:[VendorListItem]
+  getVendorPromotionEvents(vendor: String): [VendorPromotionEvent]
+  getVendorInterface(vendor: String): VendorInterface
+  getVendorOrders(vendor: String): [VendorOrder]
+  getVendorSalesInfo(vendor: String): SalesInfo
+  getVendorSearchResult(searchItems: [String]): [VendorSearchResult]
+  getVendorSettlementRecords(vendor: String): [VendorSettlementRecord]
+  setUpFlyer(
+    flyerId: String!
+    businessTitle: String!
+    time: String
+  ): SavedFlyer!
+  searchAvailableDeals(input: DealSearchInput): [SoughtDeal]
+}
+
+# Mutation
+type Mutation {
+
+  allyGuild(guildAsk: String, guildAccept: String): GuildAllied
+
+  callGroupPurchase(newsTitle: String, headLine: String, date: String): News
+
+  changePostalCode(
+    postalCode: String!
+    email: String!
+    initialLat: Float
+    initialLng: Float
+  ): PostalCodeRevised
+
+  # changeOrderStatus(vendor: String, orderNo: String, status: Boolean): VendorOrderStatus
+
+  commitGuildDeals(input: GuildDealsCommitedInput): [GuildDealStatus]
+
+  crackEgg( resident: String, silver: Int): CrackEgg
+
+  createPromotionEvent(input: PromotionEventInput): [PromotionEvent]
+
+  cancel(vendor: String, 
+  resident: String, 
+  orderNo: String, 
+  content: String, 
+  isUnderDispute: Boolean,
+  isConfirmed: Boolean,
+  isCanceled: Boolean
+  ): OrderStatusChanged
+
+  confirm(vendor: String, 
+  resident: String, 
+  orderNo: String, 
+  content: String, 
+  isUnderDispute: Boolean,
+  isConfirmed: Boolean,
+  isCanceled: Boolean
+  ): OrderStatusChanged
+
+  dispute(vendor: String, 
+  resident: String, 
+  orderNo: String, 
+  content: String, 
+  isUnderDispute: Boolean,
+  isConfirmed: Boolean,
+  isCanceled: Boolean
+  ): OrderStatusChanged
+
+  disally(guildAsk: String, guildAccept: String): GuildAllied
+
+  distributeFlyer(input: DistributeFlyerInput): AddedFlyer
+
+  distributeWelfare(welfare: Int, total: Int, metro: String): welfareDistributed
+
+  feedPet(
+    flyerId: String, 
+    residentName: String, 
+    stashOrActive: String, 
+    petExperienceGained: Int, 
+    silverRewarded: Int
+    targetDistribute: Boolean): Resident
+
+  fulfill(vendor: String, orderNo: String, fulfillNote: String): Fulfilled
+
+  editGuild(
+    guildId: ID
+    guildFullName: String
+    guildShortName: String
+    guildLogo: String
+    guildPost: String
+    perk: Float
+    contributionRatio: Float
+  ): GuildUpdateInfo
+
+  gainLoseSilver( winner: String, loser: String, amount: Float): SilverChanged
+
+  joinGuild(
+    residentName: String
+    nickName: String
+    avatar: String
+    guildId: ID
+    lat: Float
+    lng: Float
+  ): Guild
+
+  kickGuildMember(guild: String, resident: String): GuildMemberKicked
+
+  placeOrder(
+    vendor: String
+    resident: String
+    deliveryType: String
+    customerName: String
+    deliveryAddress: String
+    pickupAddress: String
+    totalAmount: Float
+    totalDiscount: Float
+    shipping: Float
+    silverSpand: Int
+    dealsTitle: [DealTitleInput]
+    salesOrderItems: [SalesOrderItemInput]
+    valueDiscountList: [ValueDiscountListInput] 
+    tax: Float
+    paymentMethod: String
+    impendingOrderNo: String
+    note: String): [ResidentOrder]
+
+  prepay(
+    vendor: String
+    resident: String
+    customerName: String
+    totalAmount: Float
+    totalDiscount: Float
+    silverSpand: Int
+    dealsTitle: [DealTitleInput]
+    valueDiscountList: [ValueDiscountListInput] 
+    tax: Float
+    paymentMethod: String
+    ): [ResidentOrder]
+
+  
+
+  promoteGuildMember(guild:String, resident: String, newRank: Int): GuildMemberPromoted
+
+  quitGuild( residentName: String, guildFullName: String ): QuitGuildInfo
+
+  readMessage(receiver: String, sender: String, type: String, guild: String, time: String): MessageRead
+
+  rewardGuildMember(resident: String, guild: String, silverAmount: Int): GuildMemberRewarded
+
+  saveCustomerRating(
+    vendor: String
+    residentId: ID
+    rating: Float
+    comments: String
+    time: String): [CustomerRating]
+
+  saveSingleItemRating(
+    itemCode: String
+    vendor: String
+    residentId: ID
+    rating: Float
+    comments: String
+    time: String): SingleItemRating
+
+  saveItemCatalog(input: ItemCatalogInput!): [Item]
+
+  savePrepaidVendorItem(
+    vendor: String
+    resident: String
+    vendorItemCode: String
+    vendorItemPrice: Float
+    quantity: Int
+    date: String
+    ): PrepaidVendorItem
+
+  saveTemplate(input: FlyerTemplateInput!): [TemplateList!]
+
+  saveSketch(input: SketchPagesInput!): [SketchList!]
+
+  saveShoppingCart(
+    resident: String
+    itemCode: String
+    vendor: ID
+    description: String
+    quantity: Int
+    rewardSilver: Int
+    rate: Float
+    promoRate: Float
+    taxRate: Float): ShoppingCartItem
+
+  saveSubstituteItems(vendor: String, dateFrom: String, dateTo: String, input: SubstituteItemInput): SubstituteItemsSaved
+
+  saveFlyer(input: SketchPagesInput!): SavedFlyer!
+
+  saveGuildDeals(input: GuildDealsInput): [GuildDeal]
+
+  saveGuildChat(
+    residentId: ID 
+    guildFullName: String
+    input: GuildMessageInput
+    ): GuildChat
+
+  sendMessage(
+    sender: String 
+    receiver: String 
+    time: String 
+    text: String 
+    receiverType: String 
+    title: String
+    fullName: String
+    guild: String): Message
+
+
+  sendWish(
+    sender: String 
+    wishKeywords: [String]
+    text: String 
+    fullName: String
+    ): Message
+
+  signupResident(
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+    postalCode: String!
+    initialLat: Float
+    initialLng: Float
+  ): SignupToken
+
+  signupVendor(
+    tagline: String
+    businessTitle: String!
+    email: String!
+    password: String!
+    businessUnitNo: String
+    businessStreetNo: String
+    businessStreetName: String
+    businessCity: String
+    businessPostalCode: String
+    businessPhone: [String!]
+    businessFax: String
+    businessEmail: String
+    logo: String
+    businessHours: [BusinessHourInput]
+    photoList: [String]
+    businessCategory: [String!]
+    aboutUs: String
+    website: String
+    deliveryFees: Float
+    maxDeliveryDistance: Float
+    crossBoundaryBusiness: Boolean
+    lat: Float
+    lng: Float
+  ): SignupVendorToken
+
+  signinResident(
+    email: String!
+    password: String!
+    fingerPrint: String
+  ): SigninToken!
+
+  signinVendor(
+    email: String!
+    password: String!
+    fingerPrint: String
+  ): SigninVendorToken!
+
+  stashFlyer(
+    residentName: String!
+    vendor: String!
+    flyerId: String!
+    flyerTitle: String!
+    flyerType: String!
+    dateFrom: String!
+    dateTo: String!
+    promoInfo: String
+    logo: String!
+    targetDistribute: Boolean
+  ): [StashedFlyer]
+
+  stashMonsterChestItems(
+    playerName: String
+    vendor: String
+    promotionItemId: String
+    rewardItems: [RewardItemInChestInput]
+  ): Stashed
+
+  startGuild(
+    guildLeader: String
+    guildLeaderAvatar: String
+    guildLeaderNickName: String
+    guildFullName: String
+    guildShortName: String
+    guildLogo: String
+    guildPost: String
+    perk: Float
+    contributionRatio: Float
+    lat: Float
+    lng: Float
+  ): GuildInfoAfterAdded
+
+  targetDistribute(input: TargetDistributeInput): AddedFlyer
+
+  toggleGuildDealActive(dealId: ID, isActive: Boolean): [GuildDeal]
+
+  transactionShopSubstituteItem(
+  resident: String, 
+  vendor: String, 
+  vendorItemCode: String
+  vendorItemPrice: Float
+  quantity: Int
+   ): PrepaidVendorItem
+
+  transferGuildLeaderRemun(resident: String, guild: String, amount: Int): AmountTransfered
+  
+  transferGuildLeadership(leader: String, member: String, guildId: ID): LeaderShipTransfered
+
+  updateAvatar(avatarUpdated: String!, email: String!): Avatar
+
+  updateGalleryFiles(
+    vendor: String!
+    photoList: [String]
+  ): GalleryFile
+
+  # fileToDelete: String
+  #   filesToAdd: Upload
+
+  updateMonsterChest(
+    vendor: String
+    promotionItemTitle: String
+    promotionItemId: String
+    promotionType: String
+    rewardItems: [RewardItemInChestInput]
+  ): MonsterChestSaved
+
+  # updateSavedFlyer(input: FlyerUpdateInput!): SavedFlyer!
+
+  updateProfile(
+    residentId: ID
+    residentName: String
+    nickName: String
+    lastName: String
+    firstName: String
+    mailPostalCode: String
+    mailStrAddress: String
+    mailCity: String
+    gender: String
+    birthday: String
+    pet: String
+    postalCode: String
+    password: String
+    hobbies: [String]
+    favoriteFood: [String]
+    belief: String
+    initialLat: Float,
+    initialLng: Float,
+  ): Resident
+
+  updatePetExpSilver(
+    vendor: String
+    residentName: String
+    petExperience: Int
+    silverCoins: Int
+    vendor: String
+    flyerId: String
+  ): PetExpSilModified
+
+  updatePetExpSilverStash(
+    residentName: String
+    petExperience: Int
+    silverCoins: Int
+    vendor: String
+    flyerId: String
+  ): PetExpSilStashModified
+
+  updateResidentSliver( resident: String, silver: Float): ResidentSilverUpdated
+
+  updateSavedFlyer(input: FlyerUpdateInput!): SavedFlyer!
+
+  updateStashedFlyers(residentName: String, flyerId: String): [StashedFlyer]
+
+  updateShoppingCart(resident: String, itemCode: String, quantity: Int): UpdateOfShpCat
+
+  updateVendorProfile(
+    tagline: String
+    businessTitle: String!
+    email: String!
+    password: String
+    businessUnitNo: String
+    businessStreetNo: String
+    businessStreetName: String
+    businessCity: String
+    businessPostalCode: String
+    businessPhone: [String!]
+    businessFax: String
+    businessEmail: String
+    businessHours: [BusinessHourInput]
+    logo: String
+    businessCategory: [String!]
+    aboutUs: String
+    website: String
+    deliveryFees: Float
+    maxDeliveryDistance: Float
+    photoList: [String]
+    crossBoundaryBusiness: Boolean
+    lat: Float
+    lng: Float
+  ): Vendor
+}
+
+# Subscription
+
+type Subscription {
+  customerRatingAdded: CustomerRating
+  cityhallUpdated: CityHall
+  flyerAdded: AddedFlyer!
+  guildDealTransactionAdded: GuildDealTransaction
+  guildChatMsgAdded: GuildChat
+  messageReceived: Message
+  monsterChestAdded: AddedMonsterChest!
+  newsAdded: News
+  productRatingAdded: ProductRating
+  updateActiveFlyers: [ActiveFlyer]
+  updateGuildDealActive: GuildDeal
+  residentOrderAdded: ResidentOrder
+  residentSilverUpdated: ResidentSilverUpdated
+  shoppingCartItemAdded: ShoppingCartItem
+  vendorOrderAdded: VendorOrder
+  orderStatusChanged: OrderStatus
+  vendorSettlementRecordAdded: VendorSettlementRecord
+}
+# stashMonsterChestItems(
+#   playerName: String
+#   vendor: String
+#   rewardItems: [RewardItemInChestInput]
+# ): Stashed

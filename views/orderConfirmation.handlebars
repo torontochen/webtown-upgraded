@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+
+    .center {
+      text-align: center;
+    }
+
+    .confirmation {
+      width: 60%;
+      border: none;
+      background-color: #FAFAFA;
+      float: left;
+      margin: auto;
+      padding: 10px 20px;
+    }
+
+    .container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .title {
+      width: 100%;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 400;
+      color: #555555;
+      padding: 2px;
+      margin: 5px 0;
+    }
+
+   .title .order-no {
+      width: 70%;
+      text-align: center;
+      font-size: 18;
+      font-weight: bold;
+      color: #5C6BC0;
+      margin: 0 auto;
+    }
+
+    .confirmList {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+    }
+
+    .item {
+      width: 100%;
+      padding: 2px;
+      margin: 3px 0;
+    }
+
+    .item .img {
+      width: 25%;
+      float: left;
+      text-align: left;
+    }
+
+    .item .itemDetails {
+      width: 60%;
+      text-align: left;
+      float: left;
+      font-size: 16px;
+      font-weight: bold;
+      color: #5C6BC0;
+    }
+
+    .text {
+      text-overflow: ellipsis;
+      font-size: 14px;
+      color: #555555;
+      margin-bottom: 2px;
+      text-align: left;
+    }
+
+    .totalAmount {
+      text-overflow: ellipsis;
+      font-size: 14px;
+      color: #555555;
+      margin-bottom: 2px;
+      margin-left: 2px;
+      text-align: left !important;
+    }
+
+    .total {
+      text-overflow: ellipsis;
+      font-size: 14px;
+      color: #B75420;
+      margin-bottom: 2px;
+      text-align: rignt !important;
+      padding-right: 5px;
+    }
+
+    .itemTr {
+      border-bottom: 3px dashed #5C6BC0;
+      margin-bottom: 5px;
+    }
+
+    .tdAlign {
+      text-align: left;
+      vertical-align: top;
+      width: 75%;
+    }
+  </style>
+
+</head>
+
+<body style="background-color:white; margin: 0; padding: 0;">
+  <div  class="container">
+
+    <div class="confirmation">
+
+      <table align="center" cellpadding="0" cellspacing="0" width="200"
+        style="border-collapse: collapse; text-align: left; table-layout: auto">
+        <tr>
+          <td style="padding-left: 30px;">
+            <img src="data:image/png;base64,{{base64}}" width="190" height="42" />
+            {{!-- <i style="color: #6e5ec5;">WebTown</i> --}}
+          </td>
+        </tr>
+      </table>
+
+      <div class="title">
+          <h3>Dear {{name}},</h3><br>
+          <P>Thank you for shopping at Boundary. We appreciate your business and hope you 
+            enjoyed your shopping experience. Please Contact the vendor <span><h3 style="color: #B75420; font-weight:bolder;" >{{vendor}}</h3></span>
+             for any additional support or for questions about this order. <span class="order-no">Order No.<a href="{{url}}">{{orderNo}}</a></span></P>
+      </div>
+
+     
+      <table align="left" cellpadding="0" cellspacing="0" width="100%"
+        style="text-align: left; table-layout: auto; border-collapse: separate;">
+        {{#each confirmedOrderList}}
+        <tr class="itemTr">
+          <td style="padding-left: 2px;">
+              <img src="{{photo}}" width="100" height="100" />
+          </td>
+          <td class="tdAlign">
+              <span class="text">Item:&nbsp; {{description}}</span><br>
+              <span class="text">Item Price:&nbsp; {{itemPrice}}</span><br>
+              <span class="text">Quantity:&nbsp; {{quantity}}</span><br>
+              <span class="text">Item Total:&nbsp; {{itemTotal}}</span>
+          </td>
+        </tr>
+         {{/each}}
+      </table>
+       
+   
+    <hr>
+      <div style="margin: 10px;">
+         <table align="right" cellpadding="0" cellspacing="0" width="200"
+        style="border-collapse: collapse; text-align: right; table-layout: auto; margin-bottom: 20px; ">
+        <tr style="margin-bottom: 3px; color: red">
+          <td class="total">Total Discount:</td>
+          <td class="totalAmount">{{totalDiscount}} </td>
+        </tr>
+        <tr style="margin-bottom: 3px;">
+          <td class="total">Total Before Tax:</td>
+          <td class="totalAmount">{{totalBeforeTax}} </td>
+        </tr>
+        <tr style="margin-bottom: 3px;">
+          <td class="total">Shipping:</td>
+          <td class="totalAmount">{{shipping}} </td>
+        </tr>
+        <tr style="margin-bottom: 3px;">
+          <td class="total">Tax:</td>
+          <td class="totalAmount">{{tax}} </td>
+        </tr>
+        <tr style="margin-bottom: 3px;">
+          <td class="total">Total Amount:</td>
+          <td class="totalAmount">{{totalAmount}} </td>
+        </tr>
+        <tr style="margin-bottom: 3px;">
+          <td class="total">Paid By: </td>
+          <td class="totalAmount">{{paidBy}} </td>
+        </tr>
+        <tr style="margin-bottom: 3px;">
+          <td class="total">Boundary Earned: </td>
+          <td class="totalAmount">{{totalRewardSilver}} </td>
+        </tr>
+        {{#if isNote}}
+        <tr style="margin-bottom: 5px; text-align: left;">
+          
+          <td class="total">Note: </td>
+          
+          <td class="totalAmount">{{note}} </td>
+          
+        </tr>
+        {{/if}}
+      </table>
+
+      </div>
+    
+      <div style="height: 40px; 
+      width: 100%; 
+      background-color: #5C6BC0 ; 
+      margin-top: 180px; 
+      border: 1px solid white;
+      border-radius: 3px; 
+      text-align:center;
+      color: white;
+      line-height: 40px;
+      font-weight: bolder;
+      font-size: 18px
+      ">
+          <span >Live Real Life In A Virtual World</span>
+      </div>
+
+    </div>
+
+    
+
+  </div>
+</body>
+
+</html>

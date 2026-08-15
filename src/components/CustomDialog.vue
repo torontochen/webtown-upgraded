@@ -1,0 +1,65 @@
+<template>
+
+  <v-dialog
+    v-model="dialogSpark"
+    width="400"
+    persistent
+    transition="fade"
+  >
+    <v-card style="border-top: 15px solid #B75420">
+      <v-card-title
+        class="text-h6 accent--text text--lighten-1"
+      >leaving {{component}} ?</v-card-title>
+
+      <v-card-text
+        class="text-subtitle-1 accent--text text--lighten-1"
+      >
+       all unsaved change will be lost!
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          text
+          small
+          @click="$emit('yes-leave')"
+        >
+          Yes
+        </v-btn>
+
+        <v-btn
+          color="accent"
+          text
+          small
+          outlined
+          @click="$emit('abort-leave')"
+        >
+          No
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+export default {
+  props: ["value", "component"],
+
+  data() {
+    return {};
+  },
+
+  watch: {},
+
+  computed: {
+    dialogSpark() {
+      // console.log(this.value);
+      return this.value;
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+</style>

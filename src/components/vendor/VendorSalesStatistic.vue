@@ -1,0 +1,226 @@
+<template>
+    <v-card flat outlined dense>
+        <!-- Daily  -->
+        <v-card-text>
+            <v-card class="rounded-lg" elevation="5">
+                <v-card-title class="text-center text-h3 font-weight-bold accent--text">{{today}}</v-card-title>
+                <v-card-text>
+                    <v-row class="d-flex flex-row justify-space-around align-center">
+                        <v-card-title>Sales:&nbsp;{{vendorSalesInfo.dailySales.sales | format-currency-amount}}</v-card-title>
+                        <v-card-title>Orders:&nbsp;{{vendorSalesInfo.dailySales.orders}}</v-card-title>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+        </v-card-text>
+
+        <!-- Month To Date  -->
+        <v-card-text>
+        <v-card class="rounded-lg" elevation="5">
+            <v-card-title>Month To Date</v-card-title>
+
+            <!-- monthToDate Sales -->
+            <v-card-text>
+                <v-col cols="12">
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Sales &nbsp;(&nbsp;{{salesMTD | format-currency-amount}}&nbsp;)</span>
+                    <v-row class="d-flex flex-row justify-space-around align-center my-2" no-gutters>
+                        <v-col cols="1" v-for="(item, i) in vendorSalesInfo.monthToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
+                            <span class="text-body-2 my-1 font-weight-bold accent--text" >{{i+1}}</span>
+                            <span class="text-body-2 my-1">{{item.sales | format-currency-amount}}</span>
+                        </v-col>
+                    </v-row>
+
+                     
+                    <v-sheet color="primary" class="pa-2" rounded>
+                        <v-sparkline
+                        :value="monthToDateSalesSparkLine"
+                        :labels="dateOfMonth"
+                        color="primary lighten-4"
+                        
+                        >
+                        </v-sparkline>
+                        <v-row class="my-2">
+                            <v-spacer></v-spacer>
+                            <span class="text-h6 font-weight-bold primary--text text--lighten-4">Sales</span>
+                            <v-spacer></v-spacer>
+                        </v-row>
+                    </v-sheet>
+                </v-col>
+                </v-card-text>
+               <v-card-text>
+                   <v-divider></v-divider>
+
+                <!-- monToDate Orders -->
+                <v-col cols="12">
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Orders&nbsp;(&nbsp;{{ordersMTD | format-int-amount}}&nbsp;)</span>
+
+                    <v-row class="d-flex flex-row justify-space-around align-center my-2">
+                         <v-col cols="1" v-for="(item, i) in vendorSalesInfo.monthToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
+                            <span class="text-body-2 my-1  font-weight-bold accent--text">{{i+1}}</span>
+                            <span class="text-body-2 my-1">{{item.orders | format-int-amount}}</span>
+                        </v-col>
+                      </v-row>  
+
+                    <v-sheet color="primary" class="pa-2" rounded>
+                        <v-sparkline
+                        :value="monthToDateOrdersSparkLine"
+                        :labels="dateOfMonth"
+                        color="primary lighten-4"
+                        >
+                        </v-sparkline>
+                         <v-row class="my-2">
+                            <v-spacer></v-spacer>
+                            <span class="text-h6 font-weight-bold primary--text text--lighten-4">Orders</span>
+                            <v-spacer></v-spacer>
+                        </v-row>
+                    </v-sheet>
+                </v-col>
+            </v-card-text>
+        </v-card> 
+        </v-card-text>
+
+
+        <!-- Year To Date  -->
+        <v-card-text>
+        <v-card class="rounded-lg" elevation="5">
+            <v-card-title>Year To Date</v-card-title>
+
+            <!-- YearToDate Sales -->
+            <v-card-text>
+                <v-col cols="12">
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Sales&nbsp;(&nbsp;{{salesYTD | format-currency-amount}}&nbsp;)</span>
+
+                    <v-row class="d-flex flex-row justify-space-around align-center my-2">
+                        <v-col cols="1" v-for="(item, i) in vendorSalesInfo.yearToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
+                            <span class="text-body-2 font-weight-bold my-1 accent--text">{{i+1}}</span>
+                            <span class="text-body-2 my-1">{{item.sales | format-currency-amount}}</span>
+                        </v-col>
+                    </v-row>
+
+                     
+                    <v-sheet color="primary" class="pa-2" rounded>
+                        <v-sparkline
+                        :value="yearToDateSalesSparkLine"
+                        :labels="month"
+                        color="primary lighten-4"
+                        >
+                        </v-sparkline>
+                         <v-row class="my-2">
+                            <v-spacer></v-spacer>
+                            <span class="text-h6 font-weight-bold primary--text text--lighten-4">Sales</span>
+                            <v-spacer></v-spacer>
+                        </v-row>
+                    </v-sheet>
+                </v-col>
+                </v-card-text>
+
+                <!-- YearToDate Orders -->
+               <v-card-text>
+                
+                <v-col cols="12">
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Orders&nbsp;(&nbsp;{{ordersYTD | format-int-amount}}&nbsp;)</span>
+
+                    <v-row class="d-flex flex-row justify-space-around align-center my-2">
+                         <v-col cols="1" v-for="(item, i) in vendorSalesInfo.yearToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
+                            <span class="text-body-2 font-weight-bold my-1 accent--text">{{i+1}}</span>
+                            <span class="text-body-2 my-1">{{item.orders | format-int-amount}}</span>
+                        </v-col>
+                      </v-row>  
+
+                    <v-sheet color="primary" class="pa-2" rounded>
+                        <v-sparkline
+                        :value="yearToDateOrdersSparkLine"
+                        :labels="month"
+                        color="primary lighten-4"
+                        >
+                        </v-sparkline>
+                         <v-row class="my-2">
+                            <v-spacer></v-spacer>
+                            <span class="text-h6 font-weight-bold primary--text text--lighten-4">Orders</span>
+                            <v-spacer></v-spacer>
+                        </v-row>
+                    </v-sheet>
+                </v-col>
+            </v-card-text>
+        </v-card> 
+        </v-card-text>
+    </v-card>
+</template>
+
+<script>
+import {mapGetters} from 'vuex'
+import moment from 'moment'
+
+
+export default {
+   name: "vendorSalesStatistic",
+
+   data(){
+       return {
+           month:['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+           
+       }
+   },
+   computed:{
+       ...mapGetters(["vendorSalesInfo"]),
+
+       dateOfMonth(){
+           return this.vendorSalesInfo.monthToDateSales.map((item, i)=>{
+               return (i+1).toString()
+           })
+       },
+
+       monthToDateSalesSparkLine(){
+           return this.vendorSalesInfo.monthToDateSales.map(item => {
+               return item.sales
+           })
+       },
+       monthToDateOrdersSparkLine(){
+           return this.vendorSalesInfo.monthToDateSales.map(item => {
+               return item.orders
+           })
+       },
+       salesMTD(){
+           let salesMTD = 0
+           this.vendorSalesInfo.monthToDateSales.map(item => {
+               salesMTD += item.sales
+           })
+           return salesMTD 
+       },
+       ordersMTD(){
+           let ordersMTD = 0
+           this.vendorSalesInfo.monthToDateSales.map(item => {
+               ordersMTD += item.orders
+           })
+           return ordersMTD 
+       },
+       salesYTD(){
+           let salesYTD = 0
+           this.vendorSalesInfo.yearToDateSales.map(item => {
+               salesYTD += item.sales
+           })
+           return salesYTD 
+       },
+       ordersYTD(){
+           let ordersYTD = 0
+           this.vendorSalesInfo.yearToDateSales.map(item => {
+               ordersYTD += item.orders
+           })
+           return ordersYTD 
+       },
+       yearToDateSalesSparkLine(){
+           return this.vendorSalesInfo.yearToDateSales.map(item => {
+               return item.sales
+           })
+       },
+       yearToDateOrdersSparkLine(){
+           return this.vendorSalesInfo.yearToDateSales.map(item => {
+               return item.orders
+           })
+       },
+
+       today(){
+           return moment(Date.now()).format("YYYY-MM-DD")
+       }
+   }
+}
+</script>

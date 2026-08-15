@@ -1,0 +1,8 @@
+$body-font-family: 'Montserrat', sans-serif;
+// 'Open Sans',
+$heading-font-family: $body-font-family;
+$btn-active-opacity: 0.05;
+$btn-toggle-btn-opacity: 0.4;
+
+// Required for modifying core defaults
+@import "~vuetify/src/styles/styles.sass";
