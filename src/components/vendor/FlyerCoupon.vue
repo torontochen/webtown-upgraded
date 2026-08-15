@@ -2165,7 +2165,7 @@ export default {
 
           this.pages--;
 
-          if ((this.pageNo = 1)) {
+          if (this.pageNo === 1) {
             document.getElementById(
               this.pageNoWatcher[0].pageId
             ).style.display = "";
@@ -2197,7 +2197,7 @@ export default {
 
           this.pages_C--;
 
-          if ((this.pageNo_C = 1)) {
+          if (this.pageNo_C === 1) {
             document.getElementById(
               this.pageNoWatcher_C[0].pageId
             ).style.display = "";

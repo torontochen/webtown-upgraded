@@ -701,14 +701,14 @@ module.exports = {
                   disputeInfo: {$first: '$disputeInfo'},
                   note:{$first: '$note'},
                   tax: { $sum: '$tax' },
-                  orderItems: {$first: '$orderItems'} ? {$first: '$orderItems'} : { $push: {
-                    itemCode: '$itemCode',
-                    description: '$description',
-                    quantity: '$quantity',
-                    unitPrice: '$unitPrice',
-                    taxRate: '$taxRate',
-                    photo: '$photo'
-                  }}
+                  orderItems: {$first: '$orderItems'}
+                  // NOTE: this was written as
+                  //   {$first:'$orderItems'} ? {$first:'$orderItems'} : {$push:{...}}
+                  // A JS ternary is evaluated when the pipeline object is built, not
+                  // by MongoDB. The condition is a non-empty object literal, so it was
+                  // always truthy and the $push branch was unreachable. Collapsed to the
+                  // branch that actually ran — behaviour is identical. If the $push
+                  // behaviour was ever intended, it needs $cond inside the pipeline.
                 }}])
       // console.log(aggregationResult)
      return aggregationResult

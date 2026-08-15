@@ -1252,7 +1252,7 @@ export default {
 
         this.pages--;
 
-        if ((this.pageNo = 1)) {
+        if (this.pageNo === 1) {
           document.getElementById(this.pageNoWatcher[0].pageId).style.display =
             "";
           this.pageNo = 1;

@@ -16,7 +16,8 @@
     "lint:fix": "eslint . --ext .js,.vue --fix",
     "format": "prettier --write \"**/*.{js,vue,json,md}\"",
     "format:check": "prettier --check \"**/*.{js,vue,json,md}\"",
-    "verify": "npm run lint && npm test && npm run build"
+    "verify": "npm run lint && npm test && npm run build",
+    "test:e2e": "node test-e2e/live-verification.js"
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.2",

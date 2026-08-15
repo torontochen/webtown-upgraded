@@ -14,13 +14,17 @@ Running record of the staged upgrade, phase by phase.
 | 1a — Authentication guards on all mutations | ✅ Done | `5c0bf65` |
 | 1b — Ownership, roles, connection-string hardening | ✅ Done | `95b0bd8` |
 | 1c — Query guards (PII and billable endpoints) | ✅ Done | `e9a5def` |
-| 2 — Config, tooling, lint, CI | ✅ Done | this commit |
+| 2 — Config, tooling, lint, CI | ✅ Done | `000c998` |
+| 2.5 — Live verification + deferred bug fixes | ✅ Done | this commit |
 | 3 — Server modernization (Apollo 4, Mongoose 8) | Not started | |
 | 4 — Client modernization (Vite, Vue 3) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-Run `npm run verify` after any change — lint, 55 tests, and a production build.
+Run `npm run verify` after any change — lint, 58 tests, and a production build.
 Tests use Node's built-in runner; no test framework dependency.
+
+`npm run test:e2e` additionally verifies the guards against a live database.
+It needs `npm run server` running and a reachable `MONGO_URI`.
 
 ---
 
@@ -380,6 +384,73 @@ puppeteer 10) and come down in Phases 3–5, not from tooling changes.
 
 ---
 
+## Phase 2.5 — Live verification, and the bug it found ✅
+
+**Goal:** verify Phases 1a–1c against real data, and resolve the five bugs
+deferred from Phase 2.
+
+`test-e2e/live-verification.js` drives the real HTTP + Apollo path with real
+signed-in tokens and asserts on real database state. It creates two throwaway
+residents prefixed `__ugtest_`, runs 22 checks, and deletes them in a `finally`
+block. Existing records are only ever read. **22/22 pass.**
+
+The database holds 75 residents, 41 vendors, 12 guilds.
+
+### It found a privilege-escalation path that unit tests could not
+
+`updateProfile` takes **two** identity arguments. Phase 1b pinned `residentId`
+but not `residentName` — and the resolver does `$set: { residentName }`.
+
+`residentName` is not a display name. It is:
+
+- the **per-tenant MongoDB database name** (`tenantUri(newResident)`)
+- the foreign key in `Guild.guildMembers[].name`
+- the value **`CityHall.governor` is compared against**
+
+The live data made the impact concrete: `CityHall.governor` is
+`"[Toronto Glory]Weir"`, and **no Resident holds that name**. So the unique
+index would not have blocked claiming it. Any signed-in resident could have
+renamed themselves to it, passed the `governor` role check, and called
+`distributeWelfare` against a treasury of 2,320,618.
+
+Fixed by pinning `residentName` on `updateProfile` and `businessTitle` on
+`updateVendorProfile` — the same class of issue, since `businessTitle` is the
+vendor's per-tenant database name.
+
+A scan of every `$set` block found five mutations that write an identity key.
+The other three (`feedPet`, `distributeFlyer`, `targetDistribute`) already
+pinned theirs. A regression test now asserts all five stay pinned.
+
+**Why unit tests missed it:** the fakes had no unique index and no CityHall
+row, so the spoofed rename simply succeeded silently. The live run failed on a
+duplicate-key error, which is what exposed the second unpinned argument.
+
+### The five deferred bugs — all resolved
+
+| Bug | Resolution |
+|---|---|
+| 3× Mongo aggregation `X ? X : Y` where `X` is an object literal | Collapsed to `X`. A JS ternary is evaluated when the pipeline is built, not by MongoDB; the condition was always truthy and the `$push` branch unreachable. **Provably behaviour-preserving** |
+| `FlyerCoupon.vue` ×2, `HtmlConverter.vue` ×1 — `if ((this.pageNo = 1))` | Changed to `===`. Verified safe first: a `pageNo` watcher handles page display on change, which is why the true branch sets `display` directly and the else branch does not. Effect: deleting a page now returns you to the previous page rather than always to page 1 |
+| `App.vue` unreachable `else if` | Removed. Its body dispatched `getGuildChatMessages` with the same argument the reachable branch already dispatches — redundant, not just dead |
+| `Profile.vue` duplicate `created()` | Removed one. **See correction below** |
+
+### Correction to the Phase 2 notes
+
+Phase 2 recorded that `Profile.vue`'s duplicate `created()` meant "the real hook
+at line 681 has never run" and that fixing it would "activate ~40 lines of dead
+code". **That was wrong.** I inferred a body without reading it. Both hooks are
+empty — line 681 contains only commented-out `console.log`s — and the
+component's real initialisation is in `mounted()`, which was never shadowed.
+Removing the duplicate is a no-op. No behaviour was ever affected.
+
+### Lint
+
+`no-constant-condition` is back to **error** now that all six original
+violations are resolved. Still 0 errors.
+
+
+---
+
 ## Open items and judgement calls
 
 Things a future session (or reviewer) should know.
@@ -405,6 +476,10 @@ Things a future session (or reviewer) should know.
 - **Subscriptions are still unguarded.** Phases 1a–1c covered queries and
   mutations. `resolvers/Subscription.js` is small (3.4 KB) but publishes guild
   chat and message events; it should get the same treatment.
+- **Identity keys are writable through profile updates by design elsewhere.**
+  Renaming is now blocked on both profile mutations, but if a rename feature is
+  ever wanted it must also migrate the per-tenant database and every stored
+  foreign key. Treat `residentName` / `businessTitle` as immutable.
 - **`getSelectedFlyerClientView` is authenticated but not owner-pinned.** It
   records a flyer read against `resident`, and vendors preview their own flyers
   through the same query, so pinning to the caller would break preview. Closing

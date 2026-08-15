@@ -54,6 +54,47 @@ test("updateProfile cannot target another resident's account", async () => {
   assert.notEqual(seen.residentId, VICTIM_ID);
 });
 
+test("updateProfile cannot rename the caller (privilege-escalation path)", async () => {
+  // residentName is the per-tenant database name, the guild foreign key, and
+  // the value CityHall.governor is compared against. Pinning only residentId
+  // still allowed a rename to any unused name — and CityHall.governor pointed
+  // at a name no Resident held, so it was claimable, yielding the governor role
+  // and distributeWelfare. Found by the Phase 2.5 run against live data.
+  const seen = await argsSeenBy(
+    "updateProfile",
+    { residentId: VICTIM_ID, residentName: "[Toronto Glory]Weir", password: "x" },
+    attacker
+  );
+  assert.equal(seen.residentId, ATTACKER_ID);
+  assert.equal(seen.residentName, "Attacker", "residentName must be pinned too");
+});
+
+test("updateVendorProfile cannot rename the calling vendor", async () => {
+  const seen = await argsSeenBy(
+    "updateVendorProfile",
+    { email: "victim@x.com", businessTitle: "Rival Bakery" },
+    vendorAuth
+  );
+  assert.equal(seen.email, "bakery@x.com");
+  assert.equal(seen.businessTitle, "Honest Bakery");
+});
+
+test("every mutation that writes an identity key pins that key", () => {
+  // The dangerous shape is filtering on one identity field while writing
+  // another. These five were found by scanning $set blocks in Mutation.js.
+  const writesIdentity = {
+    updateProfile: "residentName",
+    updateVendorProfile: "businessTitle",
+    feedPet: "residentName",
+    distributeFlyer: "input.businessTitle",
+    targetDistribute: "input.businessTitle",
+  };
+  for (const [name, key] of Object.entries(writesIdentity)) {
+    const entry = MUTATION_POLICY[name];
+    assert.ok(entry.own && key in entry.own, `${name} must pin ${key}`);
+  }
+});
+
 test("crackEgg cannot mint silver into someone else's balance", async () => {
   const seen = await argsSeenBy(
     "crackEgg",

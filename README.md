@@ -28,6 +28,8 @@ cp variables.env.example variables.env   # then fill in real values
 | `npm run client` | Vue dev server on :8080 |
 | `npm run build` | Production build into `dist/` |
 | `npm test` | Auth/policy tests (Node's built-in runner, no extra deps) |
+| `npm run test:e2e` | Live verification against a real database (needs the server running) |
+| `npm run verify` | lint + test + build — the gate CI runs |
 
 - GraphQL endpoint: `http://localhost:4000/graphql`
 - Subscriptions: `ws://localhost:4000/graphql`
@@ -37,7 +39,9 @@ cp variables.env.example variables.env   # then fill in real values
 - [x] **Phase 0** — Separate working copy, repo hygiene, secrets to env, **build restored**
 - [x] **Phase 1a** — Authentication guards on all 59 mutations, token expiry, CORS, upload limits
 - [x] **Phase 1b** — Server-derived identity, roles, connection-string hardening
-- [ ] **Phase 2** — Config, tooling, lint, CI
+- [x] **Phase 1c** — Query guards (PII and billable endpoints)
+- [x] **Phase 2** — Config, tooling, lint, CI
+- [x] **Phase 2.5** — Live verification against Atlas; deferred bug fixes
 - [ ] **Phase 3** — Server modernization (Apollo 4, Mongoose 8, resolver split)
 - [ ] **Phase 4** — Client modernization (Vite, event-bus removal, Vue 3)
 - [ ] **Phase 5** — Dependency cleanup

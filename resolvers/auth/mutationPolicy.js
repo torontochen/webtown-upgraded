@@ -51,7 +51,19 @@ const MUTATION_POLICY = {
   stashFlyer: { policy: RESIDENT, own: { residentName: "residentName" } },
   stashMonsterChestItems: { policy: RESIDENT, own: { playerName: "residentName" } },
   updateAvatar: { policy: RESIDENT, own: { email: "email" } },
-  updateProfile: { policy: RESIDENT, own: { residentId: "residentId" } },
+  // `residentName` must be pinned as well as `residentId`. The resolver does
+  // `$set: { residentName }`, and residentName is not just a display name — it
+  // is the per-tenant Mongo database name, the foreign key in
+  // Guild.guildMembers[].name, and the value CityHall.governor is compared
+  // against. Pinning only residentId still let a signed-in resident rename
+  // themselves to an unused name; because CityHall.governor pointed at a name
+  // no Resident held, the unique index did not block claiming it, which was a
+  // path to the governor role and distributeWelfare. Found by the Phase 2.5
+  // run against live data.
+  updateProfile: {
+    policy: RESIDENT,
+    own: { residentId: "residentId", residentName: "residentName" },
+  },
   updatePetExpSilver: { policy: RESIDENT, own: { residentName: "residentName" } },
   updatePetExpSilverStash: { policy: RESIDENT, own: { residentName: "residentName" } },
   updateResidentSliver: { policy: RESIDENT, own: { resident: "residentName" } },
@@ -125,7 +137,13 @@ const MUTATION_POLICY = {
   saveSubstituteItems: { policy: VENDOR, own: { vendor: "businessTitle" } },
   updateGalleryFiles: { policy: VENDOR, own: { vendor: "businessTitle" } },
   updateMonsterChest: { policy: VENDOR, own: { vendor: "businessTitle" } },
-  updateVendorProfile: { policy: VENDOR, own: { email: "email" } },
+  // Same class of issue as updateProfile: businessTitle is the vendor's
+  // per-tenant database name and the foreign key used across orders, flyers and
+  // deals, so it cannot be settable from the request.
+  updateVendorProfile: {
+    policy: VENDOR,
+    own: { email: "email", businessTitle: "businessTitle" },
+  },
   callGroupPurchase: VENDOR, // publishes a News item; carries no owner field
 
   // Takes only dealId, so ownership has to come from the stored record.

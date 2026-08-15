@@ -54,13 +54,9 @@ module.exports = {
     "no-unsafe-negation": "error",
     "no-cond-assign": "error",
 
-    // Six existing violations, all latent bugs whose fixes change runtime
-    // behaviour — two are `if ((x = 1))` assignments that were meant to be
-    // comparisons, and three are `cond ? cond : fallback` ternaries in Mongo
-    // aggregation pipelines. They are enumerated in PROJECT_NOTES.md and need
-    // a run against a live database before being touched, so this is a warning
-    // rather than a blocked build.
-    "no-constant-condition": ["warn", { checkLoops: false }],
+    // All six original violations were resolved in Phase 2.5, so this is back
+    // to an error and will block any new one.
+    "no-constant-condition": ["error", { checkLoops: false }],
     "valid-typeof": "error",
     "use-isnan": "error",
 
