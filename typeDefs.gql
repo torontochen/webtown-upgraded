@@ -1779,7 +1779,6 @@ type Mutation {
   ): Resident
 
   updatePetExpSilver(
-    vendor: String
     residentName: String
     petExperience: Int
     silverCoins: Int

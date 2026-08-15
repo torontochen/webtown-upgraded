@@ -12,10 +12,10 @@ Vue.use(Chat);
 
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
-import { createUploadLink } from "apollo-upload-client";
+import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
 import { ApolloLink, Observable } from "apollo-link";
-import { WebSocketLink } from "apollo-link-ws";
+import { GraphQLWsLink } from "./apollo/graphqlWsLink";
 import { getMainDefinition } from "apollo-utilities";
 import VueApollo from "vue-apollo";
 import Alert from "./components/Alert";
@@ -250,24 +250,18 @@ const wsLink = ApolloLink.from([
 
   requestLink,
 
-  new WebSocketLink({
-    uri: GRAPHQL_WS_URI,
-    options: {
-      reconnect: true,
-      connectionParams: () => {
-        if (localStorage.token) {
-          const token = localStorage.getItem("token");
-          return {
-            Authorization: `Bearer ${token}`,
-          };
-        }
-        if (localStorage.vendortoken) {
-          const token = localStorage.getItem("vendortoken");
-          return {
-            Authorization: `Bearer ${token}`,
-          };
-        }
-      },
+  // graphql-ws replaces subscriptions-transport-ws (Phase 3a). It reconnects by
+  // default, so the old `reconnect: true` has no equivalent, and
+  // connectionParams is a top-level callback rather than nested under `options`.
+  // It is re-evaluated on every (re)connect, so a token refreshed after sign-in
+  // is picked up without recreating the link.
+  new GraphQLWsLink({
+    url: GRAPHQL_WS_URI,
+    connectionParams: () => {
+      const token = localStorage.token
+        ? localStorage.getItem("token")
+        : localStorage.getItem("vendortoken");
+      return token ? { Authorization: `Bearer ${token}` } : {};
     },
   }),
 ]);
@@ -309,8 +303,11 @@ const httpLink = ApolloLink.from([
 
   requestLink,
 
-  // Create file upload link
-  new createUploadLink({
+  // Plain HTTP link. This was apollo-upload-client's createUploadLink, but the
+  // schema has no Upload scalar — no operation ever sent a file — so the
+  // multipart transport was unused. Dropping it also removed the
+  // graphql-upload CSRF advisory Apollo Server warned about on every boot.
+  new HttpLink({
     uri: GRAPHQL_HTTP_URI,
     credentials: "include",
   }),

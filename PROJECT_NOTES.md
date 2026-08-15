@@ -15,16 +15,18 @@ Running record of the staged upgrade, phase by phase.
 | 1b — Ownership, roles, connection-string hardening | ✅ Done | `95b0bd8` |
 | 1c — Query guards (PII and billable endpoints) | ✅ Done | `e9a5def` |
 | 2 — Config, tooling, lint, CI | ✅ Done | `000c998` |
-| 2.5 — Live verification + deferred bug fixes | ✅ Done | this commit |
-| 3 — Server modernization (Apollo 4, Mongoose 8) | Not started | |
+| 2.5 — Live verification + deferred bug fixes | ✅ Done | `d4c92e6` |
+| 3a — Apollo Server 4, graphql-ws, error migration | ✅ Done | this commit |
+| 3b — Mongoose 8, resolver split, logging | Not started | |
 | 4 — Client modernization (Vite, Vue 3) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-Run `npm run verify` after any change — lint, 58 tests, and a production build.
+Run `npm run verify` after any change — lint, 61 tests, and a production build.
 Tests use Node's built-in runner; no test framework dependency.
 
-`npm run test:e2e` additionally verifies the guards against a live database.
-It needs `npm run server` running and a reachable `MONGO_URI`.
+`npm run test:e2e` additionally verifies the guards (22 checks) and
+subscriptions over graphql-ws (4 checks) against a live database. It needs
+`npm run server` running and a reachable `MONGO_URI`.
 
 ---
 
@@ -451,6 +453,90 @@ violations are resolved. Still 0 errors.
 
 ---
 
+## Phase 3a — Apollo Server 4, graphql-ws, error migration ✅
+
+**Goal:** off the end-of-life Apollo 2 stack, without breaking the auth layer
+built on top of it.
+
+### Why this was the risky phase
+
+Apollo Server 2 → 4 is not a version bump. `apollo-server-express` applied
+itself to Express and installed its own subscription handlers; v4 splits those
+into separate concerns that the app wires itself. More importantly it **removed
+the error classes the entire Phase 1 auth layer was built on**.
+
+| Concern | Apollo 2 | Now |
+|---|---|---|
+| HTTP | `server.applyMiddleware({ app })` | `expressMiddleware(server)` mounted by us |
+| Subscriptions | `installSubscriptionHandlers` (subscriptions-transport-ws) | `graphql-ws` + `ws`, wired by us |
+| PubSub | `apollo-server-express` | `graphql-subscriptions` |
+| Errors | `AuthenticationError` etc. | `GraphQLError` + `extensions.code` |
+| Uploads | built in | **removed — see below** |
+
+### Errors
+
+`resolvers/errors.js` provides `AuthenticationError` / `ForbiddenError` /
+`UserInputError` as thin `GraphQLError` subclasses carrying the **same
+`extensions.code` strings Apollo 2 produced**. That matters beyond tidiness:
+`formatError` maps those codes back to error names, and `src/main.js` triggers
+its automatic sign-out on `err.name === "AuthenticationError"`. A changed code
+would silently break sign-out on token expiry. A test locks the codes.
+
+The auth layer's call sites were unchanged — only the import moved.
+
+### File uploads removed entirely
+
+The schema has **no `Upload` scalar**. No operation ever sent a file; images are
+stored as base64 strings. So `graphql-upload` and `apollo-upload-client` were
+carrying a multipart transport nothing used — and were the source of the CSRF
+advisory Apollo printed on every boot:
+
+> This package is vulnerable to Cross-Site Request Forgery (CSRF) attacks.
+
+Both removed; the client uses a plain `HttpLink`. **That warning is now gone.**
+
+### Subscriptions
+
+`subscriptions-transport-ws` is unmaintained and its protocol is not supported
+by graphql-ws. Both ends moved to `graphql-ws`.
+
+Apollo Client 2 has no graphql-ws link (`@apollo/client/link/subscriptions`
+needs Apollo Client 3, which is Phase 4), so `src/apollo/graphqlWsLink.js` is a
+~25-line `ApolloLink` adapter around the graphql-ws client. **It is deleted in
+Phase 4** and replaced with the official link.
+
+`connectionParams` is now re-evaluated on every reconnect, so a token refreshed
+after sign-in is picked up without recreating the link — the old nested
+`options.connectionParams` shape captured it once.
+
+### Two real bugs surfaced by stricter tooling
+
+1. **`typeDefs.gql` declared `vendor` twice** on `updatePetExpSilver`.
+   graphql 15 tolerated it; graphql 16 refuses to build the schema. Fixed.
+2. **graphql 16 ships class fields in *both* its ESM and CJS builds**, which
+   webpack 4 cannot parse — the client build failed outright. `graphql` is now
+   in `transpileDependencies`, with a `graphql$` alias pinning the bare
+   specifier to the CJS entry. Both go away in Phase 4 with Vite.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **61 unit tests**, production build succeeds.
+- `npm run test:e2e` against live Atlas — **22/22 guard checks** (unchanged from
+  Phase 2.5, so the auth layer survived the migration intact) plus **4/4
+  subscription checks**: graphql-ws handshake, subscribe, publish from an HTTP
+  mutation, delivery on the socket with the correct payload.
+- Apollo boots clean; the graphql-upload CSRF warning is gone.
+- Vulnerabilities 155 → **151**; high 48 → 44.
+
+### Still on the old stack (Phase 3b / 4)
+
+Mongoose 5, the 3,800-line resolver files, 1,617 `console.log` calls, and the
+Apollo **Client** 2 stack (`apollo-client`, `apollo-cache-inmemory`,
+`apollo-link`, `vue-apollo` 3).
+
+
+---
+
 ## Open items and judgement calls
 
 Things a future session (or reviewer) should know.
@@ -474,8 +560,10 @@ Things a future session (or reviewer) should know.
 ### Known gaps
 
 - **Subscriptions are still unguarded.** Phases 1a–1c covered queries and
-  mutations. `resolvers/Subscription.js` is small (3.4 KB) but publishes guild
-  chat and message events; it should get the same treatment.
+  mutations. `resolvers/Subscription.js` publishes guild chat and message
+  events to any connected socket. Phase 3a confirmed the transport carries
+  auth (`connectionParams` reaches the context), so the guards can now be
+  applied the same way — this is the largest remaining security gap.
 - **Identity keys are writable through profile updates by design elsewhere.**
   Renaming is now blocked on both profile mutations, but if a rename feature is
   ever wanted it must also migrate the per-tenant database and every stored

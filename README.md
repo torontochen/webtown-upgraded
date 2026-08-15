@@ -42,7 +42,8 @@ cp variables.env.example variables.env   # then fill in real values
 - [x] **Phase 1c** — Query guards (PII and billable endpoints)
 - [x] **Phase 2** — Config, tooling, lint, CI
 - [x] **Phase 2.5** — Live verification against Atlas; deferred bug fixes
-- [ ] **Phase 3** — Server modernization (Apollo 4, Mongoose 8, resolver split)
+- [x] **Phase 3a** — Apollo Server 4, graphql-ws, error migration
+- [ ] **Phase 3b** — Mongoose 8, resolver split into domains, structured logging
 - [ ] **Phase 4** — Client modernization (Vite, event-bus removal, Vue 3)
 - [ ] **Phase 5** — Dependency cleanup
 

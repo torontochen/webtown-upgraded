@@ -1,4 +1,4 @@
-const { ForbiddenError } = require("apollo-server-express");
+const { ForbiddenError } = require("../errors");
 
 /**
  * Ownership and role enforcement (Phase 1b).

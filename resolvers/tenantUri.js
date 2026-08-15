@@ -1,4 +1,4 @@
-const { UserInputError } = require("apollo-server-express");
+const { UserInputError } = require("./errors");
 
 /**
  * Builds the per-tenant MongoDB connection string.
