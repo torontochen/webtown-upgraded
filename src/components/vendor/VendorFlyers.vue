@@ -60,7 +60,7 @@
                           <template v-slot:label>
                             <div
                               v-if="flyerFormat == 'FLYER'"
-                              class="indigo--text font-weight-medium"
+                              class="text-indigo font-weight-medium"
                             >
                               Simple Flyer
                             </div>
@@ -70,7 +70,7 @@
                           <template v-slot:label>
                             <div
                               v-if="flyerFormat == 'COUPON'"
-                              class="indigo--text font-weight-medium"
+                              class="text-indigo font-weight-medium"
                             >
                               Simple Coupon
                             </div>
@@ -80,7 +80,7 @@
                           <template v-slot:label>
                             <div
                               v-if="flyerFormat == 'MULTICOUPON'"
-                              class="indigo--text font-weight-medium"
+                              class="text-indigo font-weight-medium"
                             >
                               Multiply Coupons
                             </div>
@@ -93,7 +93,7 @@
                           <template v-slot:label>
                             <div
                               v-if="flyerFormat == 'FLYERCOUPON'"
-                              class="indigo--text font-weight-medium"
+                              class="text-indigo font-weight-medium"
                             >
                               Flyer with Multiply Coupons
                             </div>
@@ -109,13 +109,12 @@
                               src="../../assets/images/simpleflyer.png"
                               max-width="300"
                               max-height="250"
-                              contain
                             >
                             </v-img>
                           </v-col>
                           <v-col cols="5" align-self="start">
                             <p
-                              class="indigo--text subtitle font-weight-regular"
+                              class="text-indigo subtitle font-weight-regular"
                               style="text-align: justify"
                             >
                               Simple Flyer only contain photos and
@@ -135,13 +134,12 @@
                               src="../../assets/images/simplecoupon.png"
                               max-width="300"
                               max-height="250"
-                              contain
                             >
                             </v-img>
                           </v-col>
                           <v-col cols="5">
                             <p
-                              class="indigo--text subtitle font-weight-regular"
+                              class="text-indigo subtitle font-weight-regular"
                               style="text-align: justify"
                             >
                               Simple Coupon is for redeeming free merchandise or
@@ -163,13 +161,12 @@
                               src="../../assets/images/multicoupon.png"
                               max-width="300"
                               max-height="250"
-                              contain
                             >
                             </v-img>
                           </v-col>
                           <v-col cols="5">
                             <p
-                              class="indigo--text subtitle font-weight-regular"
+                              class="text-indigo subtitle font-weight-regular"
                               style="text-align: justify"
                             >
                               Multipy Coupons can be a combination of free
@@ -191,13 +188,12 @@
                               src="../../assets/images/flyercoupon.png"
                               max-width="300"
                               max-height="250"
-                              contain
                             >
                             </v-img>
                           </v-col>
                           <v-col cols="5">
                             <p
-                              class="indigo--text subtitle font-weight-regular"
+                              class="text-indigo subtitle font-weight-regular"
                               style="text-align: justify"
                             >
                               Flyers with multipy Coupons is a combination of
@@ -212,18 +208,15 @@
                         </v-row>
                       </v-container>
                       <v-row justify="center" class="my-12">
-                        <v-btn
+                        <v-btn variant="flat"
                           color="primary"
                           @click="stepper = 2"
-                          class="d-block mr-2"
-                          depressed
+                          class="d-block mr-2" 
                         >
                           Continue
                         </v-btn>
 
-                        <v-btn
-                          text
-                          outlined
+                        <v-btn variant="text"
                           color="primary"
                           @click="handleCancel"
                           >Cancel</v-btn
@@ -283,27 +276,25 @@
                 </v-col>
               </v-row>
               <v-row justify="center" class="my-12">
-                <v-btn
+                <v-btn variant="flat"
                   :disabled="btnDisable"
                   color="primary"
                   @click="saveSketch"
-                  class="d-block mr-2"
-                  depressed
+                  class="d-block mr-2" 
                 >
                   Save Sketch
                 </v-btn>
 
-                <v-btn
+                <v-btn variant="flat"
                   :disabled="btnDisable"
                   color="primary"
                   @click="toPreview"
-                  class="d-block mr-2"
-                  depressed
+                  class="d-block mr-2" 
                 >
                   Continue
                 </v-btn>
 
-                <v-btn color="primary" outlined text @click="handleCancel"
+                <v-btn variant="text" color="primary"  @click="handleCancel"
                   >Cancel</v-btn
                 >
               </v-row>
@@ -320,22 +311,22 @@
                   "
                 >
                   <v-card flat :width="(viewportWidth * 9) / 10" outlined>
-                    <v-tabs v-model="tab" background-color="primary" dark>
+                    <v-tabs v-model="tab" background-color="primary" theme="dark">
                       <v-tab v-for="(item, i) in pagePreview" :key="i">
                         Page {{ i + 1 }}
                       </v-tab>
                     </v-tabs>
                     <v-row justify="center" class="pb-4">
-                      <v-tabs-items v-model="tab" class="mt-5 ma-0 pa-0">
-                        <v-tab-item
+                      <v-window v-model="tab" class="mt-5 ma-0 pa-0">
+                        <v-window-item
                           v-for="(item, i) in pagePreview"
                           :key="i"
                           class="ml-0"
                         >
                           <v-card v-html="item.previewString" flat tile>
                           </v-card>
-                        </v-tab-item>
-                      </v-tabs-items>
+                        </v-window-item>
+                      </v-window>
                     </v-row>
                   </v-card>
                 </v-row>
@@ -345,15 +336,15 @@
                       <v-btn-toggle
                         v-model="flyerCoupon"
                         rounded
-                        dense
+                        density="compact"
                         mandatory
                         class="mt-6"
-                        dark
+                        theme="dark"
                       >
-                        <v-btn small  depressed value="flyer" color="primary darken-5">
+                        <v-btn variant="flat" size="small"  value="flyer" color="primary darken-5">
                           flyer
                         </v-btn>
-                        <v-btn small  depressed value="coupon" color="primary darken-5">
+                        <v-btn variant="flat" size="small"  value="coupon" color="primary darken-5">
                           coupon
                         </v-btn>
                       </v-btn-toggle>
@@ -365,22 +356,22 @@
                       outlined
                       v-if="flyerCoupon == 'flyer'"
                     >
-                      <v-tabs v-model="tab" background-color="primary" dark>
+                      <v-tabs v-model="tab" background-color="primary" theme="dark">
                         <v-tab v-for="(item, i) in pagePreview" :key="i">
                           Page {{ i + 1 }}
                         </v-tab>
                       </v-tabs>
                       <v-row justify="center">
-                        <v-tabs-items v-model="tab" class="mt-5 ma-0 pa-0">
-                          <v-tab-item
+                        <v-window v-model="tab" class="mt-5 ma-0 pa-0">
+                          <v-window-item
                             v-for="(item, i) in pagePreview"
                             :key="i"
                             class="ml-0"
                           >
                             <v-card v-html="item.previewString" flat tile>
                             </v-card>
-                          </v-tab-item>
-                        </v-tabs-items>
+                          </v-window-item>
+                        </v-window>
                       </v-row>
                     </v-card>
                     <v-card
@@ -389,22 +380,22 @@
                       outlined
                       v-else
                     >
-                      <v-tabs v-model="tab" background-color="primary" dark>
+                      <v-tabs v-model="tab" background-color="primary" theme="dark">
                         <v-tab v-for="(item, i) in pagePreview_C" :key="i">
                           Page {{ i + 1 }}
                         </v-tab>
                       </v-tabs>
                       <v-row justify="center">
-                        <v-tabs-items v-model="tab" class="mt-5 ma-0 pa-0">
-                          <v-tab-item
+                        <v-window v-model="tab" class="mt-5 ma-0 pa-0">
+                          <v-window-item
                             v-for="(item, i) in pagePreview_C"
                             :key="i"
                             class="ml-0"
                           >
                             <v-card v-html="item.previewString" flat tile>
                             </v-card>
-                          </v-tab-item>
-                        </v-tabs-items>
+                          </v-window-item>
+                        </v-window>
                       </v-row>
                     </v-card>
                   </v-col>
@@ -415,77 +406,65 @@
                   </v-col>
                 </v-row>
                 <v-row class="d-flex justify-center my-10">
-                  <v-btn
+                  <v-btn variant="flat"
                     :disabled="
                       !isDesign || !isFormat || !isPreview || templateSaved
                     "
                     color="primary"
                     type="submit"
                     class="d-inline-block mr-2"
-                    @click="toDesign"
-                    small
-                    dark
-                    depressed
+                    @click="toDesign" size="small"
+                    theme="dark" 
                   >
-                    <span slot="loader" class="custom-loader">
+                    <template #loader><span class="custom-loader">
                       <v-icon>cached</v-icon>
-                    </span>
+                    </span></template>
                     Back To Design
                   </v-btn>
 
-                  <v-btn
+                  <v-btn variant="flat"
                     :disabled="!isDesign || !isFormat || !isPreview"
                     color="primary"
                     type="submit"
-                    class="d-inline-block mr-2"
-                    small
-                    depressed
-                    dark
+                    class="d-inline-block mr-2" size="small" 
+                    theme="dark"
                     @click="saveTemplateDialog = true"
                     v-if="!templateIsSaved"
                   >
-                    <span slot="loader" class="custom-loader">
+                    <template #loader><span class="custom-loader">
                       <v-icon>cached</v-icon>
-                    </span>
+                    </span></template>
                     Save as template
                   </v-btn>
 
-                  <v-btn
+                  <v-btn variant="outlined"
                     :disabled="templateIsSaved"
                     color="info lighten-1"
                     type="submit"
-                    class="d-inline-block mr-2"
-                    small
-                    depressed
-                    outlined
+                    class="d-inline-block mr-2" size="small" 
                     v-if="templateIsSaved"
                   >
-                    <span slot="loader" class="custom-loader">
+                    <template #loader><span class="custom-loader">
                       <v-icon>cached</v-icon>
-                    </span>
+                    </span></template>
                     template is saved
                   </v-btn>
 
-                  <v-btn
+                  <v-btn variant="flat"
                     :disabled="!isDesign || !isFormat || !isPreview"
                     color="primary "
                     type="submit"
-                    class="d-inline-block mr-2"
-                    small
-                    dark
-                    depressed
+                    class="d-inline-block mr-2" size="small"
+                    theme="dark" 
                     @click="saveAndDistribute"
                   >
-                    <span slot="loader" class="custom-loader">
+                    <template #loader><span class="custom-loader">
                       <v-icon>cached</v-icon>
-                    </span>
+                    </span></template>
                     Save Design and Continue
                   </v-btn>
 
-                  <v-btn
-                    text
-                    small
-                    outlined
+                  <v-btn variant="text" size="small"
                     color="primary"
                     @click="handleCancel"
                     >Cancel</v-btn
@@ -506,14 +485,14 @@
                     <v-row>
                       <v-col cols="4">
                         <h5
-                          class="primary--text text--lighten-1 d-block ml-6 mb-2"
+                          class="text-primary d-block ml-6 mb-2"
                         >
                           Title: {{ currentFlyerTitle }}
                         </h5>
                       </v-col>
                       <v-col cols="8">
                         <h5
-                          class="primary--text text--lighten-1 d-block ml-6 mb-2"
+                          class="text-primary d-block ml-6 mb-2"
                         >
                           Flyer Id: {{ savedFlyer ? savedFlyer.flyerId : "" }}
                         </h5>
@@ -524,29 +503,29 @@
                       <v-tabs
                         v-model="tabStep4"
                         background-color="primary"
-                        dark
+                        theme="dark"
                       >
                         <v-tab v-for="(item, i) in tabSource" :key="i">
                           Page {{ i + 1 }}
                         </v-tab>
                       </v-tabs>
                       <v-row  class="pb-4 justify-center">
-                        <v-tabs-items v-model="tabStep4" class="mt-5 ma-0 pa-0">
-                          <v-tab-item
+                        <v-window v-model="tabStep4" class="mt-5 ma-0 pa-0">
+                          <v-window-item
                             v-for="(item, i) in tabSource"
                             :key="i"
                             class="ml-0"
                           >
                             <v-card v-html="item.previewString" flat tile>
                             </v-card>
-                          </v-tab-item>
-                        </v-tabs-items>
+                          </v-window-item>
+                        </v-window>
                       </v-row>
                     </v-card>
                   </v-container>
                 </v-card>
               </v-row>
-              <!-- <v-divider dark></v-divider> -->
+              <!-- <v-divider theme="dark"></v-divider> -->
               <v-row class="justify-center">
                 <v-card flat v-if="stepper == 4" class="mt-6" :width="(viewportWidth * 6) / 10">
                   <v-form v-model="isDistribute" lazy-validation ref="checkOut">
@@ -554,7 +533,7 @@
                       <!-- <v-container fluid> -->
                         <!-- <tr>
                           <td> -->
-                            <h5 class="d-block mr-4 primary--text">Valid:</h5>
+                            <h5 class="d-block mr-4 text-primary">Valid:</h5>
                           <!-- </td> -->
                           <!-- <td class="mr-3 d-block"> -->
                             <v-menu
@@ -563,13 +542,13 @@
                               offset-y
                               min-width="290px"
                             >
-                              <template v-slot:activator="{ on }">
+                              <template v-slot:activator="{ props }">
                                 <v-text-field
                                   v-model="dateFrom"
                                   label="From"
                                   prepend-inner-icon="event"
                                   readonly
-                                  v-on="on"
+                                  v-bind="props"
                                   :rules="fromDateRules"
                                   class="mx-2"
                                 ></v-text-field>
@@ -590,14 +569,14 @@
                               offset-y
                               min-width="290px"
                             >
-                              <template v-slot:activator="{ on }">
+                              <template v-slot:activator="{ props }">
                                 <v-text-field
                                   v-model="dateTo"
                                   label="To"
                                   prepend-inner-icon="event"
                                   readonly
                                   :rules="toDateRules"
-                                  v-on="on"
+                                  v-bind="props"
                                   class="mx-2"
                                 ></v-text-field>
                               </template>
@@ -613,7 +592,7 @@
                       <!-- </v-container> -->
                     </v-row>
 
-                    <!-- <v-divider dark></v-divider> -->
+                    <!-- <v-divider theme="dark"></v-divider> -->
 
                     <v-row
                       class="justify-center"
@@ -626,7 +605,7 @@
                                <v-col cols="12" >
                               <!-- <v-row> -->
                                 <h4
-                                  class="primary--text text--lighten-1 d-block ml-6 mb-4"
+                                  class="text-primary d-block ml-6 mb-4"
                                 >
                                   Coupon ID:
                                   {{ couponIdConfirm }}
@@ -649,7 +628,7 @@
                                <v-switch
                                   v-model="oneTimeUsage[tabStep4]"
                                   class="d-block"
-                                  dense
+                                  density="compact"
                                   :label="oneTimeUsage[tabStep4] ? 'One Time' : 'Unlimited Times'"
                                 ></v-switch>
                             </v-col>
@@ -676,24 +655,19 @@
                                       
                                       v-model="isForAllItems[tabStep4]"
                                       class="d-block"
-                                      dense
+                                      density="compact"
                                       :label="isForAllItems[tabStep4] ? 'For All Items' : 'For Items Bound'"
                                     ></v-switch>
                                     </v-col>
                                     <v-col cols="3" align-self="center">
                                     <v-tooltip top >
-                                      <template v-slot:activator="{ on, attrs }"> 
-                                        <!-- <v-btn
-                                          
-                                          small
-                                          text
+                                      <template v-slot:activator="{ props }"> 
+                                        <!-- <v-btn variant="text" size="small" 
                                         > -->
                                           <v-icon 
                                           @click="bindItemHandler" 
                                           size="24"
-                                          :disabled="isForAllItems[tabStep4]"
-                                          v-bind="attrs"
-                                          v-on="on"
+                                          :disabled="isForAllItems[tabStep4]" v-bind="props"
                                           style="background-color: #FAFAFA;"
                                           class="ma-2 d-block"
                                           color="primary">
@@ -754,7 +728,7 @@
                                       v-model="isForExceedance[tabStep4]"
                                       class="d-block mt-2"
                                       v-if="minimalAmount[tabStep4]>0||minimalQty[tabStep4]>0"
-                                      dense
+                                      density="compact"
                                       :label="isForExceedance[tabStep4] ? 'For Exceedance Only' : 'For All'"
                                     ></v-switch>
                                 </v-col>
@@ -778,7 +752,7 @@
                             </v-col>
                             <v-col cols="2" align-self="end">
                               <h5
-                                class="d-block ml-10 primary--text text--lighten-1"
+                                class="d-block ml-10 text-primary"
                               >
                                 QR Code
                               </h5>
@@ -798,20 +772,19 @@
 
                     <v-row  class="my-10 justify-center">
                       <!-- !isDesign || !isFormat || !isPreview || !isDistribute || -->
-                      <v-btn
+                      <v-btn variant="flat"
                         :disabled="!couponReady"
                         color="primary lighten-1"
                         type="submit"
                         class="d-inline-block mr-2"
-                        @click="handleUpdateSave"
-                        depressed
+                        @click="handleUpdateSave" 
                       >
-                        <span slot="loader" class="custom-loader">
+                        <template #loader><span class="custom-loader">
                           <v-icon>cached</v-icon>
-                        </span>
+                        </span></template>
                         Save
                       </v-btn>
-                      <v-btn text @click.stop="handleCancel">Cancel</v-btn>
+                      <v-btn variant="text"  @click.stop="handleCancel">Cancel</v-btn>
                     </v-row>
                   </v-form>
                 </v-card>
@@ -821,7 +794,7 @@
              <!--  Step 5  Check Out && Distribute -->
             <v-stepper-content step="5">
                <v-card class="pa-3">
-                 <v-card-subtitle class="accent--text font-weight-bold" v-if="savedFlyer">{{savedFlyer.flyerId}}&nbsp;|&nbsp;{{ currentFlyerTitle }}</v-card-subtitle>
+                 <v-card-subtitle class="text-accent font-weight-bold" v-if="savedFlyer">{{savedFlyer.flyerId}}&nbsp;|&nbsp;{{ currentFlyerTitle }}</v-card-subtitle>
                  <v-divider class="my-1"></v-divider>
                  <v-row no-gutters align="center">
                    <v-col cols="6">
@@ -837,7 +810,7 @@
                  </v-row>
                   <!-- regular distribute -->
                   <v-card outlined class="pa-3" v-if="distributeType=='regular'">
-                    <span class="primary--text text-subtitle-1 text-center">regualr distribute to all resident in GTA metro area</span>
+                    <span class="text-primary text-subtitle-1 text-center">regualr distribute to all resident in GTA metro area</span>
                     <v-card-text>
                       <v-row class="d-flex flex-row justify-start align-center">
                         <v-checkbox 
@@ -845,7 +818,7 @@
                         :value='metroSpec.insideBoundary' 
                         :label="`Resident inside GTA boundary: ${insideBoundary}`" class="mx-2"/>
                       <span class="text-subtitle-2 mx-2 ">rate:&nbsp; ${{distributeBasicRate}}&nbsp;/&nbsp;Address</span>
-                      <span class="text-subtitle-2 mx-2 accent--text font-weight-bold">Item Total: {{ $filters.formatCurrencyAmount(insideBoundary * distributeBasicRate) }}</span>
+                      <span class="text-subtitle-2 mx-2 text-accent font-weight-bold">Item Total: {{ $filters.formatCurrencyAmount(insideBoundary * distributeBasicRate) }}</span>
                       </v-row>
                       <v-row class="d-flex flex-row justify-start align-center" v-if="vendor.crossBoundaryBusiness">
                         <v-checkbox 
@@ -853,7 +826,7 @@
                         :value="metroSpec.outsideBoundary" 
                         :label="`Resident outside GTA boundary: ${outsideBoundary}`" class="mx-2"/>
                          <span class="text-subtitle-2 mx-2 ">rate: ${{distributeBasicRate}}/send</span>
-                      <span class="text-subtitle-2 mx-2 accent--text font-weight-bold">Item Total: {{ $filters.formatCurrencyAmount(outsideBoundary * distributeBasicRate) }}</span>
+                      <span class="text-subtitle-2 mx-2 text-accent font-weight-bold">Item Total: {{ $filters.formatCurrencyAmount(outsideBoundary * distributeBasicRate) }}</span>
                       </v-row>
                     </v-card-text>
                   </v-card>
@@ -861,14 +834,14 @@
                 <!-- target distribute -->
                   <v-card outlined v-if="distributeType=='target'" class="pa-3">
                     <v-card-title>
-                      <span class="primary--text text-subtitle-1 text-center">
+                      <span class="text-primary text-subtitle-1 text-center">
                       target distribute to specific resident qualified ( surcharge: $0.05 / metric ): {{ $filters.formatIntAmount(residentTargeted ? targetDistributeNumber : 0) }} 
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rate:&nbsp;${{(distributeBasicRate + distributeAdditionRate * distributeAddition).toFixed(2)}}&nbsp;/&nbsp;Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span class="accent--text text-subtitle-1">subtotal: {{ $filters.formatCurrencyAmount(distributeSubTotal) }}</span></span>
+                      <span class="text-accent text-subtitle-1">subtotal: {{ $filters.formatCurrencyAmount(distributeSubTotal) }}</span></span>
                       <v-spacer></v-spacer>
                        <v-switch
                                   v-model="crossBoundary"
-                                  dense
+                                  density="compact"
                                   :label="crossBoundary ? 'Cross Boundary' : 'No Cross Boundary'"
                                   v-if="vendor.crossBoundaryBusiness"
                                 ></v-switch>
@@ -884,14 +857,14 @@
                               <v-row no-gutters>
                                 <v-checkbox 
                                 v-model="ageChecked" 
-                                dense
+                                density="compact"
                                 />
-                                <v-select :disabled="!ageChecked" v-model="ageFrom" :items="ageList"   :error-messages="ageErrMsg" label=" Age From" dense class="mr-3" ></v-select>
+                                <v-select :disabled="!ageChecked" v-model="ageFrom" :items="ageList"   :error-messages="ageErrMsg" label=" Age From" density="compact" class="mr-3" ></v-select>
                               </v-row>
                             </v-col>
                             <v-col cols="5">
                               <v-row no-gutters>
-                                <v-select :disabled="!ageChecked" v-model="ageTo"   :error-messages="ageErrMsg" :items="ageList" label=" Age To" dense ></v-select>
+                                <v-select :disabled="!ageChecked" v-model="ageTo"   :error-messages="ageErrMsg" :items="ageList" label=" Age To" density="compact" ></v-select>
                               </v-row>
                             </v-col>
                           </v-row>
@@ -901,9 +874,9 @@
                           <v-row align="center" class="mr-1">
                             <v-checkbox 
                               v-model="religionChecked" 
-                              dense
+                              density="compact"
                               />
-                            <v-select :disabled="!religionChecked" :items="religionList" label="religion" v-model="religionSelected"  dense></v-select>
+                            <v-select :disabled="!religionChecked" :items="religionList" label="religion" v-model="religionSelected" density="compact"></v-select>
                           </v-row>
                         </v-col>
                         <!-- gender -->
@@ -911,9 +884,9 @@
                           <v-row align="center" class="mr-1">
                           <v-checkbox 
                             v-model="genderChecked" 
-                            dense
+                            density="compact"
                             />
-                          <v-select :disabled="!genderChecked" :items="genders" label="gender" v-model="genderSelected"  dense></v-select>
+                          <v-select :disabled="!genderChecked" :items="genders" label="gender" v-model="genderSelected" density="compact"></v-select>
                           </v-row>
                         </v-col>
                         <!-- to existing customer -->
@@ -921,7 +894,7 @@
                           <v-row align="center" class="mr-1">
                           <v-checkbox 
                             v-model="existingCustomerChecked" 
-                            dense
+                            density="compact"
                             label="Current Customer"
                             disabled
                             />
@@ -935,7 +908,7 @@
                           <v-row align="start" class="mr-1" no-gutters> 
                             <v-checkbox 
                               v-model="hobbyChecked" 
-                              dense
+                              density="compact"
                               />
                             <v-select 
                               :disabled="!hobbyChecked" 
@@ -945,8 +918,7 @@
                               small-chips
                               clearable
                               deletable-chips  
-                              v-model="hobbySelected" 
-                              dense></v-select>
+                              v-model="hobbySelected" density="compact"></v-select>
                           </v-row>
                         </v-col>
 
@@ -954,7 +926,7 @@
                           <v-row align="center" class="mr-1">
                             <v-checkbox 
                                 v-model="favoriteFoodChecked" 
-                                dense
+                                density="compact"
                                 />
                               <v-select 
                                 :disabled="!favoriteFoodChecked" 
@@ -964,8 +936,7 @@
                                 small-chips
                                 clearable
                                 deletable-chips  
-                                v-model="favoriteFoodSelected" 
-                                dense></v-select>
+                                v-model="favoriteFoodSelected" density="compact"></v-select>
                           </v-row>
                         </v-col>
                       </v-row>
@@ -975,7 +946,7 @@
                           <v-row align="center" class="mr-1" no-gutters>
                              <v-checkbox 
                           v-model="regionChecked" 
-                          dense
+                          density="compact"
                           />
                         <v-select 
                           :disabled="!regionChecked" 
@@ -985,8 +956,7 @@
                           small-chips
                           clearable
                           deletable-chips  
-                          v-model="regionsSelected" 
-                          dense></v-select>
+                          v-model="regionsSelected" density="compact"></v-select>
                           </v-row>
                         </v-col>
 
@@ -994,15 +964,14 @@
                           <v-row align="center" class="mr-1">
                               <v-checkbox 
                               v-model="distanceChecked" 
-                              dense
+                              density="compact"
                               />
                             <v-select 
                               :disabled="!distanceChecked" 
                               :items="distance" 
                               label="distance"  
                               clearable
-                              v-model="distanceSelected" 
-                              dense></v-select>
+                              v-model="distanceSelected" density="compact"></v-select>
                           </v-row>
                         </v-col>
 
@@ -1011,7 +980,7 @@
                             <v-checkbox 
                           v-model="wishChecked" 
                           label="wish List"
-                          dense
+                          density="compact"
                           />
                           </v-row>
                            
@@ -1022,7 +991,7 @@
                  
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn text color="accent" outlined :disabled="canTarget" @click="handleTarget">target</v-btn>
+                      <v-btn variant="text"  color="accent" :disabled="canTarget" @click="handleTarget">target</v-btn>
                       <v-spacer></v-spacer>
                     </v-card-actions>
                   </v-card>
@@ -1045,7 +1014,7 @@
                                 </v-col>
                         </v-row>
 
-                        <v-row align="stretch" class="my-2 mr-5 text-subtitle-2  accent--text">
+                        <v-row align="stretch" class="my-2 mr-5 text-subtitle-2  text-accent">
                          <v-spacer></v-spacer>
                           <v-col cols="2">
 
@@ -1069,14 +1038,14 @@
                               value="creditcard"
                           >
                           <template v-slot:label>
-                              <div><v-img src="/static/credit_card-removebg-preview.png" contain max-height="60" max-width="80"></v-img></div>
+                              <div><v-img src="/static/credit_card-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                           </template>
                           </v-radio>
                           <v-radio
                               value="paypal"
                           >
                           <template v-slot:label>
-                              <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80" contain></v-img></div>
+                              <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                           </template>
                           </v-radio>
                         </v-radio-group>
@@ -1088,22 +1057,20 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn
+                  <v-btn variant="flat"
                     :disabled="canDistribute"
                     color="primary "
                     type="submit"
-                    class="d-inline-block mr-2"
-                    depressed
-                    small
+                    class="d-inline-block mr-2" size="small"
                     @click="handleDistribute"
                   >
-                    <span slot="loader" class="custom-loader">
+                    <template #loader><span class="custom-loader">
                       <v-icon>cached</v-icon>
-                    </span>
+                    </span></template>
                    Pay & Distribute
                   </v-btn>
 
-                  <v-btn text small outlined color="primary" @click="handleCancel"
+                  <v-btn variant="text" size="small" color="primary" @click="handleCancel"
                     >Cancel</v-btn
                   >
                   <v-spacer></v-spacer>
@@ -1124,12 +1091,12 @@
             v-model="templateChoice"
             column
             :mandatory="true"
-            class="indigo--text subtitle font-weight-regular"
+            class="text-indigo subtitle font-weight-regular"
           >
             <v-radio
               label="Save as a new template"
               value="1"
-              class="indigo--text subtitle font-weight-regular"
+              class="text-indigo subtitle font-weight-regular"
             ></v-radio>
             <v-text-field
               label="Template Tag Name"
@@ -1139,7 +1106,7 @@
               :label="'Overwrite Current Template:' + getTemplateId"
               value="2"
               v-if="selectedTemplate_C || selectedTemplate"
-              class="indigo--text subtitle font-weight-regular"
+              class="text-indigo subtitle font-weight-regular"
             ></v-radio>
           </v-radio-group>
         </v-container>
@@ -1147,16 +1114,14 @@
         <!-- </v-card-text> -->
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary lighten-2"
-            text
+          <v-btn variant="text"
+            color="primary lighten-2" 
             @click="saveTemplate"
             :disabled="disableTempChoice"
             >Save</v-btn
           >
-          <v-btn
-            color="primary lighten-2"
-            text
+          <v-btn variant="text"
+            color="primary lighten-2" 
             @click="saveTemplateDialog = false"
             >Cancel</v-btn
           >
@@ -1387,7 +1352,7 @@ export default {
     console.log("vendorflyers created");
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.$store.commit("clearSelectedSketch");
     this.$store.commit("clearSelectedTemplate");
     this.$store.commit("clearSelectedSketch_C");

@@ -122,11 +122,8 @@ export default {
     this.quill.on("text-change", this.handleTextChange);
   },
 
-  // Vue 2 calls beforeDestroy, Vue 3 calls beforeUnmount, and each ignores the
-  // other as an unrecognised option — so this file needs no edit at the flip.
-  beforeDestroy() {
-    this.teardown();
-  },
+  // Written during the Vue 2 / Vue 3 straddle with both hook names; 4b-4
+  // collapsed it to the Vue 3 one.
   beforeUnmount() {
     this.teardown();
   },

@@ -18,7 +18,7 @@
 
     <!-- Main Part -->
     <v-card flat outlined class="pa-1 mx-auto" width='1400' >
-      <v-card-title class="primary--text"
+      <v-card-title class="text-primary"
         >Promotion Events</v-card-title
       >
       <!-- Event Selector -->
@@ -26,12 +26,10 @@
         <v-row>
           <!-- Promotion Category -->
           <v-col cols="6">
-            <v-select
+            <v-select variant="outlined"
               v-model="eventTypeSelected"
               :items="promotionEventList"
-              label="Event Category "
-              outlined
-              dense
+              label="Event Category " density="compact"
               append-outer-icon="mdi-exit-to-app"
               @click:append-outer="handleExit"
               :disabled="!flyerSelected=='' || itemsOnSaleSelected.length > 0"
@@ -44,19 +42,17 @@
 
         <!-- Monster Chest  -->
           <v-card flat v-if="eventTypeSelected=='Monster_Chest'">
-              <v-card-title class="primary--text"
+              <v-card-title class="text-primary"
                                 >Items In Chest</v-card-title
                               >
                 <!-- Promotion item -->
                   <v-card flat>
                     <v-card-text>
                       <v-row class="d-flex justify-center align-center">
-                        <v-select
+                        <v-select variant="outlined"
                             label="Promotion Item"
                             v-model="flyerSelected"
-                            :items="flyerListToSelect"
-                            outlined
-                            dense
+                            :items="flyerListToSelect" density="compact"
                             ></v-select>
                       </v-row> 
                     </v-card-text>
@@ -64,32 +60,28 @@
             <v-spacer></v-spacer>
             <!-- Reward items -->
               <v-card outlined>
-                  <v-card-title class="primary--text text-subtitle-1"
+                  <v-card-title class="text-primary text-subtitle-1"
                                   >{{ flyerSelected }}</v-card-title
                                 >
                     <v-card-text>
                       <v-row >
                         <v-toolbar flat>
                             <v-toolbar-title
-                            class="font-weight-bold primary--text text-subtitle-2"
+                            class="font-weight-bold text-primary text-subtitle-2"
                             >Reward Items</v-toolbar-title
                           >
                           <v-spacer></v-spacer>
                                 <v-dialog v-model="dialog" max-width="400px" persistent>
-                                  <template v-slot:activator="{ on, attrs }">
+                                  <template v-slot:activator="{ props }">
                                     <v-btn
                                       color="primary"
-                                      dark
-                                      class="mb-2"
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      fab
-                                      small
+                                      theme="dark"
+                                      class="mb-2" v-bind="props" icon size="small"
                                       right
                                       floating
                                       :disabled="!flyerSelected"
                                     >
-                                      <v-icon dark> mdi-plus </v-icon>
+                                      <v-icon theme="dark"> mdi-plus </v-icon>
                                     </v-btn>
                                   </template>
                                   <v-form lazy-validation ref="form">
@@ -102,19 +94,17 @@
                                         <v-container fluid>
                                           <v-row class="d-flex justify-space-around align-end">
                                             <v-col cols="8" >
-                                              <v-select
+                                              <v-select variant="outlined"
                                                 label="Reward Item"
                                                 v-model="rewardItemSelected"
-                                                :items="rewardItemsToSelect"
-                                                outlined
-                                                dense
+                                                :items="rewardItemsToSelect" density="compact"
                                                 class="mt-2"
                                                 >
                                                 
                                                  <template v-slot:item="{item}">
                                                             <div>
                                                               <v-row class="my-1 d-flex-inline justify-start align-center">
-                                                                <v-img src="/static/animated-money-image-0013.gif" height="40" width="40" contain />
+                                                                <v-img src="/static/animated-money-image-0013.gif" height="40" width="40" />
                                                               {{item.itemName}}
                                                               </v-row>
                                                             </div>
@@ -136,10 +126,10 @@
 
                                       <v-card-actions>
                                         <v-spacer></v-spacer>
-                                        <v-btn color="accent" text outlined @click="close">
+                                        <v-btn variant="text" color="accent" @click="close">
                                           Cancel
                                         </v-btn>
-                                        <v-btn color="primary" text @click="saveRewardItems"> OK </v-btn>
+                                        <v-btn variant="text" color="primary"  @click="saveRewardItems"> OK </v-btn>
                                         <v-spacer></v-spacer>
                                       </v-card-actions>
                                     </v-card>
@@ -149,23 +139,19 @@
                           </v-toolbar>
                       </v-row> 
                       <v-card flat>
-                        <v-list dense expand>
+                        <v-list density="compact" expand>
                           <v-list-item v-for="(item, index) in rewardItemsInChest" :key="index">
-                            <v-list-item-icon>
+                            <template #prepend>
                               <v-icon v-text="item.icon" color="
                               primary"></v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-content>
-                                <v-list-item-title v-text="item.itemName"  class="text-subtitle-1 primary--text"
+                              </template>
+                                <v-list-item-title v-text="item.itemName"  class="text-subtitle-1 text-primary"
                                 ></v-list-item-title>
-                              </v-list-item-content>
-                              <v-list-item-content>
-                                <v-list-item-title v-text="item.quantity.toString()" class="text-subtitle-1 primary--text"></v-list-item-title>
-                              </v-list-item-content>
-                              <v-list-item-icon>
+                                <v-list-item-title v-text="item.quantity.toString()" class="text-subtitle-1 text-primary"></v-list-item-title>
+                              <template #append>
                               <v-icon  color="
                               primary" @click="deleteItem(index)">mdi-delete</v-icon>
-                              </v-list-item-icon>
+                              </template>
                           </v-list-item>
                         </v-list>
                       </v-card>
@@ -177,7 +163,7 @@
                 Save
               </v-btn>
 
-              <v-btn text outlined color="accent" @click="exitDialog = true"
+              <v-btn variant="text" color="accent" @click="exitDialog = true"
                 >Cancel</v-btn
               >
             </v-row>
@@ -185,23 +171,21 @@
 
         <!-- On Sale -->
         <v-card flat v-if="eventTypeSelected=='On_Sale'" class="pa-2">
-            <v-card-title class="primary--text">Choose Items On Sale</v-card-title>
+            <v-card-title class="text-primary">Choose Items On Sale</v-card-title>
             <!-- Pick Items On Sale -->
                   <v-card flat>
                     <v-card-text>
                       <v-row class="d-flex justify-center align-center">
-                        <v-select
+                        <v-select variant="outlined"
                             label="On Sale Items"
                             v-model="itemsOnSaleSelected"
-                            :items="onSaleItemsList"
-                            outlined
-                            dense
+                            :items="onSaleItemsList" density="compact"
                             chips
                             small-chips
                             multiple
                             v-if="onSaleItemsList.length>0"
                             ></v-select>
-                            <span class="text-subtitle-1 primary--text" v-else>No Items with Promotion Rate Set Up &nbsp;&nbsp;<v-btn text color="accent" class="ml-2" @click="handleExit" outlined>exit</v-btn></span>
+                            <span class="text-subtitle-1 text-primary" v-else>No Items with Promotion Rate Set Up &nbsp;&nbsp;<v-btn variant="text"  color="accent" class="ml-2" @click="handleExit">exit</v-btn></span>
                             
                       </v-row> 
                     </v-card-text>
@@ -211,7 +195,7 @@
             <v-card flat v-if="itemsOnSaleSelected.length>0" >
               <v-card-title>
                 <v-toolbar flat color="primary" shaped short>
-                  <v-toolbar-title class="text-subtitle-1 white--text font-weight-medium">Set Up Event </v-toolbar-title>
+                  <v-toolbar-title class="text-subtitle-1 text-white font-weight-medium">Set Up Event </v-toolbar-title>
                 </v-toolbar>
               </v-card-title>
 
@@ -232,13 +216,12 @@
                               color="primary"
                               class="mt-4"
                               show-size
-                              chips
-                              dense
+                              chips density="compact"
                               @change="onFilePicked"
                               :error-messages="errMsgPic"
                               v-model="photoFile"
                             ></v-file-input>
-                            <v-img contain width="150" height="150" :src="eventPhoto" v-if="eventPhoto"></v-img>
+                            <v-img width="150" height="150" :src="eventPhoto" v-if="eventPhoto"></v-img>
                     </v-col>
                   </v-row>
                   <!-- Date -->
@@ -251,13 +234,13 @@
                       offset-y
                       min-width="290px"
                       >
-                      <template v-slot:activator="{ on }">
+                      <template v-slot:activator="{ props }">
                           <v-text-field
                           v-model="dateFrom"
                           label="From"
                           prepend-inner-icon="event"
                           readonly
-                          v-on="on"
+                          v-bind="props"
                           :rules="fromDateRules"
                           ></v-text-field>
                       </template>
@@ -279,14 +262,14 @@
                       offset-y
                       min-width="290px"
                       >
-                      <template v-slot:activator="{ on }">
+                      <template v-slot:activator="{ props }">
                           <v-text-field
                           v-model="dateTo"
                           label="To"
                           prepend-inner-icon="event"
                           readonly
                           :rules="toDateRules"
-                          v-on="on"
+                          v-bind="props"
                           ></v-text-field>
                       </template>
                       <v-date-picker
@@ -310,8 +293,7 @@
                       placeholder="Event Instructions"
                       auto-grow
                       clearable
-                      background-color="#EFEBE9"
-                      dense>
+                      background-color="#EFEBE9" density="compact">
 
                     </v-textarea>
                     </v-col>
@@ -325,18 +307,17 @@
                   <v-card v-for="(item, i) in onSaleItemsListSelected" :key="i" width="250" class="ma-2 pa-1">
                     <v-img
                         :src="item.photo"
-                        class="white--text  ma-auto"
+                        class="text-white  ma-auto"
                         height="220"
                         width="220"
-                        contain
                       >
-                        <v-img src="../../assets/images/sales_images__1_-removebg-preview.png" width="100" height="80" contain style="position: absolute; top: 10px; right: 0px"></v-img>
+                        <v-img src="../../assets/images/sales_images__1_-removebg-preview.png" width="100" height="80" style="position: absolute; top: 10px; right: 0px"></v-img>
                       </v-img>
                       <v-card-text class="text-body-2">{{item.description}}</v-card-text>
                     <v-card-actions>
                             <!-- <v-card-title v-text=""></v-card-title> -->
                       <v-spacer></v-spacer>
-                        <span   class="text-subtitle-1 red--text mx-1" >${{item.promoRate}}</span>
+                        <span   class="text-subtitle-1 text-red mx-1" >${{item.promoRate}}</span>
                         <span  class="text-subtitle-2 text--lighten-2 font-weight-light" ><del>${{item.rate}}</del></span>
                     </v-card-actions>
                 </v-card>
@@ -345,11 +326,11 @@
 
                 <v-divider></v-divider>
                   <v-row justify="center" class="my-10">
-                      <v-btn color="primary" class="d-block mr-2" @click="saveOnSale" depressed :disabled="!canSave">
+                      <v-btn variant="flat" color="primary" class="d-block mr-2" @click="saveOnSale"  :disabled="!canSave">
                         Save
                       </v-btn>
 
-                      <v-btn text outlined color="primary" @click="exitDialog = true"
+                      <v-btn variant="text" color="primary" @click="exitDialog = true"
                         >Cancel</v-btn
                       >
                   </v-row>
@@ -363,12 +344,12 @@
             <v-card flat >
               <v-card-title>
                 <v-toolbar flat color="primary" shaped short>
-                  <v-toolbar-title class="text-subtitle-1 white--text font-weight-medium">Set Up Event </v-toolbar-title>
+                  <v-toolbar-title class="text-subtitle-1 text-white font-weight-medium">Set Up Event </v-toolbar-title>
                 </v-toolbar>
               </v-card-title>
                <v-card-subtitle v-if="currentShopItemName!=null" class="my-4"><v-icon color="primary">mdi-store</v-icon> Items In Game Store:&nbsp;&nbsp;
-         <span class="accent--text font-weight-bold">{{currentSubstituteItemName}}</span> &nbsp;&nbsp; for  &nbsp;&nbsp;
-         <span class="accent--text font-weight-bold">{{currentShopItemName}}</span>
+         <span class="text-accent font-weight-bold">{{currentSubstituteItemName}}</span> &nbsp;&nbsp; for  &nbsp;&nbsp;
+         <span class="text-accent font-weight-bold">{{currentShopItemName}}</span>
          </v-card-subtitle>
          <v-divider class="mb-2"></v-divider>
               <v-card-text>
@@ -379,8 +360,7 @@
                       <v-select
                             label="Vendor Item"
                             v-model="substituteVendorItemSelected"
-                            :items="vendorItemList"
-                            dense
+                            :items="vendorItemList" density="compact"
                             small-chips
                             ></v-select>
                     </v-col>
@@ -389,8 +369,7 @@
                       <v-text-field
                           :value="substituteItemPrice"
                           label="Price"
-                          readonly
-                          dense
+                          readonly density="compact"
                           prefix="$"
                           ></v-text-field>
                     </v-col>
@@ -399,8 +378,7 @@
                       <v-select
                             label="Bind Coupon"
                             v-model="couponBond"
-                            :items="vendorCouponList"
-                            dense
+                            :items="vendorCouponList" density="compact"
                             small-chips
                             ></v-select>
                     </v-col> -->
@@ -412,8 +390,7 @@
                       <v-select
                             label="Item to Substitute In Game"
                             v-model="itemToSubstituteSelected"
-                            :items="gameProps"
-                            dense
+                            :items="gameProps" density="compact"
                             small-chips
                             >
                             <template v-slot:selection="{ item }">
@@ -423,7 +400,7 @@
                             <template v-slot:item="{item}">
                               <div>
                                 <v-row class="my-1">
-                                  <v-img :src="'data:image/png;base64,'+item.picture" height="30" width="30" contain />
+                                  <v-img :src="'data:image/png;base64,'+item.picture" height="30" width="30" />
                                  &nbsp;&nbsp;&nbsp;&nbsp;{{item.itemName}}
                                 </v-row>
                               </div>
@@ -436,8 +413,7 @@
                      <v-select
                             label="Matching for Vendor Item"
                             v-model="substituteItemSelected"
-                            :items="gameSubstitute"
-                            dense
+                            :items="gameSubstitute" density="compact"
                             small-chips
                             >
                             <template v-slot:selection="{ item }">
@@ -447,7 +423,7 @@
                             <template v-slot:item="{item}">
                               <div>
                                 <v-row class="my-1 d-flex-inline justify-start align-center">
-                                  <v-img :src="'data:image/png;base64,'+item.picture" height="30" width="30" contain />
+                                  <v-img :src="'data:image/png;base64,'+item.picture" height="30" width="30" />
                                  &nbsp;&nbsp;&nbsp;&nbsp;{{item.itemName}}
                                 </v-row>
                               </div>
@@ -463,8 +439,7 @@
                       placeholder="Event Instructions"
                       auto-grow
                       clearable
-                      background-color="#EFEBE9"
-                      dense>
+                      background-color="#EFEBE9" density="compact">
 
                     </v-textarea>
                     </v-col>
@@ -481,13 +456,13 @@
                       offset-y
                       min-width="290px"
                       >
-                      <template v-slot:activator="{ on }">
+                      <template v-slot:activator="{ props }">
                           <v-text-field
                           v-model="dateFrom"
                           label="From"
                           prepend-inner-icon="event"
                           readonly
-                          v-on="on"
+                          v-bind="props"
                           :rules="fromDateRules"
                           ></v-text-field>
                       </template>
@@ -509,14 +484,14 @@
                       offset-y
                       min-width="290px"
                       >
-                      <template v-slot:activator="{ on }">
+                      <template v-slot:activator="{ props }">
                           <v-text-field
                           v-model="dateTo"
                           label="To"
                           prepend-inner-icon="event"
                           readonly
                           :rules="toDateRules"
-                          v-on="on"
+                          v-bind="props"
                           ></v-text-field>
                       </template>
                       <v-date-picker
@@ -538,19 +513,19 @@
               <!-- class="d-flex flex-row justify-end align-center  my-1" -->
               <!-- Display Selected Substitute Item -->
                 <v-row  v-if="substituteItemSelected && substituteVendorItemSelected && itemToSubstituteSelected" >
-                  <v-card-title >Substitute Buy Item:&nbsp;<v-img :src="'data:image/png;base64,'+substituteItemSelected.picture" height="30" width="30" contain class="d-flex-inline"/>
+                  <v-card-title >Substitute Buy Item:&nbsp;<v-img :src="'data:image/png;base64,'+substituteItemSelected.picture" height="30" width="30" class="d-flex-inline"/>
                       &nbsp;{{substituteItemSelected.itemName}}&nbsp;for  Game Shop Item:&nbsp;
-                      <v-img :src="'data:image/png;base64,'+itemToSubstituteSelected.picture" height="30" width="30" contain class="d-flex-inline"/>
+                      <v-img :src="'data:image/png;base64,'+itemToSubstituteSelected.picture" height="30" width="30" class="d-flex-inline"/>
                       {{itemToSubstituteSelected.itemName}}
                       </v-card-title>
                 </v-row>
                 <v-divider></v-divider>
                   <v-row justify="center" class="my-10">
-                      <v-btn color="primary" class="d-block mr-2" @click="saveOnSale" depressed :disabled="!canSave">
+                      <v-btn variant="flat" color="primary" class="d-block mr-2" @click="saveOnSale"  :disabled="!canSave">
                         Save
                       </v-btn>
 
-                      <v-btn text outlined color="accent" @click="exitDialog = true"
+                      <v-btn variant="text" color="accent" @click="exitDialog = true"
                         >Cancel</v-btn
                       >
                   </v-row>
@@ -562,19 +537,19 @@
  <!-- Cancel Dialog -->
     <v-dialog v-model="exitDialog" width="400" persistent transition="fade">
       <v-card style="border-top: 15px solid #B75420">
-        <v-card-title class="text-h6 accent--text" 
+        <v-card-title class="text-h6 text-accent" 
           >Leaving Promotion Events</v-card-title
         >
 
-        <v-card-text  class="text-body-1 accent--text">
+        <v-card-text  class="text-body-1 text-accent">
           Are you Sure ? All unsaved change will be lost!
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary"  text @click="handleCancel"> Yes </v-btn>
+          <v-btn variant="text" color="primary"  @click="handleCancel"> Yes </v-btn>
 
-          <v-btn color="accent" outlined text @click="exitDialog = false"> No </v-btn>
+          <v-btn variant="text" color="accent"  @click="exitDialog = false"> No </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

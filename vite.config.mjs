@@ -1,17 +1,19 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue2";
+import vue from "@vitejs/plugin-vue";
+import vuetify from "vite-plugin-vuetify";
 
 /**
- * Vite replaces vue-cli 4 / webpack 4 (Phase 4a-ii).
+ * Vite + Vue 3 + Vuetify 3 (Phase 4b-4).
  *
- * Two workarounds added in Phase 3a are gone as a result: `graphql` no longer
- * needs to sit in `transpileDependencies`, and the `graphql$` alias forcing its
- * CommonJS build is unnecessary — Vite handles graphql 16's ESM and class
- * fields natively, which webpack 4's parser could not.
+ * `vite-plugin-vuetify` is the Vite-native replacement for the webpack-only
+ * `vuetify-loader`. It auto-imports each Vuetify component and its styles
+ * where a template uses one, which is the tree-shaking Phase 4a-ii had to give
+ * up when it fell back to Vuetify 2's full build — the reason the bundle grew
+ * from 2.18 MB to 2.88 MB then.
  */
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), vuetify({ autoImport: true })],
 
   resolve: {
     alias: {
@@ -25,13 +27,10 @@ export default defineConfig({
 
   build: {
     outDir: "dist",
-    // Matches what webpack was emitting; the app ships one large vendor chunk.
     chunkSizeWarningLimit: 3000,
   },
 
-  // Vuetify 2 and its .sass sources are pre-bundled so dev startup does not
-  // re-resolve hundreds of component modules on every cold start.
   optimizeDeps: {
-    include: ["vue", "vuetify", "apollo-client", "graphql", "quill"],
+    include: ["vue", "vuetify", "@apollo/client/core", "graphql", "quill"],
   },
 });

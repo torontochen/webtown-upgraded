@@ -8,31 +8,26 @@
   >
     <v-card style="border-top: 15px solid #B75420">
       <v-card-title
-        class="text-h6 accent--text text--lighten-1"
+        class="text-h6 text-accent"
       >leaving {{component}} ?</v-card-title>
 
       <v-card-text
-        class="text-subtitle-1 accent--text text--lighten-1"
+        class="text-subtitle-1 text-accent"
       >
        all unsaved change will be lost!
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          text
-          small
+        <v-btn variant="text"
+          color="primary" size="small"
           @click="$emit('yes-leave')"
         >
           Yes
         </v-btn>
 
-        <v-btn
-          color="accent"
-          text
-          small
-          outlined
+        <v-btn variant="text"
+          color="accent" size="small"
           @click="$emit('abort-leave')"
         >
           No

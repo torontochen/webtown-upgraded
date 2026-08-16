@@ -2,7 +2,7 @@
     <v-card outlined flat>
           <v-sheet
           color="primary"
-          dark
+          theme="dark"
           rounded
           class="d-flex flex-row justify-space-around align-center flex-wrap pa-5"
         >
@@ -20,7 +20,7 @@
          </span>
         </v-sheet>
         <v-card-text>
-            <v-simple-table
+            <v-table
                 fixed-header
                 :height="viewPortDimension.height * 0.38"
             >
@@ -65,19 +65,19 @@
                     </tr>
                 </tbody>
                 </template>
-            </v-simple-table>
+            </v-table>
         </v-card-text>
 
     <!-- Redeem Gold -->
         <v-dialog v-model="isRedeemGoldOpen" v-if="vendor.goldCoins>0" max-width="500">
             <v-card width="500">
-                <v-toolbar dark color="primary" flat>
+                <v-toolbar theme="dark" color="primary" flat>
                     <v-toolbar-title>Exchange Gold</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text >
                      <v-row class="justify-center align-center flex-row d-flex" no-gutters>
                                 <v-spacer/>
-                                    <span class="accent--text">(1 gold = 1 $)</span>
+                                    <span class="text-accent">(1 gold = 1 $)</span>
                                    
                                     <span class="mx-1"><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{ $filters.formatIntAmount(vendor.goldCoins - goldToRedeem) }}</span>
                                     <v-slider
@@ -94,7 +94,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn depressed  color="primary" @click="confirmRedeem" :disabled="goldToRedeem==0">Confirm</v-btn>
+                    <v-btn variant="flat"   color="primary" @click="confirmRedeem" :disabled="goldToRedeem==0">Confirm</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
@@ -103,16 +103,15 @@
     <!-- Purchase Silver -->
         <v-dialog v-model="isPurchaseSilverOpen"  max-width="800">
             <v-card width="800">
-                 <v-toolbar dark color="primary" flat>
+                 <v-toolbar theme="dark" color="primary" flat>
                     <v-toolbar-title>Purchase Silver&nbsp;($1 = 1000 Silver)</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text class="mt-8">
                     <v-row >
                         <v-col cols="8">
-                            <v-select
+                            <v-select variant="outlined"
                                 label="Silver Amount"
-                                v-model="purchaseAmount"
-                                outlined
+                                v-model="purchaseAmount" 
                                 :items="silverPurchaseList">
                                 <template v-slot:selection="{ item }">
                                     <span>{{ $filters.formatIntAmount(item) }}</span>
@@ -121,7 +120,7 @@
                         </v-col>
 
                         <v-col cols="4">
-                            <span v-if="purchaseAmount" class="text-h6 font-weight-bold accent--text">Price:&nbsp;{{ $filters.formatCurrencyAmount(silverPrice) }}</span> 
+                            <span v-if="purchaseAmount" class="text-h6 font-weight-bold text-accent">Price:&nbsp;{{ $filters.formatCurrencyAmount(silverPrice) }}</span> 
                         </v-col>
                     </v-row>
                 
@@ -138,21 +137,21 @@
                                     value="creditcard"
                                 >
                                 <template v-slot:label>
-                                    <div><v-img src="/static/credit_card-removebg-preview.png" contain max-height="60" max-width="80"></v-img></div>
+                                    <div><v-img src="/static/credit_card-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                                 </template>
                                 </v-radio>
                                 <v-radio
                                     value="paypal"
                                 >
                                 <template v-slot:label>
-                                    <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80" contain></v-img></div>
+                                    <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                                 </template>
                                 </v-radio>
                                 </v-radio-group>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn depressed  color="primary" @click="confirmPurchase" :disabled="!purchaseAmount">Confirm</v-btn>
+                    <v-btn variant="flat"   color="primary" @click="confirmPurchase" :disabled="!purchaseAmount">Confirm</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
@@ -161,7 +160,7 @@
        <v-snackbar
         v-model="snackbar"
         centered
-        dark
+        theme="dark"
         color="primary"
         class="pa-3"
         timeout="3000"

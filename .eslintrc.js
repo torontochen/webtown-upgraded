@@ -38,7 +38,11 @@ module.exports = {
 
   extends: [
     "eslint:recommended",
-    "plugin:vue/essential", // Vue 2: correctness rules only, no style
+    // Vue 3 ruleset (Phase 4b-4). vue3-essential is the same "correctness
+    // only, no style" tier as the Vue 2 `essential` it replaces — but it knows
+    // Vue 3 semantics, so e.g. a key on <template v-for> is now correct rather
+    // than an error.
+    "plugin:vue/vue3-essential",
     "prettier",
   ],
 

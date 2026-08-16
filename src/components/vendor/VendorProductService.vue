@@ -19,29 +19,25 @@
           </v-row>
 
 
-      <v-card-title class="primary--text"
+      <v-card-title class="text-primary"
         >Product and Service Catalog</v-card-title
       >
       <v-card-text>
         <v-row>
           <!-- Products Category -->
           <v-col cols="6">
-            <v-select
+            <v-select variant="outlined"
               v-model="categorySeleted"
               :items="category"
-              label="Business Category "
-              outlined
-              dense
+              label="Business Category " density="compact"
               :disabled="inEdit"
             ></v-select>
           </v-col>
           <v-col cols="6">
-            <v-select
+            <v-select variant="outlined"
               v-model="subCategorySeleted"
               :items="subCategoryHandler"
-              label="Subcategory"
-              outlined
-              dense
+              label="Subcategory" density="compact"
               :disabled="!categorySeleted || inEdit"
               @change="changeSubcateHandler"
             ></v-select>
@@ -61,7 +57,7 @@
               <template v-slot:top>
                 <v-toolbar flat>
                   <v-toolbar-title
-                    class="font-weight-bold primary--text subtitle-1"
+                    class="font-weight-bold text-primary subtitle-1"
                     >{{ subCategorySeleted }}</v-toolbar-title
                   >
                   <!-- <v-divider
@@ -72,18 +68,14 @@
                   <v-spacer></v-spacer>
                   <!-- add item catalog dialog -->
                   <v-dialog v-model="dialog"  width="900" height="700"  persistent>
-                    <template v-slot:activator="{ on, attrs }">
+                    <template v-slot:activator="{ props }">
                       <v-btn
                         color="primary"
-                        dark
-                        class="mb-2"
-                        v-bind="attrs"
-                        v-on="on"
-                        fab
-                        small
+                        theme="dark"
+                        class="mb-2" v-bind="props" icon size="small"
                         :disabled="!subCategorySeleted"
                       >
-                        <v-icon dark> mdi-plus </v-icon>
+                        <v-icon theme="dark"> mdi-plus </v-icon>
                       </v-btn>
                     </template>
                    
@@ -104,8 +96,7 @@
                                   hint="Item Code has to be unique"
                                   @blur="checkItemCode"
                                   :error-messages="errMsgDup"
-                                  :rules="itemCodeRule"
-                                  dense
+                                  :rules="itemCodeRule" density="compact"
                                 ></v-text-field>
                               </v-col>
 
@@ -116,32 +107,27 @@
                                   label="Description"
                                   @blur="checkDescription"
                                   :error-messages="errMsgDes"
-                                  :rules="descriptionRule"
-                                  dense
+                                  :rules="descriptionRule" density="compact"
                                 ></v-text-field>
                               </v-col>
                             </v-row>
                             <!-- row 2 -->
                             <v-row justify="end">
                               <v-col cols="3">
-                                <!-- <v-select
+                                <!-- <v-select variant="outlined"
                                       v-model="editedItem.unit"
                                       :items="unitList"
-                                      label="Unit"
-                                      outlined
-                                      dense
+                                      label="Unit" density="compact"
                                   ></v-select> -->
                                 <v-text-field
-                                  label="Unit"
-                                  dense
+                                  label="Unit" density="compact"
                                   :rules="unitRule"
                                   v-model.trim="editedItem.unit"
                                   hint="such as box, pack, bag, kg, foot, hour, pax, head, times..."
                                 ></v-text-field>
                               </v-col>
                                 <v-col cols="3">
-                                <v-text-field
-                                dense
+                                <v-text-field density="compact"
                                   label="Reward Silver"
                                   v-model.number="editedItem.rewardSilver">
                                 </v-text-field>
@@ -179,8 +165,7 @@
                                   v-model.number="editedItem.rate"
                                   prefix="$"
                                   label="Rate"
-                                  :rules="priceRules"
-                                  dense
+                                  :rules="priceRules" density="compact"
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" sm="6" md="4">
@@ -188,23 +173,21 @@
                                   v-model.number="editedItem.promoRate"
                                   prefix="$"
                                   label="Promotion Rate"
-                                  :rules="promoRules"
-                                  dense
+                                  :rules="promoRules" density="compact"
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" sm="6" md="4">
                                 <v-switch
                                   v-model="editedItem.active"
                                   label="Active"
-                                  dense
+                                  density="compact"
                                 ></v-switch>
                               </v-col>
                             </v-row>
                             <!-- row 4 -->
                             <v-row>
                               <v-col cols="12">
-                                <v-textarea  
-                                  dense
+                                <v-textarea density="compact"
                                   background-color="grey lighten-3"
                                   color="cyan"
                                   label="Product Specfication"
@@ -219,13 +202,13 @@
                         <v-card-actions>
                           <v-row>
                               <v-spacer></v-spacer>
-                              <v-btn color="warning" text plain v-if="priceError!=' '">{{priceError}}</v-btn>
+                              <v-btn variant="text" color="warning"  v-if="priceError!=' '">{{priceError}}</v-btn>
                               <v-spacer></v-spacer>
                           </v-row>
                           <v-row>
                               <v-spacer></v-spacer>
-                           <v-btn color="primary" class="ma-3" depressed @click="save"> Save </v-btn>
-                          <v-btn color="primary" class="ma-3" text outlined @click="close">
+                           <v-btn variant="flat" color="primary" class="ma-3"  @click="save"> Save </v-btn>
+                          <v-btn variant="text" color="primary" class="ma-3" @click="close">
                             Cancel
                           </v-btn>
                           <v-spacer></v-spacer>
@@ -240,21 +223,18 @@
                   <!-- delete item catalog warning dialog -->
                   <v-dialog v-model="dialogDelete" max-width="500px" persistent>
                     <v-card style="border-top: 15px solid #B75420">
-                      <v-card-title class="text-subtitle-1 accent--text">{{
+                      <v-card-title class="text-subtitle-1 text-accent">{{
                         lastItemWarning
                           ? "Last Item! can not delete"
                           : "Are you sure you want to delete this item?"
                       }}</v-card-title>
                       <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" depressed @click="closeDelete"
+                        <v-btn variant="flat" color="primary"  @click="closeDelete"
                           >Cancel</v-btn
                         >
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          plain
-                          outlined
+                        <v-btn variant="text"
+                          color="blue darken-1" 
                           @click="deleteItemConfirm"
                           :disabled="lastItemWarning"
                           >OK</v-btn
@@ -282,11 +262,11 @@
               </template>
           </v-data-table>
           <v-row justify="center" class="my-10">
-            <v-btn color="primary" class="d-block mr-2" depressed @click="resetHandler">
+            <v-btn variant="flat" color="primary" class="d-block mr-2"  @click="resetHandler">
               Reset
             </v-btn>
 
-            <v-btn text outlined color="primary" @click="handleCancel"
+            <v-btn variant="text" color="primary" @click="handleCancel"
               >Exit</v-btn
             >
           </v-row>
@@ -306,9 +286,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="#ff9800" text @click="handleCancel"> Yes </v-btn>
+          <v-btn variant="text" color="#ff9800"  @click="handleCancel"> Yes </v-btn>
 
-          <v-btn color="#ff9800" text @click="exitDialog = false"> No </v-btn>
+          <v-btn variant="text" color="#ff9800"  @click="exitDialog = false"> No </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog> -->

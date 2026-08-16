@@ -15,8 +15,7 @@
                         full-icon="mdi-star"
                         half-icon="mdi-star-half"
                     ></v-rating>
-                    <v-textarea  
-                        outlined 
+                    <v-textarea variant="outlined"  
                         v-model="comments" 
                         label="Customer Comments" 
                         placeholder="thank you for your commentary!"
@@ -24,21 +23,21 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn outlined color="primary" @click="ratingWindow=false">Cancel</v-btn>
-                    <v-btn dark color="primary" @click="save">Save</v-btn>
+                    <v-btn variant="outlined"  color="primary" @click="ratingWindow=false">Cancel</v-btn>
+                    <v-btn theme="dark" color="primary" @click="save">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
        <v-toolbar flat color="shade">
            <v-spacer></v-spacer>
-           <v-btn plain text color="primary" @click="startRating">comment</v-btn>
+           <v-btn variant="text"   color="primary" @click="startRating">comment</v-btn>
        </v-toolbar>
         <v-card-title v-if="vendorCustomerRatings.length==0" class="text-center justify-center">No Customer Comments</v-card-title>
         <v-card-text v-else>
             <v-timeline
                 align-top
-                :dense="$vuetify.breakpoint.smAndDown"
+                :dense="$vuetify.display.smAndDown"
             >
                 <v-timeline-item
                 v-for="(item, i) in vendorCustomerRatings"
@@ -49,7 +48,7 @@
                 >
                 <v-card
                     :color="ratingColor(item.rating)"
-                    dark
+                    theme="dark"
                     hover
                 >
                     <v-card-title class="text-h6">
@@ -71,16 +70,15 @@
                     ></v-rating>
                     </v-card-title>
                     <v-card-text class="white text--primary">
-                    <p class="fontColor--text text--darken-2">{{item.comments}}</p>
+                    <p class="text-fontColor">{{item.comments}}</p>
                     
                     </v-card-text>
                     <v-card-actions>
                         {{ $filters.convertCustomerRatingTime(item.time) }}
                         <v-spacer></v-spacer>
-                        <!-- <v-btn
+                        <!-- <v-btn variant="outlined"
                         :color="item.color"
-                        class="mx-0"
-                        outlined
+                        class="mx-0" 
                     >
                         Reply
                     </v-btn> -->

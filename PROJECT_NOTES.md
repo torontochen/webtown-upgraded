@@ -25,8 +25,9 @@ Running record of the staged upgrade, phase by phase.
 | 4b-3a — Observer, mask, masonry | ✅ Done | `07a0438`+ |
 | 4b-3b — vue2-editor, vue-advanced-chat | ✅ Done | `f6b1cdf`+ |
 | 4b-3c — vue-beautiful-chat | ✅ Done | `8597a15`+ |
-| 4b-4 — The flip: Vue 3 + Vuetify 3 | Not started | |
-| 4c — Pinia + Apollo Client 3 | Not started | |
+| 4b-4 — The flip: Vue 3 + Vuetify 3 | ✅ Done | `cfa820a`+ |
+| 4b-5 — Vuetify 3 layout polish | Not started | |
+| 4c — Pinia (Apollo Client 3 landed in 4b-4) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
 ✅ No known regressions are open. The "flyer card photos blank" report was
@@ -1187,6 +1188,152 @@ handled) and typing an emoji works; only the picker widget is gone.
 > above and the App.vue wiring is locked by tests, but the live subscription
 > round-trip has not been run. **Worth a manual pass before 4b-4**, alongside
 > the flyer designer.
+
+---
+
+## Phase 4b-4 — the flip ✅
+
+**The app runs on Vue 3.5.41 + Vuetify 3.13.1.** Build, lint and 112 tests are
+green, it boots against live Atlas, renders real data, and logs **no Vue or
+Vuetify warnings at all**.
+
+### What went in
+
+| | From | To |
+|---|---|---|
+| Framework | vue 2.6 | **vue 3.5.41** |
+| UI | vuetify 2.5 | **vuetify 3.13.1** + `vite-plugin-vuetify` |
+| Router | vue-router 3 | **vue-router 4.6** |
+| Store | vuex 3 | **vuex 4.1** |
+| GraphQL | apollo-client 2 + vue-apollo 3 | **@apollo/client 3.14 + @vue/apollo-option 4.2** |
+| Vite plugin | @vitejs/plugin-vue2 | **@vitejs/plugin-vue 6** |
+| Cropper / draggable / qrcode | Vue 2 majors | their Vue 3 majors |
+| sass | ~1.32 (pinned in Phase 0) | ^1.77 — Vuetify 3 needs `math.div` |
+
+`src/apollo/graphqlWsLink.js` is **deleted**. It existed only because Apollo
+Client 2 had no graphql-ws link; the official
+`@apollo/client/link/subscriptions` replaces it, wrapping the same graphql-ws
+client. That was flagged for deletion back in Phase 3a.
+
+### The bundle win
+
+**JS 2,456 kB → 2,158 kB**, below the 2.18 MB webpack figure the notes hoped
+to recover. `vite-plugin-vuetify` restores the per-component auto-import that
+Phase 4a-ii had to give up when it fell back to Vuetify 2's full build — that
+fallback is what pushed the bundle to 2.88 MB, and it is now undone. CSS is
+695 kB and now tree-shaken per component rather than shipped whole.
+
+Dependencies 52 → **47**. Vulnerabilities 50 → **41**.
+
+### The mechanical half
+
+Codemods, with counts, because the scale is the point — 353 colour helpers and
+~600 prop rewrites are not hand work:
+
+| | |
+|---|---|
+| `x--text` → `text-x` | 353 |
+| activator slots `{ on, attrs }` → `{ props }`, `v-on="on"` → `v-bind="props"` | 141 |
+| `v-btn` `text`/`depressed`/`outlined` → `variant`, `small`/`large` → `size` | 308 |
+| `dark` → `theme="dark"` | 103 |
+| `dense` → `density="compact"` | 171 |
+| `v-img contain` (now the default) | 69 |
+| `v-list-item-icon`/`-avatar`/`-action` → `#prepend`/`#append` slots | 31 |
+| `v-simple-table`→`v-table`, `v-tab-item`→`v-window-item`, panel header/content → title/text | 40 |
+| `beforeDestroy` → `beforeUnmount`, `destroyed` → `unmounted` | 6 |
+| `slot="loader"` → `<template #loader>` | 13 |
+
+### Where the codemods were wrong, and how that was caught
+
+Worth recording, because "run a regex over 43 components" is exactly the move
+that quietly breaks things:
+
+1. **The `--text` rule matched a CSS class.** `sc-message--text-content` became
+   `sc-text-message-content`, silently breaking the styling contract between
+   GuildChat.vue and App.vue's `!important` colour rule. Caught by auditing
+   every `text-*` token the codemod produced against the known theme and
+   material palettes, rather than by trusting the run.
+2. **Theme colours do not take lighten/darken in Vuetify 3.** `primary--text
+   text--lighten-1` became `text-primary-lighten-1`, which does not exist —
+   only the material palette gets those variants. 63 sites corrected to plain
+   `text-<colour>`.
+3. **The slot conversion dropped attributes**, including two `v-if`s on
+   mutually exclusive avatars in the AI chat list. Found by diffing which
+   removed tags had carried attributes at all — only 2 of 31 had.
+4. **`#C9C9C9--text`** became `#text-C9C9C9`. Neither is real: Vuetify has never
+   had hex colour helpers, so this styled nothing in Vuetify 2 either. Left as
+   a no-op rather than "fixed", since inventing a colour would be a visual
+   change smuggled into a migration.
+
+### The things a codemod could not do
+
+- **`v-list-group` activators.** Vuetify 3 hands the activator `props` that must
+  be bound to a `v-list-item` wrapping the content; the codemod had produced
+  `<template #prepend>` nested directly inside `<template v-slot:activator>`,
+  which crashes the compiler with the famously unhelpful *"Codegen node is
+  missing for element/if/for node"*. 3 blocks restructured by hand.
+- **`v-model` on a prop.** Vue 2 allowed writing through with a warning; the
+  Vue 3 compiler rejects it. `Signin.vue` bound the dialog to its own `signIn`
+  prop — the parent already drove visibility and already listened for
+  `closeSignIn`, so this became the one-way binding it always should have been.
+- **Two malformed expressions Vue 2 tolerated**: `{{specItem,}}` and `{{  }}` in
+  ManageGuildDeals.vue. Vue 3 parses expressions with a real JS parser.
+- **`<template v-for>` keys** moved onto the template, where Vue 3 wants them.
+- **`vue-demi` shipped its Vue 2 entry**, because vue-masonry's postinstall ran
+  before vue 3 was installed. `postinstall: vue-demi-switch 3` pins it.
+
+### Apollo Client 3 freezes query results
+
+The one runtime break that a green build would not have caught, and it took
+down the home page: **Apollo Client 3 freezes what queries and `readQuery`
+return.** Apollo 2 did not, and this codebase mutated results in place in three
+places:
+
+- `data.getRestaurantCategory.items.sort()` — sorts a copy now
+- the `feedPet` cache update — pushed, spliced and `+=`'d its way through a
+  frozen resident; rebuilt as new objects
+- the `stashFlyer` cache update — spliced the array to empty then pushed each
+  item back; replaced wholesale, which is what it amounted to
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **112 tests**, production build.
+- ESLint moved from `plugin:vue/essential` to **`plugin:vue/vue3-essential`** —
+  same "correctness only, no style" tier, but Vue 3 semantics. Two tests that
+  locked Vue 2 invariants were retired: `.native` is now gone entirely, and the
+  components written with both `beforeDestroy` and `beforeUnmount` for the
+  straddle are down to the Vue 3 name.
+- In the browser against live Atlas: the app boots, the city hall bar reads
+  `2,320,618 / 75 / 100`, flyer cards render their photography and vendor logos,
+  the Google map draws with its markers, the vendor detail panel populates, and
+  the search autocomplete works. `#app.__vue_app__.version` reports **3.5.41**.
+  **Zero Vue or Vuetify warnings.**
+
+### Phase 4b-5 — what is left, and it is only layout
+
+Nothing is broken; some things are ugly. Vuetify 3 changed spacing and card
+internals, so:
+
+- **Flyer card text overlaps its neighbour** in the masonry grid — tile heights
+  are measured before the card settles.
+- **Card date lines are missing** on some cards.
+- One fix already made, as an example of the class: the `sort by` column is
+  `position: fixed` with `cols="1"`, so it only ever had a max-width of ~76px.
+  Vuetify 2's radio label overflowed that happily; Vuetify 3 puts the label
+  inside the control's flex row, where it shrank to 12px and wrapped one
+  character per line. Given an explicit `min-width`.
+- The Vuetify 3 rewrites the codemods **deliberately did not attempt** —
+  `v-data-table` (9), `v-date-picker` (9), `v-stepper` (20), `v-data-iterator`
+  (5), `v-time-picker` (4, and not in Vuetify 3 core — it is in `vuetify/labs`),
+  `v-overlay` (4). These need real API work, not renames, and every one of them
+  is behind a route this session could not exercise.
+
+> **Still not verified, and now more urgent:** the vendor flyer designer and
+> guild chat are both behind authentication, so neither the QuillEditor from
+> 4b-3b nor the GuildChat from 4b-3c has been exercised in its real screen —
+> and both have now also been through the Vue 3 flip. Along with the
+> data-table, stepper and picker screens above, these want **a manual pass with
+> a vendor account and a guild resident** before Phase 4b is called finished.
 
 ---
 

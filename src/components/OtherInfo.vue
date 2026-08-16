@@ -2,8 +2,8 @@
     <v-card flat>
         <v-card-text>
             <v-card outlined flat>
-                <v-card-subtitle class=" font-weight-bold fontColor--text text--darken-3 text-subtitle-2">About Us</v-card-subtitle>
-                <v-card-text><p class="fontColor--text text--darken-1">{{aboutUs}}</p></v-card-text>
+                <v-card-subtitle class=" font-weight-bold text-fontColor text-subtitle-2">About Us</v-card-subtitle>
+                <v-card-text><p class="text-fontColor">{{aboutUs}}</p></v-card-text>
             </v-card>
             <v-card outlined flat >
                 <v-card-subtitle>Location and Hours</v-card-subtitle>
@@ -16,18 +16,15 @@
                             class="pa-1"
                         ></div>
                         <!-- <div> -->
-                        <v-textarea  
-                        outlined 
+                        <v-textarea variant="outlined"  
                         v-model="comments" 
                         label="Customer Comments" 
                         placeholder="thank you for your commentary!"
                         v-if="resident"
                         class="py-1"></v-textarea>
-                        <v-btn  
+                        <v-btn variant="flat"  
                         class="d-inline-block mt-n8" 
-                        color='primary' 
-                        depressed 
-                        small 
+                        color='primary' size="small" 
                         right 
                         :disabled="!comments"
                         v-if="resident" 
@@ -35,18 +32,18 @@
                         <!-- </div> -->
                     </v-col>
                     <v-col cols="6" class="flex-column justify-space-around align-center">
-                        <v-row class="my-2 ml-2 fontColor--text text--darken-2">Address: {{businessStreetNo + ' ' 
+                        <v-row class="my-2 ml-2 text-fontColor">Address: {{businessStreetNo + ' ' 
                                 + businessStreetName 
                                 + ', ' + businessCity 
                                 + ' ' + businessState 
                                 + ', ' + businessPostalCode}}</v-row>
                         <v-divider></v-divider>
-                        <v-row class="my-2 ml-2 fontColor--text text--darken-2">Phone: &nbsp;<span v-for="(phone, i) in businessPhone" :key="i"> {{ phone}} </span></v-row>
-                        <v-row class="my-2 ml-2 fontColor--text text--darken-2">Fax:&nbsp; {{businessFax?businessFax:''}}</v-row>
-                        <v-row class="my-2 ml-2 fontColor--text text--darken-2">{{`Email:&nbsp; ${businessEmail}`}}</v-row>
-                        <v-row class="my-2 ml-2 fontColor--text text--darken-2">Website:&nbsp; <a :href="website">{{website?website:''}}</a></v-row>
+                        <v-row class="my-2 ml-2 text-fontColor">Phone: &nbsp;<span v-for="(phone, i) in businessPhone" :key="i"> {{ phone}} </span></v-row>
+                        <v-row class="my-2 ml-2 text-fontColor">Fax:&nbsp; {{businessFax?businessFax:''}}</v-row>
+                        <v-row class="my-2 ml-2 text-fontColor">{{`Email:&nbsp; ${businessEmail}`}}</v-row>
+                        <v-row class="my-2 ml-2 text-fontColor">Website:&nbsp; <a :href="website">{{website?website:''}}</a></v-row>
                         <v-divider></v-divider>
-                        <v-row v-for="(hour, i) in businessHours" :key="i" class="my-2 ml-2 fontColor--text text--darken-2">{{`${hour.weekDay}: ${hour.time}`}}</v-row>
+                        <v-row v-for="(hour, i) in businessHours" :key="i" class="my-2 ml-2 text-fontColor">{{`${hour.weekDay}: ${hour.time}`}}</v-row>
                     </v-col>
                     </v-row>
                     

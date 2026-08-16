@@ -13,26 +13,24 @@
       v-if="residentOrders.length>0"
     >
       <template v-slot:header>
-        <v-toolbar dark flat dense rounded color="primary" class="mb-1">
+        <v-toolbar theme="dark" flat density="compact" rounded color="primary" class="mb-1">
           <v-toolbar-title class="text-h6">Orders</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-text-field
+          <v-text-field variant="solo"
             v-model="searchStatus"
             clearable
-            flat
-            dense
-            solo-inverted
+            flat density="compact" -inverted
             hide-details
             prepend-inner-icon="mdi-magnify"
             label="Search"
           ></v-text-field>
-          <template v-if="$vuetify.breakpoint.mdAndUp">
+          <template v-if="$vuetify.display.mdAndUp">
             <v-spacer></v-spacer>
             <v-btn-toggle v-model="sortDesc" mandatory>
-              <v-btn small depressed color="primary lighten-1" :value="false">
+              <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
                 <v-icon>mdi-arrow-up</v-icon>
               </v-btn>
-              <v-btn small depressed color="primary lighten-1" :value="true">
+              <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
                 <v-icon>mdi-arrow-down</v-icon>
               </v-btn>
             </v-btn-toggle>
@@ -53,40 +51,40 @@
             <!-- iterated items -->
             <v-card class="pa-0" @click="showOrderDetails(item)">
               <v-card-title>
-                <v-img :src="item.orderItems[0].photo" contain v-if='item.orderItems.length>0'></v-img>
+                <v-img :src="item.orderItems[0].photo" v-if='item.orderItems.length>0'></v-img>
               </v-card-title>
               <v-card-text>
                 <v-col>
-                  <span class="d-block fontColor--text  font-weight-bold text-caption  " 
+                  <span class="d-block text-fontColor  font-weight-bold text-caption  " 
                     >Order: &nbsp;{{ item.orderNo }}</span
                   ><br />
-                  <span class="d-block fontColor--text text-body-2">Sold by: &nbsp;{{ item.vendor }}</span
+                  <span class="d-block text-fontColor text-body-2">Sold by: &nbsp;{{ item.vendor }}</span
                   ><br />
-                  <span class="d-block fontColor--text text-body-2" v-if="item.deliveryType == 'pickup'"
+                  <span class="d-block text-fontColor text-body-2" v-if="item.deliveryType == 'pickup'"
                     >Pick Up at: &nbsp;{{ item.pickupAddress }}</span
                   >
-                  <span class="d-block fontColor--text text-body-2" v-else
+                  <span class="d-block text-fontColor text-body-2" v-else
                     >Ship to: &nbsp;{{ item.deliveryAddress }}</span
                   ><br />
-                  <span class="fontColor--text text-body-2"
+                  <span class="text-fontColor text-body-2"
                     >{{
                       totalItemCount(item.orderItems)
                     }}&nbsp;item{{totalItemCount(item.orderItems)>1?'s':' '}}</span><br/>
-                  <span class="accent--text text-body-2 text-center" v-if="item.impending&&!item.isCanceled">
+                  <span class="text-accent text-body-2 text-center" v-if="item.impending&&!item.isCanceled">
                     Impending Order&nbsp;&nbsp;<v-btn icon color="accent" @click.stop="finalizeOrder(item)"><v-icon>mdi-pencil-box</v-icon></v-btn></span><br/>
-                <v-btn x-small text plain color="primary" v-if="item.isGameSubstitueBuy" >game purchase</v-btn>
+                <v-btn variant="text" x-small  color="primary" v-if="item.isGameSubstitueBuy" >game purchase</v-btn>
                 </v-col>
               </v-card-text>
               <v-card-actions>
                 <!-- <v-spacer></v-spacer> -->
-                <span class="fontColor--text text--darken-2 text-caption ml-3"
+                <span class="text-fontColor text-caption ml-3"
                   >{{ $filters.convertCustomerRatingTime(item.date) }}&nbsp;
-                <v-btn x-small text plain color="primary" v-if="canCancel(item)&&!item.isGameSubstitueBuy" @click.stop="cancel(item)">Cancel</v-btn>
-                <v-btn x-small text plain color="primary" v-if="!canCancel(item)&&!item.impending&&!item.isGameSubstitueBuy&&!item.isUnderDispute&&!item.isCanceled" @click.stop="dispute(item)">Dispute</v-btn>
-                <v-btn x-small text plain color="primary" v-if="!canCancel(item)&&!item.impending&&!item.isGameSubstitueBuy&&item.isUnderDispute&&!item.isCanceled" @click.stop="cancelDispute(item)">Cancel Dispute</v-btn>
-                <v-btn x-small text plain color="secondary" v-if="item.isConfirmed" >Confirmed</v-btn>
-                <v-btn x-small text plain color="secondary" v-if="item.isConfirmed&&item.isFood" >Filled</v-btn>
-                <v-btn x-small text plain color="accent" v-if="item.isCanceled" >Canceled</v-btn></span>
+                <v-btn variant="text" x-small  color="primary" v-if="canCancel(item)&&!item.isGameSubstitueBuy" @click.stop="cancel(item)">Cancel</v-btn>
+                <v-btn variant="text" x-small  color="primary" v-if="!canCancel(item)&&!item.impending&&!item.isGameSubstitueBuy&&!item.isUnderDispute&&!item.isCanceled" @click.stop="dispute(item)">Dispute</v-btn>
+                <v-btn variant="text" x-small  color="primary" v-if="!canCancel(item)&&!item.impending&&!item.isGameSubstitueBuy&&item.isUnderDispute&&!item.isCanceled" @click.stop="cancelDispute(item)">Cancel Dispute</v-btn>
+                <v-btn variant="text" x-small  color="secondary" v-if="item.isConfirmed" >Confirmed</v-btn>
+                <v-btn variant="text" x-small  color="secondary" v-if="item.isConfirmed&&item.isFood" >Filled</v-btn>
+                <v-btn variant="text" x-small  color="accent" v-if="item.isCanceled" >Canceled</v-btn></span>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -97,25 +95,19 @@
         <v-row class="mt-2" align="center" justify="center">
           <v-spacer></v-spacer>
 
-          <span class="mr-4 grey--text">
+          <span class="mr-4 text-grey">
             Page {{ page }} of {{ numberOfPages }}
           </span>
-          <v-btn
-            fab
-            dark
-            depressed
+          <v-btn variant="flat" icon
+            theme="dark" 
             color="primary"
             class="mr-1"
-            @click="formerPage"
-            small
+            @click="formerPage" size="small"
           >
             <v-icon>mdi-chevron-left</v-icon>
           </v-btn>
-          <v-btn
-            small
-            fab
-            depressed
-            dark
+          <v-btn variant="flat" size="small" icon 
+            theme="dark"
             color="primary"
             class="ml-1"
             @click="nextPage"
@@ -144,7 +136,7 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
+          theme="dark"
         >
           <v-toolbar-title>Dispute Order</v-toolbar-title>
 
@@ -155,11 +147,10 @@
           </v-btn>
         </v-toolbar>
        
-        <v-card-subtitle class="accent--text text-subtitle-1 mt-3" >From:&nbsp;{{disputeOrder.vendor}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-subtitle-1 mt-3" >From:&nbsp;{{disputeOrder.vendor}}</v-card-subtitle>
        <v-card-text>
           <v-text-field
-          label="Title"
-          dense
+          label="Title" density="compact"
           type="text"
           v-model="disputeTitle"
           clearable
@@ -168,11 +159,10 @@
        </v-card-text>
         <v-card  flat >
           <v-card-text>
-              <v-textarea
+              <v-textarea variant="filled"
                 shaped
                 auto-grow
-                v-model="disputeContent"
-                filled
+                v-model="disputeContent" 
                 placeholder="Text"
                 clearable
                 lg='12'
@@ -193,8 +183,8 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
-          dense
+          theme="dark"
+          density="compact"
           flat
         >
           <v-toolbar-title class="text-subtitle-2">Cancel Order&nbsp;{{orderToCancel.orderNo}} </v-toolbar-title>
@@ -204,21 +194,21 @@
         <v-col class="ma-auto">
          
          
-          <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
+          <span class="ma-1 d-block text-right text-fontColor text-subtitle-2 font-weight-bold"
             >subtotal:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.totalAmount -  orderToCancel.totalDiscount) }}</span>
          
          
-          <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
+          <span class="ma-1 d-block text-right text-fontColor text-subtitle-2 font-weight-bold"
             >shipping:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.shipping) }}</span>
          
-          <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
+          <span class="ma-1 d-block text-right text-fontColor text-subtitle-2 font-weight-bold"
             >tax:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.tax + orderToCancel.shipping * 0.13) }}</span>
          
-          <span class="ma-1 d-block text-right accent--text text--darken-1 text-subtitle-2 font-weight-bold"
+          <span class="ma-1 d-block text-right text-accent text-subtitle-2 font-weight-bold"
             >total:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.totalAmount-orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13) }}</span>
          
           <!-- <v-spacer></v-spacer><span>Paid By:&nbsp;${{orderDetails.totalAmount.toFixed(2)}}</span> -->
-          <v-toolbar dark dense flat height="30" rounded color="primary lighten-2"
+          <v-toolbar theme="dark" density="compact" flat height="30" rounded color="primary lighten-2"
             >
             <v-spacer></v-spacer>
             <v-toolbar-title class="text-subtitle-1 font-weight-bold text-center" 
@@ -226,19 +216,19 @@
               </v-toolbar-title>
             <v-spacer></v-spacer>
               </v-toolbar>
-          <span class=" d-block ma-1 text-right secondary--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
+          <span class=" d-block ma-1 text-right text-secondary text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
             >Boundary Silver Converted From Payment:&nbsp;{{ $filters.formatIntAmount(Math.round((orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13)* 1000 - orderToCancel.silverSpand)) }}</span>
-          <span class=" d-block ma-1 text-right secondary--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
+          <span class=" d-block ma-1 text-right text-secondary text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
             >Boundary Silver Spand:&nbsp;{{ $filters.formatIntAmount(orderToCancel.silverSpand) }}</span>
-          <span class=" d-block ma-1 text-right warning--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
+          <span class=" d-block ma-1 text-right text-warning text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
             >Boundary Silver Rewarded After Deduction:&nbsp;-&nbsp;{{ $filters.formatIntAmount(Math.round(orderToCancel.totalRewardSilver * 1.1)) }}</span>
-          <span class="ma-1 d-block text-right warning--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
+          <span class="ma-1 d-block text-right text-warning text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
             >Cancellation Fees&nbsp;-&nbsp;{{ $filters.formatIntAmount(Math.round(cancelFees) * 1000) }}</span>
-          <span class="ma-1 d-block text-right secondary--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
+          <span class="ma-1 d-block text-right text-secondary text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
             >Boundary Silver Refund&nbsp;{{ $filters.formatIntAmount(Math.round((orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13)* 1000 - orderToCancel.totalRewardSilver * 1.1 - cancelFees * 1000)) }}</span>
-          <span class="ma-1 d-block text-right warning--text text-caption" v-if="!orderToCancel.silverSpand>0&&!orderToCancel.totalRewardSilver>0"
+          <span class="ma-1 d-block text-right text-warning text-caption" v-if="!orderToCancel.silverSpand>0&&!orderToCancel.totalRewardSilver>0"
             >Cancellation Fees&nbsp;-&nbsp;{{ $filters.formatCurrencyAmount(cancelFees) }}</span>
-          <span class="ma-1 d-block text-right secondary--text text-caption" v-if="!orderToCancel.silverSpand>0&&!orderToCancel.totalRewardSilver>0"
+          <span class="ma-1 d-block text-right text-secondary text-caption" v-if="!orderToCancel.silverSpand>0&&!orderToCancel.totalRewardSilver>0"
             >Refund&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13 - cancelFees) }}&nbsp;To&nbsp;{{ orderToCancel.paymentMethod }}</span>
           
           
@@ -252,8 +242,8 @@
       </v-card-text>
       <v-card-actions >
         <v-spacer></v-spacer>
-        <v-btn small depressed  color="primary" @click="confirmCancel" class="mb-3">confirm</v-btn>
-        <v-btn  small text  plain  color="primary" @click="cancelCancel" class="mb-3">abort</v-btn>
+        <v-btn variant="flat" size="small"   color="primary" @click="confirmCancel" class="mb-3">confirm</v-btn>
+        <v-btn variant="text" size="small"   color="primary" @click="cancelCancel" class="mb-3">abort</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
         
@@ -266,9 +256,9 @@
             <v-card-text>
                 <!-- <v-img src="/images(2).jpeg" max-height="200" max-width="200"></v-img> -->
                 <!-- <v-img src="/images.jpeg" max-height="200" max-width="200"></v-img> -->
-              <v-img src="https://www.animatedimages.org/data/media/1802/animated-office-worker-image-0071.gif" height="200" contain width="200" class="ma-auto"></v-img>
+              <v-img src="https://www.animatedimages.org/data/media/1802/animated-office-worker-image-0071.gif" height="200" width="200" class="ma-auto"></v-img>
               <v-row class="mt-5">
-                  <span class="text-h3 shade4--text font-weight-bold mx-auto">Ordering ...</span>
+                  <span class="text-h3 text-shade4 font-weight-bold mx-auto">Ordering ...</span>
               </v-row>
             </v-card-text>
     </v-card>

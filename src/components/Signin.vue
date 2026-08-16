@@ -1,6 +1,11 @@
 <template>
+  <!-- `signIn` is a prop. Vue 2 allowed v-model to write through to it with a
+       warning; the Vue 3 compiler rejects it outright. The parent already
+       drives visibility and already listens for closeSignIn, so this is the
+       one-way binding it always should have been. -->
   <v-dialog
-    v-model="signIn"
+    :model-value="signIn"
+    @update:model-value="$emit('closeSignIn')"
     class="mt-0"
     :width="(viewportWidth * 4) / 10"
     persistent
@@ -30,10 +35,10 @@
     </v-row> -->
 
     <v-card :max-height="(viewportHeight * 10) / 10" rounded="5">
-     <v-btn absolute top right small icon  dark  @click="$emit('closeSignIn')" >
-          <v-icon dark>mdi-close</v-icon>
+     <v-btn absolute top right size="small" icon  theme="dark"  @click="$emit('closeSignIn')" >
+          <v-icon theme="dark">mdi-close</v-icon>
         </v-btn>
-      <v-card-title class="text-h6 primary white--text" >
+      <v-card-title class="text-h6 primary text-white" >
         welcome back!
       </v-card-title>
 
@@ -99,17 +104,16 @@
 
                 <v-row justify="center">
                   <!-- <v-col cols="12"> -->
-                  <v-btn
+                  <v-btn variant="flat"
                     :loading="loading"
                     :disabled="!isFormValid || loading"
                     color="primary lighten-1"
                     type="submit"
-                    right
-                    depressed
+                    right 
                   >
-                    <span slot="loader" class="custom-loader">
+                    <template #loader><span class="custom-loader">
                       <v-icon>cached</v-icon>
-                    </span>
+                    </span></template>
                     Sign In
                   </v-btn>
 
@@ -121,7 +125,7 @@
                   <div
                     color="primary"
                     @click="$emit('handleSignUp')"
-                    class="text-center primary--text mt-3"
+                    class="text-center text-primary mt-3"
                   >
                     don't have an account?
                     <span
@@ -131,7 +135,7 @@
                         font-size: 1.25em;
                         font-weight: bold;
                       "
-                      class="accent--text text--lighten-1 text-subtitle-2"
+                      class="text-accent text-subtitle-2"
                     >
                       Signup
                     </span>

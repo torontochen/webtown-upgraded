@@ -21,7 +21,7 @@
       <!-- <v-col cols="12"> -->
         <v-container>
           <v-card>
-            <v-card-title class="headline primary  white--text">
+            <v-card-title class="headline primary  text-white">
               Who am I
             </v-card-title>
             <v-container>
@@ -40,8 +40,7 @@
                             :rules="postalCodeRules"
                             label="Postal Code"
                             placeholder=""
-                            required
-                            dense
+                            required density="compact"
                             hint="Postal Code Of Any Favorite Places in GTA such as Residence, Work Place..."
                             type="text"
                             v-model="postalCode"
@@ -58,13 +57,12 @@
                       <v-container>
                         <v-row>
                           <v-col cols="12">
-                            <v-row class="primary--text text-subtitle-1 font-weight-bold my-3">
+                            <v-row class="text-primary text-subtitle-1 font-weight-bold my-3">
                                <!-- <v-text-field
                               :rules="residentNameRules"
                               label="Resident Name"
                               placeholder=""
-                              required
-                              dense
+                              required density="compact"
                               hint="Resident Name Has To Be 4 Characters At Least"
                               type="text"
                               v-model="residentName"
@@ -74,14 +72,13 @@
                               :value="residentName"
                             >
                             </v-text-field> -->
-                           Resident Name: <span class="text-subtitle-1 font-weight-bold fontColor--text mx-2">{{residentName}}</span>
+                           Resident Name: <span class="text-subtitle-1 font-weight-bold text-fontColor mx-2">{{residentName}}</span>
                             </v-row>
                             <v-row>
                                <v-text-field
                                   :rules="nickNameRules"
                                   label="Resident Nick Name"
-                                  required
-                                  dense
+                                  required density="compact"
                                   hint="Nick Name has to be different from Resident Name"
                                   type="text"
                                   v-model="nickName"
@@ -99,7 +96,7 @@
                             <v-col cols="12">
                               <v-row justify="start">
                                 <span
-                                  class="text-subtitle-1 font-weight-medium primary--text"
+                                  class="text-subtitle-1 font-weight-medium text-primary"
                                 >
                                   Change Password ?
                                   <v-icon
@@ -118,7 +115,7 @@
                             <v-col cols="12">
                               <v-row justify="start">
                                 <span
-                                  class="text-subtitle-1 font-weight-medium primary--text"
+                                  class="text-subtitle-1 font-weight-medium text-primary"
                                 >
                                   Change Avatar ?
                                   <v-icon
@@ -154,8 +151,7 @@
                                   placeholder=""
                                   type="password"
                                   v-model.trim="password"
-                                  required
-                                  dense
+                                  required density="compact"
                                   counter="8"
                                   class="my-1"
                                 >
@@ -168,8 +164,7 @@
                                   type="password"
                                   required
                                   counter="8"
-                                  class="my-1"
-                                  dense
+                                  class="my-1" density="compact"
                                 >
                                 </v-text-field>
                               </v-col>
@@ -187,9 +182,9 @@
                     <v-col cols="12">
                       <!-- Personal Info -->
                       <!-- <v-tooltip top> -->
-                        <!-- <template v-slot:activator="{ on }"> -->
+                        <!-- <template v-slot:activator="{ props }"> -->
                           <v-card outlined >
-                            <v-card-title class="primary--text"
+                            <v-card-title class="text-primary"
                               >Personal Info</v-card-title
                             >
                             <v-container>
@@ -198,8 +193,7 @@
                                   <v-text-field
                                     label="First Name"
                                     placeholder=""
-                                    required
-                                    dense
+                                    required density="compact"
                                     type="text"
                                     v-model="firstName"
                                     clearable
@@ -213,17 +207,14 @@
                                     required
                                     type="text"
                                     v-model="lastName"
-                                    clearable
-                                    dense
+                                    clearable density="compact"
                                   >
                                   </v-text-field>
                                 </v-col>
                                 <v-col cols="3">
-                                  <v-select
+                                  <v-select variant="outlined"
                                     :items="genderItems"
-                                    label="Gender"
-                                    outlined
-                                    dense
+                                    label="Gender" density="compact"
                                     v-model="gender"
                                   ></v-select>
                                 </v-col>
@@ -236,13 +227,12 @@
                                     offset-y
                                     min-width="290"
                                   >
-                                    <template v-slot:activator="{ on }">
+                                    <template v-slot:activator="{ props }">
                                       <v-text-field
                                         v-model="birthday"
                                         label="Birthday date"
                                         prepend-icon="event"
-                                        v-on="on"
-                                        dense
+                                        v-bind="props" density="compact"
                                       ></v-text-field>
                                     </template>
                                     <v-date-picker
@@ -265,8 +255,7 @@
                                     label="Hobbies"
                                     multiple
                                     small-chips
-                                    clearable
-                                    dense
+                                    clearable density="compact"
                                     deletable-chips
                                     hint="detailed hobbies info will bring you more benefits"
                                     persistent-hint
@@ -278,8 +267,7 @@
                                     :items="favoriteFood"
                                     small-chips
                                     label="Favorite Food"
-                                    multiple
-                                    dense
+                                    multiple density="compact"
                                     deletable-chips
                                      hint="detailed favorite food info will bring you more benefits"
                                     persistent-hint
@@ -292,13 +280,12 @@
                                     :items="religions"
                                     small-chips
                                     label="Religion"
-                                    clearable
-                                    dense
+                                    clearable density="compact"
                                   ></v-select>
                                 </v-col>
                               </v-row>
                               <v-alert
-                                dense
+                                density="compact"
                                 outlined
                                 type="warning"
                                 :value="personalInfo"
@@ -319,9 +306,9 @@
                   <v-row justify="center">
                     <v-col cols="12">
                       <!-- <v-tooltip top>
-                        <template v-slot:activator="{ on }"> -->
+                        <template v-slot:activator="{ props }"> -->
                           <v-card  outlined>
-                            <v-card-title class="primary--text"
+                            <v-card-title class="text-primary"
                               >Mailing Address</v-card-title
                             >
                             <v-container>
@@ -332,14 +319,12 @@
                                     required
                                     type="text"
                                     v-model="mailStrAddress"
-                                    clearable
-                                    dense
+                                    clearable density="compact"
                                   ></v-text-field> -->
                                    <v-text-field
                                       id="mail_address"
                                       label="Address in GTA (ex: 247 Sheppard Ave. East)"
-                                      required
-                                      dense
+                                      required density="compact"
                                       :rules="mailAddressRules"
                                       type="text"
                                       v-model="mailStrAddress"
@@ -353,15 +338,13 @@
                                     label="City"
                                     type="text"
                                     v-model="mailCity"
-                                    clearable
-                                    dense
+                                    clearable density="compact"
                                   ></v-text-field> -->
                                   <v-select 
                                   :items="regions" 
                                   label="City"  
                                   readonly
-                                  v-model="mailCity" 
-                                  dense></v-select>
+                                  v-model="mailCity" density="compact"></v-select>
                                 </v-col>
 
                                 <v-col cols="2">
@@ -370,8 +353,7 @@
                                     type="text"
                                     placeholder="Ontario, Canada"
                                     readonly
-                                    value="Ontario, Canada"
-                                    dense
+                                    value="Ontario, Canada" density="compact"
                                   ></v-text-field>
                                 </v-col>
 
@@ -384,14 +366,13 @@
                                     type="text"
                                     v-model="mailPostalCode"
                                     readonly
-                                    counter="7"
-                                    dense
+                                    counter="7" density="compact"
                                   >
                                   </v-text-field>
                                 </v-col>
                               </v-row>
                               <v-alert
-                                dense
+                                density="compact"
                                 outlined
                                 type="warning"
                                 :value="mailingInfo"
@@ -412,9 +393,9 @@
                   <v-row justify="start">
                     <v-col cols="6">
                       <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <v-card outlined hover v-on="on">
-                            <v-card-title class="primary--text"
+                        <template v-slot:activator="{ props }">
+                          <v-card outlined hover v-bind="props">
+                            <v-card-title class="text-primary"
                               >Adopt a Pet</v-card-title
                             >
                             <!-- <v-container> -->
@@ -437,7 +418,7 @@
                                 :value="pet.petName"
                               >
                                 <v-tooltip bottom color="primary lighten-1">
-                                  <template v-slot:activator="{ on }">
+                                  <template v-slot:activator="{ props }">
                                     <v-card
                                       :color="
                                         active ? 'primary' : 'primary lighten-4'
@@ -446,7 +427,7 @@
                                       height="200"
                                       width="100"
                                       @click="toggle"
-                                      v-on="on"
+                                      v-bind="props"
                                     >
                                       <!-- @hover="introShow = true" -->
                                       <v-row
@@ -496,12 +477,12 @@
                        <transition-group name="fade-down" v-if="!resident.profileFilled">
                           <span
                             style="right: 40px; bottom: 200px; position: absolute"
-                            class="text-h5 silver--text font-weight-bold"
+                            class="text-h5 text-silver font-weight-bold"
                             key="2"
                             v-if="tranStart"
                             >
                             <v-img src="/static/animated-money-image-0013.gif" 
-                            height="60" width="60" contain class="ml-5" />
+                            height="60" width="60" class="ml-5" />
                              <v-img 
                             src="/static/animated-treasure-image-0041.gif" 
                             height="80" width="80" class="ma-auto" v-if="tranStart"></v-img> 
@@ -514,34 +495,27 @@
                   <v-row>
                     <v-col cols="12">
                       <v-row justify="end">
-                        <v-btn
+                        <v-btn variant="flat"
                           :disabled="
                             loading ||
                             personalInfo ||
                             mailingInfo ||
                             !isFormValid
-                          "
-                          medium
-                          depressed
+                          "  
                           color="primary lighten-1"
                           type="submit"
                           class="d-inline-block mr-2"
                           @click="handleUpdateProfile"
                         >
-                          <span slot="loader" class="custom-loader">
+                          <template #loader><span class="custom-loader">
                             <v-icon>cached</v-icon>
-                          </span>
+                          </span></template>
                           Save
                         </v-btn>
-                        <v-btn
+                        <v-btn variant="text"
                           color="primary lighten-1"
-                          outlined
                           @click="handleCancel"
-                          class="d-inline-block mr-6 ml-1"
-                          depressed
-                          text
-                          plain
-                          medium
+                          class="d-inline-block mr-6 ml-1" 
                         >
                           Cancel
                         </v-btn>

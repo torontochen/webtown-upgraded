@@ -13,27 +13,24 @@
               hide-default-footer
             >
               <template v-slot:header>
-                <v-toolbar dark dense flat color="primary" class="mb-1">
+                <v-toolbar theme="dark" density="compact" flat color="primary" class="mb-1">
                 
           <v-toolbar-title class="text-h6"> Deals  Fulfillment Status</v-toolbar-title>
 
                   <v-spacer></v-spacer>
-                  <v-text-field
+                  <v-text-field variant="solo"
                     v-model="searchStatus"
                     clearable
-                    flat
-                    dense
-                    solo-inverted
+                    flat density="compact" -inverted
                     hide-details
                     prepend-inner-icon="mdi-magnify"
                     label="Search"
                   ></v-text-field>
-                  <template v-if="$vuetify.breakpoint.mdAndUp">
+                  <template v-if="$vuetify.display.mdAndUp">
                     <v-spacer></v-spacer>
-                    <!-- <v-select
+                    <!-- <v-select variant="solo"
                           v-model="sortBy"
-                          flat
-                          solo-inverted
+                          flat -inverted
                           hide-details
                           :items="keys"
                           prepend-inner-icon="mdi-magnify"
@@ -41,10 +38,10 @@
                         ></v-select>
                         <v-spacer></v-spacer> -->
                     <v-btn-toggle v-model="sortDesc" mandatory>
-                      <v-btn small depressed color="primary lighten-1" :value="false">
+                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
                         <v-icon>mdi-arrow-up</v-icon>
                       </v-btn>
-                      <v-btn small depressed color="primary lighten-1" :value="true">
+                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
                         <v-icon>mdi-arrow-down</v-icon>
                       </v-btn>
                     </v-btn-toggle>
@@ -63,8 +60,8 @@
                     lg="3"
                   >
                     <v-tooltip top color="#424242">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-card class="pa-2" v-bind="attrs" v-on="on" max-width="500">
+                      <template v-slot:activator="{ props }">
+                        <v-card class="pa-2" v-bind="props" max-width="500">
                           <v-card-subtitle>
                             <v-row class="d-flex align-center">
                               <v-col cols="4">
@@ -74,7 +71,7 @@
                               </v-col>
                               <v-col
                                 cols="8"
-                                class="text-subtitle-1 font-weight-bold accent--text"
+                                class="text-subtitle-1 font-weight-bold text-accent"
                               >
                                 {{ item.guild }}
                               </v-col>
@@ -88,13 +85,13 @@
 
                           <v-card-text>
                                <v-row no-gutters class="my-2">
-                                <v-col cols="12" class="text-body-2 accent--text">
+                                <v-col cols="12" class="text-body-2 text-accent">
                                      No:&nbsp;{{item.dealNo}}
                                 </v-col>
                                 
                             </v-row>
                             <v-row no-gutters class="my-2">
-                              <v-col cols="7" class="text-caption secondary--text"
+                              <v-col cols="7" class="text-caption text-secondary"
                                 >Type: {{ item.type }}&nbsp;
                                 <v-col
                                     cols="12"
@@ -110,7 +107,7 @@
                                     >
                                 </v-col>
                               </v-col>
-                              <v-col cols="5" class="pl-3 fontColor--text text--darken-2 text-caption"
+                              <v-col cols="5" class="pl-3 text-fontColor text-caption"
                                 >Redeem: {{ item.term }}</v-col>
                             </v-row>
 
@@ -118,7 +115,7 @@
                                 <v-col cols="9" class="text-caption">
                                      Amount:&nbsp;{{ $filters.formatCurrencyAmount(item.purchaseAmount) }}
                                 </v-col>
-                                <v-col cols="3" class="text-caption accent--text">
+                                <v-col cols="3" class="text-caption text-accent">
                                     {{item.active?'Active':'Expired'}}
                                 </v-col>
                             </v-row>
@@ -197,16 +194,13 @@
 
               <template v-slot:footer>
                 <v-row class="mt-2" align="center" justify="center">
-                  <!-- <span class="grey--text">Items per page</span>
+                  <!-- <span class="text-grey">Items per page</span>
                       <v-menu offset-y>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            dark
-                            text
+                        <template v-slot:activator="{ props }">
+                          <v-btn variant="text"
+                            theme="dark" 
                             color="primary"
-                            class="ml-2"
-                            v-bind="attrs"
-                            v-on="on"
+                            class="ml-2" v-bind="props"
                           >
                             {{ itemsPerPage }}
                             <v-icon>mdi-chevron-down</v-icon>
@@ -225,25 +219,19 @@
 
                   <v-spacer></v-spacer>
 
-                  <span class="mr-4 grey--text">
+                  <span class="mr-4 text-grey">
                     Page {{ page }} of {{ numberOfPages }}
                   </span>
-                  <v-btn
-                    fab
-                    dark
-                    depressed
+                  <v-btn variant="flat" icon
+                    theme="dark" 
                     color="primary"
                     class="mr-1"
-                    @click="formerPage"
-                    small
+                    @click="formerPage" size="small"
                   >
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
-                  <v-btn
-                    small
-                    fab
-                    dark
-                    depressed
+                  <v-btn variant="flat" size="small" icon
+                    theme="dark" 
                     color="primary"
                     class="ml-1"
                     @click="nextPage"
@@ -256,9 +244,9 @@
           </v-container>
 
           <v-container v-else class="mt-10">
-              <v-img src="https://www.animatedimages.org/data/media/1802/animated-office-worker-image-0077.gif" height="200" width="200" class="ma-auto" contain></v-img>
+              <v-img src="https://www.animatedimages.org/data/media/1802/animated-office-worker-image-0077.gif" height="200" width="200" class="ma-auto"></v-img>
               <v-row class="mt-3">
-                <span class="text-h3 shade4--text font-weight-bold mx-auto">No Records ...</span>
+                <span class="text-h3 text-shade4 font-weight-bold mx-auto">No Records ...</span>
               </v-row>
           </v-container>
         </v-card-text>

@@ -5,7 +5,7 @@
             <v-card-title>Guild Deals Published</v-card-title>
             <v-card-text>
             <!-- Deal list -->
-            <v-simple-table v-if="guildDeals">
+            <v-table v-if="guildDeals">
                 <template v-slot:default>
                 <thead>
                     <tr>
@@ -50,10 +50,10 @@
                    
                     <td v-if="deal.guildDealType=='Specific Item Purchase'">
                         <v-row v-for="(specItem, index) in deal.specificItemList" :key="index" class="my-2">
-                            {{specItem,}}
+                            {{ specItem }}
                         </v-row>
                     </td>
-                    <td v-else>{{  }}</td>
+                    <td v-else></td>
                     <td>
                         <v-row v-for="(level, i) in deal.guildDealLevels" :key="i" class="my-2">{{i+1}}</v-row>
                     </td>
@@ -79,15 +79,13 @@
                     <td >To: {{ $filters.convertDate(item.dateTo) }}</td>
                     <td>
                         <v-tooltip right color="#757575">
-                            <template v-slot:activator="{ on, attrs }">
+                            <template v-slot:activator="{ props }">
                                 <v-btn
                                 :outlined="!deal.active"
                                 :depressed="!deal.active"
                                 color="#039BE5"
                                 :dark="deal.active"
-                                @click="toggleDealActive(deal.active, dealIndex)"
-                                v-bind="attrs"
-                                v-on="on">{{deal.active ? "Active" : "Deactivated"}}</v-btn>
+                                @click="toggleDealActive(deal.active, dealIndex)" v-bind="props">{{deal.active ? "Active" : "Deactivated"}}</v-btn>
                             </template>
                             <span>{{deal.active ? "Deactivate" : "Activate"}}</span>
                             </v-tooltip>
@@ -95,7 +93,7 @@
                     </tr>
                 </tbody>
                 </template>
-            </v-simple-table>
+            </v-table>
             </v-card-text>
         </v-card>
     </v-container>

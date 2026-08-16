@@ -21,7 +21,7 @@
       <v-col cols="12">
         <v-container>
           <v-card flat>
-            <v-card-title class="headline primary  white--text">
+            <v-card-title class="headline primary  text-white">
               Do Businsess The Simple Way
             </v-card-title>
             <v-container>
@@ -103,11 +103,11 @@
                             </v-col>
                           </v-row>
                         </v-container>
-                        <v-btn depressed color="primary" @click="stepper = 2" :disabled="!email || password !== passwordConfirmation">
+                        <v-btn variant="flat"  color="primary" @click="stepper = 2" :disabled="!email || password !== passwordConfirmation">
                           Continue
                         </v-btn>
 
-                        <v-btn text plain color="primary" @click="handleCancel">Cancel</v-btn>
+                        <v-btn variant="text"  color="primary" @click="handleCancel">Cancel</v-btn>
                       </v-form>
                     </v-container>
                   </v-stepper-content>
@@ -140,11 +140,10 @@
                               </v-col>
                               <v-col cols="6" class="d-flex flex-column justify-space-around align-center">
                                 <v-row justify="center">
-                                  <v-btn
-                                    text
+                                  <v-btn variant="text" 
                                     block
                                     @click="addLogo = true"
-                                    class="primary--text title"
+                                    class="text-primary title"
                                     >Add Logo</v-btn
                                   >
                                 </v-row>
@@ -153,7 +152,6 @@
                                     <v-img
                                       max-width="150"
                                       max-height="150"
-                                      contain
                                       
                                       :src="this.logo"
                                     ></v-img>
@@ -176,7 +174,7 @@
                             <v-row>
                               <v-col cols="12">
                                 <v-card hover flat>
-                                  <v-card-title class="primary--text"
+                                  <v-card-title class="text-primary"
                                     >Business Categories</v-card-title
                                   >
                                   <v-container>
@@ -254,7 +252,7 @@
                                     </v-row>
                                   </v-container>
                                   <v-alert
-                                    dense
+                                    density="compact"
                                     outlined
                                     type="error"
                                     v-if="categoryCheck"
@@ -270,7 +268,7 @@
                             <v-row>
                               <v-col cols="12">
                                 <v-card hover flat>
-                                  <v-card-title class="primary--text"
+                                  <v-card-title class="text-primary"
                                     >Premises Address</v-card-title
                                   >
                                   <!-- class="d-flex flex-column justify-center align-stretch" -->
@@ -371,7 +369,7 @@
                       Continue
                     </v-btn>
 
-                    <v-btn text plain color="primay" @click="handleCancel">Cancel</v-btn>
+                    <v-btn variant="text"  color="primay" @click="handleCancel">Cancel</v-btn>
                   </v-stepper-content>
 
                   <v-stepper-content step="3">
@@ -400,17 +398,16 @@
                           <v-row>
                             <v-col cols="12">
                               <v-card flat>
-                                <v-card-title class="primary--text"
+                                <v-card-title class="text-primary"
                                   >About Us</v-card-title
                                 >
-                                <v-textarea
+                                <v-textarea variant="filled"
                                   shaped
                                   auto-grow
                                   counter
                                   v-model="aboutUs"
                                   required
-                                  :rules="aboutUsRules"
-                                  filled
+                                  :rules="aboutUsRules" 
                                   clearable
                                 ></v-textarea>
                               </v-card>
@@ -426,8 +423,7 @@
                                 chips
                                 small-chips
                                 multiple
-                                counter
-                                dense
+                                counter density="compact"
                                 @change="onFilePicked"
                                 :error-messages="errMsg"
                                 v-model="photoFiles"
@@ -487,7 +483,7 @@
                             <v-col cols="12">
                               <v-card hover flat>
                                 <v-container>
-                                  <v-card-title class="primary--text"
+                                  <v-card-title class="text-primary"
                                     >Contact</v-card-title
                                   >
                                   <v-row>
@@ -555,7 +551,7 @@
                                     <v-col cols="3">
                                       <v-switch
                                         v-model="crossBoundaryBusiness"
-                                        dense
+                                        density="compact"
                                         :label="crossBoundaryBusiness ? 'Cross Boundary' : 'No Cross Boundary'"
                                       ></v-switch>
                                     </v-col>
@@ -565,8 +561,7 @@
                                     <!-- website -->
                                     <v-col cols="6">
                                       <v-text-field
-                                        text
-                                        dense
+                                        text density="compact"
                                         v-model.trim="website"
                                         label="Offical Website"
                                       >
@@ -575,8 +570,7 @@
                                     <!-- max delivery distance -->
                                     <v-col cols="3">
                                       <v-text-field
-                                        text
-                                        dense
+                                        text density="compact"
                                         suffix="Km"
                                         v-model.number="maxDeliveryDistance"
                                         label="Max Delivery Distance"
@@ -587,8 +581,7 @@
                                     <!-- delivery fees -->
                                     <v-col cols="3">
                                       <v-text-field
-                                        text
-                                        dense
+                                        text density="compact"
                                         suffix="$"
                                         v-model.number="deliveryFees"
                                         label="Delivery Fees"
@@ -601,10 +594,9 @@
                                   <!-- hours -->
                                   <v-row class="d-flex justify-start align-center"> 
                                     <v-col cols="3">
-                                        <v-select
+                                        <v-select variant="outlined"
                                           label="Week Day"
-                                          v-model="weekDaySelected"
-                                          outlined
+                                          v-model="weekDaySelected" 
                                           :items="weekDaysSelection">
                                         </v-select>
                                       </v-col>
@@ -622,14 +614,12 @@
                                           max-width="290px"
                                           min-width="290px"
                                         >
-                                          <template v-slot:activator="{ on, attrs }">
+                                          <template v-slot:activator="{ props }">
                                             <v-text-field
                                               v-model="openTime"
                                               label="Open Time"
                                               prepend-icon="mdi-clock-time-four-outline"
-                                              readonly
-                                              v-bind="attrs"
-                                              v-on="on"
+                                              readonly v-bind="props"
                                               :disabled="!weekDaySelected || close != null "
                                             ></v-text-field>
                                           </template>
@@ -655,14 +645,12 @@
                                             max-width="290px"
                                             min-width="290px"
                                           >
-                                            <template v-slot:activator="{ on, attrs }">
+                                            <template v-slot:activator="{ props }">
                                               <v-text-field
                                                 v-model="closeTime"
                                                 label="Close Time"
                                                 prepend-icon="mdi-clock-time-four-outline"
-                                                readonly
-                                                v-bind="attrs"
-                                                v-on="on"
+                                                readonly v-bind="props"
                                                 :disabled="!weekDaySelected || close != null "
                                               ></v-text-field>
                                             </template>
@@ -684,7 +672,7 @@
                                           ></v-checkbox>
                                       </v-col>
                                       <v-col cols="1" class="mb-2">
-                                            <v-btn small plain color="primary" :disabled="okToSave" @click="saveBusinessHours"><v-icon>mdi-check</v-icon></v-btn>
+                                            <v-btn size="small"  color="primary" :disabled="okToSave" @click="saveBusinessHours"><v-icon>mdi-check</v-icon></v-btn>
                                       </v-col>
                                   </v-row>
                                   <v-row v-for="(hour, i) in businessHours" :key="i" class="ml-3">
@@ -699,23 +687,22 @@
                         </v-container>
                       </v-form>
                     </v-card>
-                    <v-btn
+                    <v-btn variant="flat"
                       color="primary lighten-1"
                       type="submit"
                       class="d-inline-block mr-2"
-                      @click="handleSignupVendor"
-                      depressed
+                      @click="handleSignupVendor" 
                     >
                       <!-- :disabled="businessHours.length < 7" -->
 
-                      <span slot="loader" class="custom-loader">
+                      <template #loader><span class="custom-loader">
                         <v-icon>cached</v-icon>
-                      </span>
+                      </span></template>
                       Save
                     </v-btn>
-                    <v-btn text plain  color="primay" @click="handleCancel">Cancel</v-btn>
+                    <v-btn variant="text"   color="primay" @click="handleCancel">Cancel</v-btn>
                     <v-alert
-                      dense
+                      density="compact"
                       outlined
                       type="error"
                       v-if="formAlert"
@@ -730,7 +717,7 @@
                           <v-alert
                             type="info"
                             transition="scale-transition"
-                            dense
+                            density="compact"
                             color="accent lighten-1"
                             class="title"
                           >

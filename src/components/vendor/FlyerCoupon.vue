@@ -8,7 +8,7 @@
                 <v-col
                   cols="6"
                 >
-                  <span class="text-subtitle-2 primary--text">
+                  <span class="text-subtitle-2 text-primary">
                     FLYERCOUPON in Design:{{flyerId}}
                     <!-- {{
                       originType !== "template" && origin !== "template"
@@ -21,8 +21,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
-                    text
-                    dense
+                    text density="compact"
                     v-model.trim="flyerTitle"
                     label="Title"
                     required
@@ -49,27 +48,25 @@
         <!-- tool bar with all buttons -->
         </v-card>
 
-          <v-toolbar flat dense color="shade3" class="ma-6 mt-0">
+          <v-toolbar flat density="compact" color="shade3" class="ma-6 mt-0">
             <!-- color="rgba(122, 108, 203, 0.5)" -->
-            <v-btn-toggle color="primary" dense group class="d-block ml-10">
+            <v-btn-toggle color="primary" density="compact" group class="d-block ml-10">
               <!-- Add element -->
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
                     v-if="flyerOrCoupon == 'flyer'"
-                    :value="1"
-                    text
-                    v-on="on"
+                    :value="1" 
+                    v-bind="props"
                     @click="addElement"
                     :disabled="editStatus"
                   >
                     <v-icon>mdi-shape-polygon-plus</v-icon>
                   </v-btn>
-                  <v-btn
+                  <v-btn variant="text"
                     v-else
-                    :value="1"
-                    text
-                    v-on="on"
+                    :value="1" 
+                    v-bind="props"
                     @click="addElement"
                     :disabled="editStatus_C"
                   >
@@ -81,11 +78,10 @@
 
               <!-- Add Page -->
               <v-tooltip top v-if="flyerOrCoupon == 'flyer'">
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :value="5"
-                    text
-                    v-on="on"
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
+                    :value="5" 
+                    v-bind="props"
                     :disabled="editStatus || pageSave.length == 0"
                     @click="addPage"
                   >
@@ -95,11 +91,10 @@
                 <span>Add Page</span>
               </v-tooltip>
               <v-tooltip top v-else>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :value="5"
-                    text
-                    v-on="on"
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
+                    :value="5" 
+                    v-bind="props"
                     :disabled="editStatus_C || pageSave_C.length == 0"
                     @click="addPage"
                   >
@@ -121,7 +116,7 @@
                 <template v-slot:activator="{ on: menu }">
                   <v-tooltip top>
                     <template v-slot:activator="{ on: tooltip }">
-                      <v-btn :value="4" text v-on="{ ...tooltip, ...menu }">
+                      <v-btn variant="text" :value="4"  v-on="{ ...tooltip, ...menu }">
                         <v-icon class="d-block mt-1"
                           >mdi-format-color-fill</v-icon
                         >
@@ -149,7 +144,7 @@
                 <template v-slot:activator="{ on: menu }">
                   <v-tooltip top>
                     <template v-slot:activator="{ on: tooltip }">
-                      <v-btn :value="4" text v-on="{ ...tooltip, ...menu }">
+                      <v-btn variant="text" :value="4"  v-on="{ ...tooltip, ...menu }">
                         <v-icon class="d-block mt-1"
                           >mdi-format-color-fill</v-icon
                         >
@@ -171,11 +166,10 @@
                 top
                 v-if="type!=='FLYER'"
               >
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :value="3"
-                    text
-                    v-on="on"
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
+                    :value="3" 
+                    v-bind="props"
                     @click="addQr"
                   >
                     <v-icon>mdi-qrcode</v-icon>
@@ -186,22 +180,20 @@
 
               <!-- Delete -->
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
                     v-if="flyerOrCoupon == 'flyer'"
-                    :value="3"
-                    text
-                    v-on="on"
+                    :value="3" 
+                    v-bind="props"
                     :disabled="!editStatus || !editId"
                     @click="deleteElement"
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
-                  <v-btn
+                  <v-btn variant="text"
                     v-else
-                    :value="3"
-                    text
-                    v-on="on"
+                    :value="3" 
+                    v-bind="props"
                     :disabled="!editStatus_C || !editId_C"
                     @click="deleteElement"
                   >
@@ -221,7 +213,7 @@
               v-if="flyerOrCoupon == 'flyer'"
               v-model="borderLined"
               class="d-block mt-5 mr-2"
-              dense
+              density="compact"
               :label="borderLined ? 'Dotted Line' : 'None'"
               :disabled="!editStatus"
             ></v-switch>
@@ -229,7 +221,7 @@
               v-else
               v-model="borderLined_C"
               class="d-block mt-5 mr-2"
-              dense
+              density="compact"
               :label="borderLined_C ? 'Dotted Line' : 'None'"
               :disabled="!editStatus_C"
             ></v-switch>
@@ -238,8 +230,8 @@
               <v-btn-toggle
                     v-model="flyerCoupon"
                     rounded
-                    dense
-                    dark
+                    density="compact"
+                    theme="dark"
                     mandatory
                     :disabled="editStatus || editStatus_C"
                   >
@@ -260,14 +252,12 @@
               </v-btn-toggle>
 
             <v-tooltip v-if="editStatus || editStatus_C" top>
-              <template v-slot:activator="{ on }">
-                <v-btn
+              <template v-slot:activator="{ props }">
+                <v-btn variant="outlined"
                   @click="quitEdit"
                   x-small
-                  depressed
-                  v-on="on"
-                  color="primary"
-                  outlined
+                  v-bind="props"
+                  color="primary" 
                   class="d-block mx-2"
                 >
                   Design
@@ -276,28 +266,26 @@
               <span>Switch to design mode</span>
             </v-tooltip>
             <v-tooltip top v-else>
-              <template v-slot:activator="{ on }">
-                <v-btn
+              <template v-slot:activator="{ props }">
+                <v-btn variant="flat"
                   v-if="flyerOrCoupon == 'flyer'"
                   x-small
                   color="primary"
-                  dark
-                  depressed
+                  theme="dark" 
                   class="d-block mx-2"
-                  v-on="on"
+                  v-bind="props"
                   @click="toEdit"
                   :disabled="pageNoWatcher.length == 0"
                 >
                   Edit
                 </v-btn>
-                <v-btn
+                <v-btn variant="flat"
                   v-else
                   x-small
                   color="primary"
-                  dark
-                  depressed
+                  theme="dark" 
                   class="d-block mx-2"
-                  v-on="on"
+                  v-bind="props"
                   @click="toEdit"
                   :disabled="pageNoWatcher_C.length == 0"
                 >
@@ -314,7 +302,7 @@
         <v-row>
           <v-col cols="1">
             <v-tooltip left open-on-hover>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-slider
                   v-if="flyerOrCoupon == 'flyer'"
                   v-model="sliderV"
@@ -324,7 +312,7 @@
                   :thumb-size="22"
                   thumb-label="always"
                   class="d-block mt-9"
-                  v-on="on"
+                  v-bind="props"
                 ></v-slider>
                 <v-slider
                   v-else
@@ -335,7 +323,7 @@
                   :thumb-size="22"
                   thumb-label="always"
                   class="d-block mt-9"
-                  v-on="on"
+                  v-bind="props"
                 ></v-slider>
               </template>
               <span
@@ -349,7 +337,7 @@
           </v-col>
           <v-col cols="11">
             <v-tooltip top open-on-hover>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-slider
                   v-if="flyerOrCoupon == 'flyer'"
                   v-model="sliderH"
@@ -359,7 +347,7 @@
                   thumb-label="always"
                   class="d-block mt-n2 ml-n2"
                   open-on-hover
-                  v-on="on"
+                  v-bind="props"
                 >
                 </v-slider>
                 <v-slider
@@ -371,7 +359,7 @@
                   thumb-label="always"
                   class="d-block mt-n2 ml-n2"
                   open-on-hover
-                  v-on="on"
+                  v-bind="props"
                 >
                 </v-slider>
               </template>
@@ -430,7 +418,7 @@
                     @resizing="onResize"
                     @activated="itemClicked(pageIndex, index)"
                     style="borderStyle: 'none' "
-                    @click.native="
+                    @click="
                       editClickElement(item, index, flyerPage.nodeId)
                     "
                   >
@@ -481,7 +469,7 @@
                       (type && type !== 'FLYER') ||
                         (originType && originType !== 'FLYER')
                     "
-                    style="position:absolute; right: 3px; bottom: 3px"
+                    style="position:absolute; end: 3px; bottom: 3px"
                     color="black"
                     size="72">mdi-qrcode</v-icon> -->
                     <!-- :style="item.htmlOuterStyle" -->
@@ -503,7 +491,7 @@
                     @resizing="onResize_C"
                     @activated="itemClicked_C(pageIndex_C, index)"
                     style="borderStyle: 'none' "
-                    @click.native="
+                    @click="
                       editClickElement(item, index, flyerPage_C.nodeId)
                     "
                   >
@@ -532,22 +520,20 @@
               </v-col>
               <v-col cols="2">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
+                  <template v-slot:activator="{ props }">
+                    <v-btn variant="text"
                       v-if="flyerOrCoupon == 'flyer'"
-                      v-on="on"
-                      @click="deletePage"
-                      text
+                      v-bind="props"
+                      @click="deletePage" 
                       class="d-clock mt-6"
                       :disabled="pages <= 1"
                     >
                       <v-icon color="primary">mdi-delete-circle</v-icon>
                     </v-btn>
-                    <v-btn
+                    <v-btn variant="text"
                       v-else
-                      v-on="on"
-                      @click="deletePage"
-                      text
+                      v-bind="props"
+                      @click="deletePage" 
                       class="d-clock mt-6"
                       :disabled="pages_C <= 1"
                     >
@@ -570,7 +556,7 @@ import moment from "moment";
 import { mapGetters } from "vuex";
 import VueDraggableResizable from "vue-draggable-resizable";
 // optionally import default styles
-import "vue-draggable-resizable/dist/VueDraggableResizable.css";
+import "vue-draggable-resizable/style.css";
 import _ from "lodash";
 import sizeOf from "object-sizeof";
 import LZString from "lzutf8";
@@ -1416,7 +1402,7 @@ export default {
     });
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     console.log("htmlConverter destroy");
     // eventBus_editElement.$off();
     // eventBus_addPage.$off();

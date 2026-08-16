@@ -7,8 +7,7 @@
                     <v-img
                         :src="singlePhotoPageUri"
                         :lazy-src="singlePhotoPageUri"
-                        aspect-ratio="1"
-                        contain>
+                        aspect-ratio="1">
                     </v-img>
                 <!-- </v-card-text> -->
             </v-card>

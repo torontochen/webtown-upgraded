@@ -15,8 +15,7 @@
                             full-icon="mdi-star"
                             half-icon="mdi-star-half"
                         ></v-rating>
-                        <v-textarea  
-                            outlined 
+                        <v-textarea variant="outlined"  
                             v-model="comments" 
                             label="Customer Comments" 
                             placeholder="thank you for your commentary!"
@@ -24,8 +23,8 @@
                     </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text plain color="primary" @click="saveRating">Save</v-btn>
-                    <v-btn outlined text plain  color="primary" @click="ratingWindow=false">Cancel</v-btn>
+                    <v-btn variant="text"  color="primary" @click="saveRating">Save</v-btn>
+                    <v-btn variant="text"   color="primary" @click="ratingWindow=false">Cancel</v-btn>
                     
                 </v-card-actions>
             </v-card>
@@ -34,17 +33,16 @@
         <v-snackbar
         v-model="snackbar"
         centered
-        dark
+        theme="dark"
         color="primary"
         
         >
       <span class="text-subtitle-1">Please Log In</span>
 
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="white"
-          text
-          v-bind="attrs"
+        <v-btn variant="text"
+          color="white" 
+          v-bind="props"
           @click="snackbar=false"
         >
           Close
@@ -54,12 +52,12 @@
 
         <!-- item info -->
         <v-card flat class="pa-12 shade">
-            <v-row dense>
+            <v-row density="compact">
                 <v-col cols="4">
-                    <v-img :src="getSingleItem.photo" max-height="500" max-width="300" contain class="ml-6"></v-img>
+                    <v-img :src="getSingleItem.photo" max-height="500" max-width="300" class="ml-6"></v-img>
                 </v-col>
                 <v-col cols="8" class="pa-1">
-                    <v-card-title class="text-subtitle-1 fontColor--text text--darken-2 ">
+                    <v-card-title class="text-subtitle-1 text-fontColor ">
                     {{getSingleItem.description}}
                     </v-card-title>
                     <v-rating
@@ -78,19 +76,19 @@
                     <!-- <v-divider></v-divider> -->
                     
                     <v-row v-if="getSingleItem.promoRate > 0" class="ma-1">
-                        <span class="text-subtitle-1  fontColor--text text--darken-3 mx-2">Price:</span>
-                        <span class="red--text text-subtitle-1 font-weight-bold mx-2" >on sale {{ $filters.formatCurrencyAmount(getSingleItem.promoRate) }}</span>
-                        <span class="text-decoration-line-through text-body-1 fontColor--text font-weight-light mx-3">was {{ $filters.formatCurrencyAmount(getSingleItem.rate) }}</span>
-                        <span class="mx-1 silver--text text--darken-1 font-weight-bold" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{ $filters.formatIntAmount(getSingleItem.rewardSilver) }}</span>
+                        <span class="text-subtitle-1  text-fontColor mx-2">Price:</span>
+                        <span class="text-red text-subtitle-1 font-weight-bold mx-2" >on sale {{ $filters.formatCurrencyAmount(getSingleItem.promoRate) }}</span>
+                        <span class="text-decoration-line-through text-body-1 text-fontColor font-weight-light mx-3">was {{ $filters.formatCurrencyAmount(getSingleItem.rate) }}</span>
+                        <span class="mx-1 text-silver font-weight-bold" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{ $filters.formatIntAmount(getSingleItem.rewardSilver) }}</span>
                     </v-row>
                     <v-row v-else class="ma-1" >
-                        <span class="text-subtitle-1 fontColor--text text--darken-2 font-weight-bold mx-2">Price:</span>
-                        <span class="text-subtitle-1 fontColor--text text--darken-2 font-weight-bold mx-2">{{ $filters.formatCurrencyAmount(getSingleItem.rate) }}</span>
-                        <span class="mx-1 silver--text text--darken-1 font-weight-black" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1" >mdi-coin</v-icon>{{ $filters.formatIntAmount(getSingleItem.rewardSilver) }}</span>
+                        <span class="text-subtitle-1 text-fontColor font-weight-bold mx-2">Price:</span>
+                        <span class="text-subtitle-1 text-fontColor font-weight-bold mx-2">{{ $filters.formatCurrencyAmount(getSingleItem.rate) }}</span>
+                        <span class="mx-1 text-silver font-weight-black" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1" >mdi-coin</v-icon>{{ $filters.formatIntAmount(getSingleItem.rewardSilver) }}</span>
                     </v-row>
                     <v-divider></v-divider>
-                    <v-subheader light class="text-subtitle-1 fontColor--text text--darken-2 ">About This Item:</v-subheader>
-                    <p class="px-3 fontColor--text text--darken-2">{{getSingleItem.specification}}</p>
+                    <v-list-subheader light class="text-subtitle-1 text-fontColor ">About This Item:</v-list-subheader>
+                    <p class="px-3 text-fontColor">{{getSingleItem.specification}}</p>
                     
                 </v-col>
             </v-row>
@@ -98,14 +96,14 @@
             <!-- Single Item Rating -->
             <v-row >
                 <v-col cols="12" class="pa-2">
-                    <v-toolbar flat dense rounded color="#FAFAFA" >
-                                        <v-toolbar-title class="primary--text  font-weight-light text-h6">Customer Rating</v-toolbar-title>
+                    <v-toolbar flat density="compact" rounded color="#FAFAFA" >
+                                        <v-toolbar-title class="text-primary  font-weight-light text-h6">Customer Rating</v-toolbar-title>
                                         <v-spacer></v-spacer>
-                                        <v-btn  color="primary" text plain outlined @click="openRating">Comment</v-btn>
+                                        <v-btn variant="text"  color="primary"  @click="openRating">Comment</v-btn>
                     </v-toolbar>
                     <v-timeline
                         align-top
-                        :dense="$vuetify.breakpoint.smAndDown"
+                        :dense="$vuetify.display.smAndDown"
                         v-if="singleItemRating"
                     >
                         <v-timeline-item
@@ -114,11 +112,11 @@
                         :color="ratingColor(item.rating)"
                         :icon="ratingFace(item.rating)"
                         fill-dot
-                        dark
+                        theme="dark"
                         >
                         <v-card
                             :color="ratingColor(item.rating)"
-                            dark
+                            theme="dark"
                             hover
                         >
                             <v-card-title class="text-h6">
@@ -140,16 +138,15 @@
                             ></v-rating>
                             </v-card-title>
                             <v-card-text class="white text--primary">
-                            <p class="fontColor--text text--darken-2">{{item.comments}}</p>
+                            <p class="text-fontColor">{{item.comments}}</p>
                             
                             </v-card-text>
                             <v-card-actions>
                                 {{ $filters.convertCustomerRatingTime(item.time) }}
                                 <v-spacer></v-spacer>
-                                <!-- <v-btn
+                                <!-- <v-btn variant="outlined"
                                 :color="item.color"
-                                class="mx-0"
-                                outlined
+                                class="mx-0" 
                             >
                                 Reply
                             </v-btn> -->

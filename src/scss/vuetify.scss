@@ -1,32 +1,23 @@
-// Vuetify 2 styles for the Vite build.
+// Vuetify 3 base styles (Phase 4b-4).
 //
-// This MUST be the precompiled full stylesheet, not `vuetify/src/styles/main.sass`.
+// Phase 4a-ii had to import the whole precompiled `vuetify/dist/vuetify.min.css`
+// here, because Vuetify 2 had no Vite equivalent of vuetify-loader and
+// importing `main.sass` alone yielded generic rules and zero component rules.
 //
-// main.sass carries only Vuetify's *generic* styles — typography, elevation,
-// transitions, spacing helpers. Each component's own CSS lives beside it in
-// vuetify/src/components/<Name>/<Name>.sass, and vuetify-loader was what
-// imported those per component as it found them in templates. vuetify-loader is
-// webpack-only, so under Vite importing main.sass alone yields ~1700 generic
-// rules and *zero* component rules.
-//
-// The symptom was subtle rather than obviously-unstyled: text and colours
-// looked right, but `.v-navigation-drawer` never received its
-// `position: fixed`, so a closed drawer sat in normal flow occupying 720px and
-// shoved the app bar and the whole page grid ~756px down the page.
-//
-// The precompiled sheet contains every component's styles.
-@import "vuetify/dist/vuetify.min.css";
+// Vuetify 3 splits that properly: `vuetify/styles` is the base layer — reset,
+// typography, elevation, transitions, the spacing and display utilities — and
+// `vite-plugin-vuetify` injects each component's own stylesheet alongside the
+// component when a template uses it. So the per-component CSS is tree-shaken
+// rather than shipped whole.
+@use "vuetify/styles";
 
-// The SASS variable overrides that `src/scss/variables.scss` used to feed
-// vuetify-loader ($body-font-family / $heading-font-family) cannot apply to an
-// already-compiled stylesheet, so they are reproduced here as plain CSS. This
-// is what those variables emitted.
-.v-application,
-.v-application .headline,
-.v-application .title,
-.v-application .subtitle-1,
-.v-application .subtitle-2,
-.v-application [class^="text-"],
-.v-application [class*=" text-"] {
+// The SASS variable overrides Phase 4a-ii reproduced as plain CSS. Vuetify 3
+// drives typography from CSS custom properties, so this is now a variable
+// assignment rather than a selector list.
+:root {
+  --v-font-family: "Montserrat", sans-serif;
+}
+
+.v-application {
   font-family: "Montserrat", sans-serif;
 }

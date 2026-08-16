@@ -58,13 +58,8 @@ export default {
     this.observer.observe(this.$el);
   },
 
-  // Vue 2 calls beforeDestroy, Vue 3 calls beforeUnmount, and each ignores the
-  // other's name as an unrecognised option. Declaring both is what lets this
-  // component survive the 4b-4 flip without an edit — the point of writing the
-  // replacement now rather than after.
-  beforeDestroy() {
-    this.disconnect();
-  },
+  // Written during the Vue 2 / Vue 3 straddle with both hook names; 4b-4
+  // collapsed it to the Vue 3 one.
   beforeUnmount() {
     this.disconnect();
   },

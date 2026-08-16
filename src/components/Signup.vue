@@ -7,7 +7,7 @@
         sm="6"
         offset-sm="3"
       >
-        <h1 class="secondary--text">Get Started Here</h1>
+        <h1 class="text-secondary">Get Started Here</h1>
       </v-col>
     </v-row> -->
 
@@ -27,10 +27,10 @@
       rounded="5"
       class="ma-auto"
     >
-      <v-btn absolute top right small icon dark @click="$emit('closeSignUp')">
-        <v-icon dark>mdi-close</v-icon>
+      <v-btn absolute top right size="small" icon theme="dark" @click="$emit('closeSignUp')">
+        <v-icon theme="dark">mdi-close</v-icon>
       </v-btn>
-      <v-card-subtitle class="primary text-h6 white--text">
+      <v-card-subtitle class="primary text-h6 text-white">
         get started here!
       </v-card-subtitle>
       <v-container>
@@ -134,7 +134,7 @@
                       <v-alert
                         type="info"
                         transition="scale-transition"
-                        dense
+                        density="compact"
                         color="accent lighten-1"
                         class="title"
                       >
@@ -146,30 +146,26 @@
                 </v-bottom-sheet>
               </v-row>
               <v-row class="mt-8" justify="center">
-                <v-btn
+                <v-btn variant="flat"
                   :loading="loading"
                   :disabled="!isFormValid || !emailOk"
                   color="primary lighten-1"
-                  @click="handleSignupResident"
-                  large
-                  depressed
+                  @click="handleSignupResident" size="large" 
                 >
-                  <span slot="loader" class="custom-loader">
+                  <template #loader><span class="custom-loader">
                     <v-icon>cached</v-icon>
-                  </span>
+                  </span></template>
                   Sign Up
                 </v-btn>
               </v-row>
 
               <v-row class="mt-5" justify="center">
-                <div class="primary--text">
+                <div class="text-primary">
                   <!-- <img src="../assets/images/609803.png"> -->
                   <span
                     >already have an account?
 
-                    <v-btn
-                      text
-                      plain
+                    <v-btn variant="text" 
                       color="accent"
                       @click="$emit('handleSignIn')"
                       >Signin</v-btn

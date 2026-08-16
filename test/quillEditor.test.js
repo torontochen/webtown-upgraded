@@ -55,9 +55,11 @@ test("an empty document still emits \"\" rather than Quill's <p><br></p>", () =>
   assert.match(EDITOR, /"<p><br><\/p>" \? "" : html/);
 });
 
-test("the component declares both Vue 2 and Vue 3 unmount hooks", () => {
-  assert.match(EDITOR, /^\s*beforeDestroy\(\) \{/m);
+test("the component uses the Vue 3 unmount hook", () => {
+  // Written during the straddle with both beforeDestroy and beforeUnmount so it
+  // would survive the flip untouched; 4b-4 collapsed it to the Vue 3 name.
   assert.match(EDITOR, /^\s*beforeUnmount\(\) \{/m);
+  assert.ok(!/beforeDestroy/.test(EDITOR), "beforeDestroy is gone in Vue 3");
 });
 
 test("the local Observer and editor are the only quill/observer entry points", () => {

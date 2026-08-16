@@ -2,13 +2,13 @@
 <v-container fluid>
     <v-card v-if="dealCate.length==0">
         <v-card-title>Deals for Guild</v-card-title>
-        <v-card-text class="accent--text  text-subtitle-1">All types of guild deal are publised !</v-card-text>
+        <v-card-text class="text-accent  text-subtitle-1">All types of guild deal are publised !</v-card-text>
         <v-row v-if="postedDeal.length>0" no-gutters>
             <v-col cols="6" v-for="(item, index) in postedDeal" :key="index">
                 <v-tooltip top color="#424242" >
-                      <template v-slot:activator="{ on, attrs }">
-                           <v-card-subtitle  v-bind="attrs" v-on="on" class="my-1"><v-icon color="primary">mdi-file-document</v-icon>&nbsp;Posted Deal:&nbsp;&nbsp;
-                                <span class="primary--text font-weight-bold"><i class="accent--text font-weight-bold">{{item.dealNo}}</i>&nbsp;&nbsp;&nbsp;{{item.guildDealType}}
+                      <template v-slot:activator="{ props }">
+                           <v-card-subtitle v-bind="props" class="my-1"><v-icon color="primary">mdi-file-document</v-icon>&nbsp;Posted Deal:&nbsp;&nbsp;
+                                <span class="text-primary font-weight-bold"><i class="text-accent font-weight-bold">{{item.dealNo}}</i>&nbsp;&nbsp;&nbsp;{{item.guildDealType}}
                                 &nbsp;<i v-if='item.specificItemList.length>0'>({{specificItem(item.specificItemList)}})</i></span> 
                                 &nbsp;&nbsp;{{ $filters.convertDate(item.dateFrom) }}&nbsp;&nbsp;to&nbsp;&nbsp;{{ $filters.convertDate(item.dateTo) }}
                             </v-card-subtitle>
@@ -73,10 +73,8 @@
     </v-card>
     <v-card outlined max-width="2000px" class="pa-5" v-else>
         <v-btn
-            color="primary"
-            fab
-            dark
-            medium
+            color="primary" icon
+            theme="dark" 
             top
             right
             absolute
@@ -90,9 +88,9 @@
         <v-row v-if="postedDeal.length>0" no-gutters>
             <v-col cols="6" v-for="(item, index) in postedDeal" :key="index">
                 <v-tooltip top color="#424242" >
-                      <template v-slot:activator="{ on, attrs }">
-                           <v-card-subtitle  v-bind="attrs" v-on="on" class="my-1"><v-icon color="primary">mdi-file-document</v-icon>&nbsp;Posted Deal:&nbsp;&nbsp;
-                                <span class="primary--text font-weight-bold"><i class="accent--text font-weight-bold">{{item.dealNo}}</i>&nbsp;&nbsp;&nbsp;{{item.guildDealType}}
+                      <template v-slot:activator="{ props }">
+                           <v-card-subtitle v-bind="props" class="my-1"><v-icon color="primary">mdi-file-document</v-icon>&nbsp;Posted Deal:&nbsp;&nbsp;
+                                <span class="text-primary font-weight-bold"><i class="text-accent font-weight-bold">{{item.dealNo}}</i>&nbsp;&nbsp;&nbsp;{{item.guildDealType}}
                                 &nbsp;<i v-if='item.specificItemList.length>0'>{{specificItem(item.specificItemList)}}</i></span> 
                                 &nbsp;&nbsp;{{ $filters.convertDate(item.dateFrom) }}&nbsp;&nbsp;to&nbsp;&nbsp;{{ $filters.convertDate(item.dateTo) }}
                             </v-card-subtitle>
@@ -176,7 +174,7 @@
                     :rules="rewardItemsSelectedRules"
                     :disabled="guildDealLevels.length>0"
                      required
-                    dense
+                    density="compact"
                     multiple>
                     </v-select>
                 </v-col>
@@ -198,13 +196,13 @@
                     offset-y
                     min-width="290px"
                     >
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator="{ props }">
                         <v-text-field
                         v-model="dateFrom"
                         label="From"
                         prepend-inner-icon="event"
                         readonly
-                        v-on="on"
+                        v-bind="props"
                         :rules="fromDateRules"
                         :disabled="guildDealLevels.length>0"
                         ></v-text-field>
@@ -227,14 +225,14 @@
                     offset-y
                     min-width="290px"
                     >
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator="{ props }">
                         <v-text-field
                         v-model="dateTo"
                         label="To"
                         prepend-inner-icon="event"
                         readonly
                         :rules="toDateRules"
-                        v-on="on"
+                        v-bind="props"
                         :disabled="guildDealLevels.length>0"
                         ></v-text-field>
                     </template>
@@ -249,7 +247,7 @@
             </v-row>
         <v-card-text>
             <!-- Deal list -->
-            <v-simple-table v-if="guildDealLevels.length>0">
+            <v-table v-if="guildDealLevels.length>0">
                 <template v-slot:default>
                 <thead>
                     <tr>
@@ -326,16 +324,16 @@
                     </tr>
                 </tbody>
                 </template>
-            </v-simple-table>
+            </v-table>
 
  
         </v-card-text>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text outlined @click="exitDialogue=true">
+            <v-btn variant="text" color="primary" @click="exitDialogue=true">
                 Exit
             </v-btn>
-            <v-btn color="primary" text @click="post" :disabled="!guildDealLevels.length>0"> Post </v-btn>
+            <v-btn variant="text" color="primary"  @click="post" :disabled="!guildDealLevels.length>0"> Post </v-btn>
         </v-card-actions>
     </v-card>
     
@@ -371,13 +369,11 @@
 
                         <v-row class="d-flex justify-start align-center">
                             <v-col cols="6">
-                                 <v-select
+                                 <v-select variant="outlined"
                                       label="Reward Items"
                                       v-model="rewardItemsSelected"
                                       :items="rewardItemsToSelect"
-                                      :rules="rewardItemsSelectedRules"
-                                      outlined
-                                      dense
+                                      :rules="rewardItemsSelectedRules" density="compact"
                                       multiple
                                       required
                                       >
@@ -387,7 +383,7 @@
                                         <template v-slot:item="{item}">
                                             <div>
                                                 <v-row class="my-1 d-flex-inline justify-start align-center">
-                                                <v-img src="/static/animated-money-image-0013.gif" height="40" width="40" contain />
+                                                <v-img src="/static/animated-money-image-0013.gif" height="40" width="40" />
                                                 &nbsp;&nbsp;&nbsp;&nbsp;{{item.itemName}}
                                                 </v-row>
                                             </div>
@@ -409,15 +405,15 @@
 
                       <v-row>
                               <v-spacer></v-spacer>
-                              <v-btn color="warning" text plain v-if="dealError!=' '">{{dealError}}</v-btn>
+                              <v-btn variant="text" color="warning"  v-if="dealError!=' '">{{dealError}}</v-btn>
                               <v-spacer></v-spacer>
                           </v-row>
                      <v-row class="d-flex justify-end">
                         <v-spacer></v-spacer>
 
-                        <v-btn color="accent" text outlined :disabled="!isDealOk" type="submit"> Save </v-btn>
+                        <v-btn variant="text" color="accent" :disabled="!isDealOk" type="submit"> Save </v-btn>
 
-                        <v-btn color="accent" text @click="handleCancel"> Cancel </v-btn>
+                        <v-btn variant="text" color="accent"  @click="handleCancel"> Cancel </v-btn>
 
                     </v-row>
                     </v-form>
@@ -427,16 +423,16 @@
             <!-- Exit dialogue -->
             <v-dialog v-model="exitDialogue" max-width="500px" >
                 <v-card class="pa-5" style="border-top: 15px solid #B75420">
-                    <v-card-text class="text-h6 accent--text"
+                    <v-card-text class="text-h6 text-accent"
                     >Exit, Are you sure ?</v-card-text
                     >
                     <v-card-actions>
                     <v-spacer></v-spacer>
                     
-                    <v-btn color="primary" text  outlined @click="close"
+                    <v-btn variant="text" color="primary" @click="close"
                         >OK</v-btn
                     >
-                    <v-btn color="accent" text @click="exitDialogue=false"
+                    <v-btn variant="text" color="accent"  @click="exitDialogue=false"
                         >Cancel</v-btn
                     >
                     <v-spacer></v-spacer>

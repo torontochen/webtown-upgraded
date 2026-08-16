@@ -2,24 +2,21 @@
   <v-data-table :headers="headers" :items="itemsBound">
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title class="font-weight-bold primary--text subtitle-1"
+        <v-toolbar-title class="font-weight-bold text-primary subtitle-1"
           >Items Bound</v-toolbar-title
         >
         <v-spacer></v-spacer>
         
         <v-dialog v-model="dialog" max-width="700">
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ props }">
             <v-btn
               color="primary"
-              dark
-              class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-              fab
+              theme="dark"
+              class="mb-2" v-bind="props" icon
               x-small
               :disabled="itemsBound.length>0&&(redeemType=='CASH_DISCOUNT'||redeemType=='CASH_VALUE')"
             >
-              <v-icon dark> mdi-plus </v-icon>
+              <v-icon theme="dark"> mdi-plus </v-icon>
             </v-btn>
           </template>
           <v-card>
@@ -49,8 +46,8 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary " text plain @click="close" class="mx-2"> Cancel </v-btn>
-              <v-btn color="primary " depressed @click="save" class="mx-2"> Save </v-btn>
+              <v-btn variant="text" color="primary "  @click="close" class="mx-2"> Cancel </v-btn>
+              <v-btn variant="flat" color="primary "  @click="save" class="mx-2"> Save </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -62,10 +59,10 @@
             >
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
+              <v-btn variant="text" color="blue darken-1"  @click="closeDelete"
                 >Cancel</v-btn
               >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+              <v-btn variant="text" color="blue darken-1"  @click="deleteItemConfirm"
                 >OK</v-btn
               >
               <v-spacer></v-spacer>

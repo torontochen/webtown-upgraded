@@ -2,11 +2,11 @@
   <v-container fluid>
    
       <v-card flat class="pa-3">
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>Membership</v-toolbar-title>
         </v-toolbar>
 
-      <v-simple-table fixed-header>
+      <v-table fixed-header>
         <template v-slot:default>
           <thead>
             <tr>
@@ -93,9 +93,9 @@
             </tr>
           </tbody>
         </template>
-      </v-simple-table>
+      </v-table>
       <v-divider class="my-2"></v-divider>
-        <v-col  class="text-right text-subtitle-2 primary--text ma-3 pa-3">
+        <v-col  class="text-right text-subtitle-2 text-primary ma-3 pa-3">
             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">Membership Amount:&nbsp;{{ $filters.formatCurrencyAmount(memberShipFees) }}</span><br>
             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">HST(13%):&nbsp;{{ $filters.formatCurrencyAmount(memberShipFees * 0.13) }}&nbsp;</span><br>
             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">Total Amount:&nbsp;{{ $filters.formatCurrencyAmount(memberShipFees * 1.13) }}</span><br>
@@ -113,24 +113,22 @@
                             value="creditcard"
                         >
                         <template v-slot:label>
-                            <div><v-img src="/static/credit_card-removebg-preview.png" contain max-height="60" max-width="80"></v-img></div>
+                            <div><v-img src="/static/credit_card-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                         </template>
                         </v-radio>
                         <v-radio
                             value="paypal"
                         >
                         <template v-slot:label>
-                            <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80" contain></v-img></div>
+                            <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                         </template>
                         </v-radio>
                         </v-radio-group>
         </v-row>
        <v-spacer></v-spacer>
-        <v-btn 
+        <v-btn variant="flat" 
                 color="primary"
-                class="pa-2"
-                large
-                depressed
+                class="pa-2" size="large" 
                 :disabled="memberShip==''"
                 >
                     Pay

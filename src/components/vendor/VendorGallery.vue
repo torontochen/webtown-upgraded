@@ -4,18 +4,16 @@
       <v-card flat class="p-2 shade">
          <v-btn
           color="primary"
-          dark
-          fab
-          medium
+          theme="dark" icon 
           top 
           right
           absolute
           @click="addImgWindowOpen=true"
           class="mt-4"
         >
-          <v-icon dark> mdi-plus </v-icon>
+          <v-icon theme="dark"> mdi-plus </v-icon>
         </v-btn>
-      <v-card-title class="primary--text"
+      <v-card-title class="text-primary"
         >Gallery</v-card-title
       >
       
@@ -96,8 +94,7 @@
                             chips
                             small-chips
                             multiple
-                            counter
-                            dense
+                            counter density="compact"
                             @change="onFilePicked"
                             :error-messages="errMsgPic"
                             v-model="photoFiles"
@@ -109,7 +106,7 @@
                       <v-row>
                         <v-col cols="12">
                            <!-- <v-alert
-                              dense
+                              density="compact"
                               outlined
                               type="error"
                               v-if="businessPhotosToShow.length == 0"
@@ -160,9 +157,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="accent" text @click="handleCancel"> Cancel </v-btn>
+          <v-btn variant="text" color="accent"  @click="handleCancel"> Cancel </v-btn>
 
-          <v-btn color="accent" outlined text @click="updateGalleryPhotos"> Save </v-btn>
+          <v-btn variant="text" color="accent"  @click="updateGalleryPhotos"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -174,8 +171,7 @@
           <v-img
              :src="singlePhotoPageUri"
             :lazy-src="singlePhotoPageUri"
-            aspect-ratio="1"
-            contain>
+            aspect-ratio="1">
           </v-img>
         <!-- </v-card-text> -->
       </v-card>

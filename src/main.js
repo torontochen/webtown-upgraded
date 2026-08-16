@@ -4,7 +4,7 @@ import "./quill-setup";
 import "quill-image-resize-module/image-resize.min.js";
 import "./scss/vuetify.scss";
 
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router/router.js";
 import store from "./store/store.js";
@@ -13,14 +13,26 @@ import filters from "./filters";
 import { VueMasonryPlugin } from "vue-masonry";
 import "vue2-animate/dist/vue2-animate.min.css";
 
-import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { HttpLink } from "apollo-link-http";
-import { onError } from "apollo-link-error";
-import { ApolloLink, Observable } from "apollo-link";
-import { GraphQLWsLink } from "./apollo/graphqlWsLink";
-import { getMainDefinition } from "apollo-utilities";
-import VueApollo from "vue-apollo";
+// Apollo Client 3 (Phase 4b-4). vue-apollo 3 is Vue 2 only, and its Vue 3
+// successor @vue/apollo-option requires Apollo Client 3 — which is why this
+// upgrade had to come forward out of Phase 4c.
+//
+// src/apollo/graphqlWsLink.js is deleted with this change: it existed only
+// because Apollo Client 2 had no graphql-ws link, and the official one now
+// ships in the client.
+import {
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  ApolloLink,
+  Observable,
+  split,
+} from "@apollo/client/core";
+import { onError } from "@apollo/client/link/error";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { createClient } from "graphql-ws";
+import { createApolloProvider } from "@vue/apollo-option";
 import Alert from "./components/Alert.vue";
 import VueQrcode from "@chenfengyuan/vue-qrcode";
 // import CKEditor from '@ckeditor/ckeditor5-vue'
@@ -68,33 +80,6 @@ const GRAPHQL_WS_URI =
   }/graphql`;
 
 
-// Register Global Component
-Vue.use(VueApollo);
-Vue.use(VueMasonryPlugin);
-// Vue.use(CKEditor)
-
-//component
-Vue.component("form-alert", Alert);
-Vue.component(VueQrcode.name, VueQrcode);
-
-//Directives
-Vue.directive("event-type-photo", {
-  bind(el, binding, vnode) {
-    switch (binding.value) {
-      case "On_Sale":
-        el.src = "/static/sales_images__1_-removebg-preview.png";
-    }
-  },
-});
-
-// Filters (Phase 4b-1)
-//
-// Vue 3 removes `Vue.filter` and the `|` template syntax. The seven filters now
-// live in src/filters.js as plain functions, reached from templates as
-// `{{ $filters.formatIntAmount(x) }}`. `Vue.prototype` is the Vue 2 spelling of
-// what becomes `app.config.globalProperties` in Vue 3 — the templates do not
-// change again at the flip.
-Vue.prototype.$filters = filters;
 // console.log("mainjs is running");
 
 // Set up request
@@ -198,7 +183,10 @@ const wsLink = ApolloLink.from([
   // connectionParams is a top-level callback rather than nested under `options`.
   // It is re-evaluated on every (re)connect, so a token refreshed after sign-in
   // is picked up without recreating the link.
-  new GraphQLWsLink({
+  // The official Apollo Client 3 link, wrapping the same graphql-ws client the
+  // hand-written adapter used to wrap.
+  new GraphQLWsLink(
+    createClient({
     url: GRAPHQL_WS_URI,
     connectionParams: () => {
       const token = localStorage.token
@@ -206,7 +194,8 @@ const wsLink = ApolloLink.from([
         : localStorage.getItem("vendortoken");
       return token ? { Authorization: `Bearer ${token}` } : {};
     },
-  }),
+    })
+  ),
 ]);
 
 // HTTP link for queries and mutations
@@ -256,8 +245,9 @@ const httpLink = ApolloLink.from([
   }),
 ]);
 
-// Link to direct ws and http traffic to the correct place
-const link = ApolloLink.split(
+// Link to direct ws and http traffic to the correct place. ApolloLink.split is
+// exported as a standalone `split` in Apollo Client 3.
+const link = split(
   ({ query }) => {
     const { kind, operation } = getMainDefinition(query);
     return kind === "OperationDefinition" && operation === "subscription";
@@ -271,34 +261,60 @@ export const defaultClient = new ApolloClient({
   link,
   cache: new InMemoryCache(),
 });
-const apolloProvider = new VueApollo({
+const apolloProvider = createApolloProvider({
   defaultClient,
 });
 
-Vue.config.productionTip = false;
+// Vue 3: one app instance, plugins installed on it rather than globally, and
+// no productionTip.
+//
+// The root `created()` hook that used to hold the boot dispatches is gone —
+// App.vue has a `created()` of its own, and spreading the component options to
+// add one here would silently replace it. The dispatches run against the store
+// directly instead, just before mount. They were always fire-and-forget async
+// queries, so ordering relative to the first render is unchanged.
+const app = createApp(App);
 
-new Vue({
-  apolloProvider,
-  router,
-  store,
-  vuetify,
-  render: (h) => h(App),
-  created() {
-    // console.log("vue starting")
-    this.$store.dispatch("getCurrentResident");
-    this.$store.dispatch("getCurrentVendor");
-    this.$store.dispatch("getPets");
-    this.$store.dispatch("getActiveFlyer");
-    this.$store.dispatch("getEventCategory");
-    this.$store.dispatch("getPromotionEvents");
-    this.$store.dispatch("getAllGuilds");
-    this.$store.dispatch("getAllGuildDeals");
-    this.$store.dispatch("getMetroSpec");
-    this.$store.dispatch("getCityHall");
-    this.$store.dispatch("getProductCategory");
-    this.$store.dispatch("getServiceCategory");
-    this.$store.dispatch("getRestaurantCategory");
-    this.$store.dispatch("getVendorList");
-    this.$store.dispatch("getNews");
+app.use(router);
+app.use(store);
+app.use(vuetify);
+app.use(apolloProvider);
+app.use(VueMasonryPlugin);
+
+app.component("form-alert", Alert);
+app.component("qrcode", VueQrcode);
+
+// Vue 3 renamed every directive hook. `bind` is `beforeMount`.
+app.directive("event-type-photo", {
+  beforeMount(el, binding) {
+    switch (binding.value) {
+      case "On_Sale":
+        el.src = "/static/sales_images__1_-removebg-preview.png";
+    }
   },
-}).$mount("#app");
+});
+
+// Phase 4b-1 put the filters here as Vue.prototype.$filters; this is the same
+// thing under Vue 3, and none of the 176 template call sites changed.
+app.config.globalProperties.$filters = filters;
+
+// The 15 boot queries. test/queryPolicy.test.js reads these names out of this
+// file and asserts every one is still PUBLIC — guarding any of them would
+// break the app on load for anonymous visitors.
+store.dispatch("getCurrentResident");
+store.dispatch("getCurrentVendor");
+store.dispatch("getPets");
+store.dispatch("getActiveFlyer");
+store.dispatch("getEventCategory");
+store.dispatch("getPromotionEvents");
+store.dispatch("getAllGuilds");
+store.dispatch("getAllGuildDeals");
+store.dispatch("getMetroSpec");
+store.dispatch("getCityHall");
+store.dispatch("getProductCategory");
+store.dispatch("getServiceCategory");
+store.dispatch("getRestaurantCategory");
+store.dispatch("getVendorList");
+store.dispatch("getNews");
+
+app.mount("#app");

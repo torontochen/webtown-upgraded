@@ -9,7 +9,7 @@
                 <v-col
                   cols="6"
                   align-self="center"
-                  class="primary--text text-subtitle-2 "
+                  class="text-primary text-subtitle-2 "
                 >
                   <span>
                     {{ originType ? originType : type }} in Design:{{ flyerId }}
@@ -38,16 +38,15 @@
             <!-- </v-container> -->
           </v-card>
         <!-- </v-card> -->
-          <v-toolbar flat dense color="shade3" class="ma-6 mt-2">
+          <v-toolbar flat density="compact" color="shade3" class="ma-6 mt-2">
             <!-- color="rgba(122, 108, 203, 0.5)" -->
-            <v-btn-toggle color="primary" dense group class="d-block ml-10">
+            <v-btn-toggle color="primary" density="compact" group class="d-block ml-10">
               <!-- Add element -->
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :value="1"
-                    text
-                    v-on="on"
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
+                    :value="1" 
+                    v-bind="props"
                     @click="addElement"
                     :disabled="editStatus"
                   >
@@ -59,11 +58,10 @@
 
               <!-- Add Page -->
               <v-tooltip top v-if="checkType">
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :value="5"
-                    text
-                    v-on="on"
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
+                    :value="5" 
+                    v-bind="props"
                     :disabled="editStatus || pageSave.length == 0"
                     @click="addPage"
                   >
@@ -84,7 +82,7 @@
                 <template v-slot:activator="{ on: menu }">
                   <v-tooltip top>
                     <template v-slot:activator="{ on: tooltip }">
-                      <v-btn :value="4" text v-on="{ ...tooltip, ...menu }">
+                      <v-btn variant="text" :value="4"  v-on="{ ...tooltip, ...menu }">
                         <v-icon class="d-block mt-1"
                           >mdi-format-color-fill</v-icon
                         >
@@ -105,11 +103,10 @@
                 top
                 v-if="type!=='FLYER'"
               >
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :value="3"
-                    text
-                    v-on="on"
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
+                    :value="3" 
+                    v-bind="props"
                     @click="addQr"
                   >
                     <v-icon>mdi-qrcode</v-icon>
@@ -120,11 +117,10 @@
 
               <!-- Delete -->
               <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :value="3"
-                    text
-                    v-on="on"
+                <template v-slot:activator="{ props }">
+                  <v-btn variant="text"
+                    :value="3" 
+                    v-bind="props"
                     :disabled="!editStatus || !editId"
                     @click="deleteElement"
                   >
@@ -139,41 +135,38 @@
             <v-switch
               v-model="borderLined"
               class="d-block mt-5 mr-2"
-              dense
+              density="compact"
               :label="borderLined ? 'Dotted Line' : 'None'"
               :disabled="!editStatus"
             ></v-switch>
 
             <v-tooltip v-if="editStatus" top>
-              <template v-slot:activator="{ on }">
-                <v-btn
+              <template v-slot:activator="{ props }">
+                <v-btn variant="outlined"
                   @click="quitEdit"
                   x-small
-                  depressed
-                  v-on="on"
-                  color="primary"
-                  outlined
+                  v-bind="props"
+                  color="primary" 
                   class="d-block mx-2 "
                 >
                   Design
                   <!-- <v-icon
                 x-small
                 color="primary"
-                dense
+                density="compact"
               >mdi-pencil-box-outline</v-icon> -->
                 </v-btn>
               </template>
               <span>Switch to design mode</span>
             </v-tooltip>
             <v-tooltip top v-else>
-              <template v-slot:activator="{ on }">
-                <v-btn
+              <template v-slot:activator="{ props }">
+                <v-btn variant="flat"
                   x-small
                   color="primary"
-                  dark
-                  depressed
+                  theme="dark" 
                   class="d-block mx-2"
-                  v-on="on"
+                  v-bind="props"
                   @click="toEdit"
                   :disabled="pageNoWatcher.length == 0"
                 >
@@ -194,7 +187,7 @@
         <v-row>
           <v-col cols="1">
             <v-tooltip left open-on-hover>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-slider
                   v-model="sliderV"
                   :max="maxSliderV"
@@ -203,7 +196,7 @@
                   :thumb-size="22"
                   thumb-label="always"
                   class="d-block mt-9 "
-                  v-on="on"
+                  v-bind="props"
                 ></v-slider>
               </template>
               <span
@@ -213,7 +206,7 @@
           </v-col>
           <v-col cols="11">
             <v-tooltip top open-on-hover>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-slider
                   v-model="sliderH"
                   :max="maxSliderH"
@@ -222,7 +215,7 @@
                   thumb-label="always"
                   class="d-block mt-n2 ml-n2"
                   open-on-hover
-                  v-on="on"
+                  v-bind="props"
                 >
                 </v-slider>
               </template>
@@ -277,7 +270,7 @@
                       (type && type !== 'FLYER') ||
                         (originType && originType !== 'FLYER')
                     "
-                    style="position:absolute; right: 3px; bottom: 3px"
+                    style="position:absolute; end: 3px; bottom: 3px"
                     color="black"
                     size="72">mdi-qrcode</v-icon> -->
                     <!-- :style="source?item.htmlOuterStyle:''" -->
@@ -299,7 +292,7 @@
                     @resizing="onResize"
                     @activated="itemClicked(pageIndex, index)"
                     style="borderStyle: 'none' "
-                    @click.native="
+                    @click="
                       editClickElement(item, index, flyerPage.nodeId)
                     "
                   >
@@ -321,11 +314,10 @@
               </v-col>
               <v-col cols="2">
                 <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      v-on="on"
-                      @click="deletePage"
-                      text
+                  <template v-slot:activator="{ props }">
+                    <v-btn variant="text"
+                      v-bind="props"
+                      @click="deletePage" 
                       class="d-clock mt-6"
                       :disabled="pages <= 1"
                     >
@@ -348,7 +340,7 @@ import moment from "moment";
 import { mapGetters } from "vuex";
 import VueDraggableResizable from "vue-draggable-resizable";
 // optionally import default styles
-import "vue-draggable-resizable/dist/VueDraggableResizable.css";
+import "vue-draggable-resizable/style.css";
 import _ from "lodash";
 import sizeOf from "object-sizeof";
 import LZString from "lzutf8";
@@ -855,7 +847,7 @@ export default {
     });
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
 
     console.log("htmlConverter destroy");
     // eventBus_editElement.$off();

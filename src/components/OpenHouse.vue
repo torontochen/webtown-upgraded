@@ -1,16 +1,16 @@
 <template>
   <v-container fluid class="mb-10">
      <!-- <v-img src="https://www.animatedimages.org/data/media/100/animated-money-image-0013.gif" 
-  height="80" width="100" contain v-show="false" />
+  height="80" width="100" v-show="false" />
     <v-img src="https://www.animatedimages.org/data/media/1353/animated-medal-image-0013.gif" 
-                      height="80" width="100" contain v-show="false"/> -->
+                      height="80" width="100" v-show="false"/> -->
    
 
     <v-row justify="center" class="mb-6" >
     <!-- General Info -->
       <v-col cols="2">
         <v-sheet
-        dark
+        theme="dark"
         color="accent lighten-2"
         elevation="10"
         :height="viewPortDimension.height*0.11"
@@ -23,7 +23,7 @@
           <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-cash</v-icon>&nbsp;&nbsp;Property Tax: {{ $filters.formatIntAmount(resident.propertyTax * 100) }}%</span><br>
         </v-sheet>
         <v-sheet
-        dark
+        theme="dark"
         color="secondary lighten-2"
         elevation="10"
         :height="viewPortDimension.height*0.11"
@@ -56,21 +56,21 @@
                     <!-- Reward Pet Experience -->
                     <span
                       style="left: 40px; bottom: 200px; position: absolute"
-                      class="text-h5 black--text font-weight-bold text-center"
+                      class="text-h5 text-black font-weight-bold text-center"
                       key="1"
                       v-if="tranStart"
                       >
                       <!-- src="https://www.animatedimages.org/data/media/1353/animated-medal-image-0013.gif"  -->
                       <v-img 
                       src="/static/animated-medal-image-0013.gif"
-                      height="90" width="110" contain  />
+                      height="90" width="110"  />
 
                     &nbsp;&nbsp;&nbsp;&nbsp; +100</span
                     >
                     <!-- Reward Silver -->
                     <span
                       style="right: 40px; bottom: 200px; position: absolute"
-                      class="text-h5 red--text font-weight-bold text-center"
+                      class="text-h5 text-red font-weight-bold text-center"
                       key="2"
                       v-if="tranStart"
                       >
@@ -78,7 +78,7 @@
                       <v-img 
                       src="/static/animated-money-image-0013.gif"
 
-                      height="80" width="100" contain />
+                      height="80" width="100" />
 
                       +{{ rewardSilver }}</span
                     >
@@ -88,13 +88,13 @@
                   <Transition name="slide-fade">
                     <span
                       style="right: 480px; bottom: 190px; position: absolute; z-index: 10;"
-                      class="text-h5 red--text font-weight-bold"
+                      class="text-h5 text-red font-weight-bold"
                       v-if="stashTranStart"
                       >
                       <!-- src="https://www.animatedimages.org/data/media/1335/animated-mail-image-0251.gif"  -->
                       <v-img 
                       src="/static/animated-mail-image-0251.gif"
-                      height="90" width="110" contain />
+                      height="90" width="110" />
                       </span>
                   </Transition>
 
@@ -102,7 +102,7 @@
                   <Transition name="slideEgg-fade">
                      <span
                       style="left: 110px; bottom: 30px; position: absolute"
-                      class="text-h5 red--text font-weight-bold"
+                      class="text-h5 text-red font-weight-bold"
                       key="2"
                       v-if="eggTranStart"
                       >
@@ -110,7 +110,7 @@
                       <v-img 
                       src="/static/animated-money-image-0013.gif"
 
-                      height="60" width="60" contain />
+                      height="60" width="60" />
 
                       +100</span
                     >
@@ -121,18 +121,18 @@
                     <v-banner
                         elevation="19"
                         color="primary"
-                        dark
+                        theme="dark"
                         rounded='pill'
                         style="left: 80px; bottom: 120px; position: absolute"
                         class="font-weight-bold"
                         v-if="feedMe"
                       >Feed Me Flyers</v-banner>
                   <v-menu left offset-x open-on-hover>
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator="{ props }">
                       <v-img
                         :src="petUrl"
                         v-if="petUrl"
-                        v-on="on"
+                        v-bind="props"
                         style="left: 25px; bottom: 20px; position: absolute"
                         @mouseenter="mouseEnterSize_pet"
                         @mouseleave="mouseLeaveSize_pet"
@@ -140,19 +140,18 @@
                           width: targetWidth_Pet + 'px',
                           height: targetHeight_Pet + 'px',
                         }"
-                        contain
                       ></v-img>
                     </template>
 
                     <v-list class="pa-1">
                       <v-list-item v-for="(item, index) in petItems" :key="index">
 
-                        <v-list-item-title v-if="item.title == 'Experience'" class="accent--text"
+                        <v-list-item-title v-if="item.title == 'Experience'" class="text-accent"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
                           >{{ item.title }}&nbsp;
                           {{ $filters.formatIntAmount(resident.petExperience) }}</v-list-item-title
                         >
-                        <v-list-item-title v-else class="accent--text" @click="isAIChatOpen=true"
+                        <v-list-item-title v-else class="text-accent" @click="isAIChatOpen=true"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
                           >{{ item.title }}</v-list-item-title
                         >
@@ -166,7 +165,6 @@
                         height="70"
                         width="70"
                         style="left: 110px; bottom: 20px; position: absolute"
-                        contain
                         @click="crackEgg"
                       ></v-img>
                   <v-img
@@ -175,7 +173,6 @@
                         height="90"
                         width="90"
                         style="left: 120px; bottom: 10px; position: absolute"
-                        contain
                       ></v-img>
 
                   </v-container>
@@ -183,9 +180,9 @@
 
                   <!-- Mailbag -->
                   <v-menu left offset-x open-on-hover :close-on-content-click="false">
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator="{ props }">
                         <v-img
-                          v-on="on"
+                          v-bind="props"
                           src="/static/mailbag-removebg-preview.png"
                           v-if="resident"
                           style="right: 480px; bottom: 80px; position: absolute"
@@ -215,11 +212,11 @@
                         v-for="(item, index) in mailbagItems"
                         :key="index"
                         @click="openMailbagHandler(index)"
-                        class="accent--text"
+                        class="text-accent"
                       >
-                       <v-list-item-icon>
+                       <template #prepend>
                           <v-icon  color="accent">{{ item.icon }}</v-icon>
-                        </v-list-item-icon>
+                        </template>
                          
                         <v-list-item-title v-if="item.title=='Flyers'">{{ item.title }}
                            <v-badge
@@ -236,25 +233,25 @@
                        <v-list-group 
                         no-action 
                         color="accent">
-                          <template v-slot:activator>
-                            <v-list-item-icon>
-                              <v-icon
-                                class="mr-2"
-                                dense
-                                color="accent"
-                                >mdi-message-text-outline</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                               <v-list-item-title
-                              class="accent--text "
-                              >Messages</v-list-item-title>
-                            </v-list-item-content>
+                          <template v-slot:activator="{ props }">
+                            <v-list-item v-bind="props">
+                              <template #prepend>
+                                <v-icon
+                                  class="mr-2"
+                                  density="compact"
+                                  color="accent"
+                                  >mdi-message-text-outline</v-icon>
+                              </template>
+                                 <v-list-item-title
+                                class="text-accent "
+                                >Messages</v-list-item-title>
+                            </v-list-item>
                           </template>
 
                         <!-- Guild Messages -->
                           <v-list-item @click="isGuildMessageOpen=true" :disabled="!resident.guild">
                           <v-list-item-title
-                            class="font-weight-light text-capitalize accent--text text-body-2 "
+                            class="font-weight-light text-capitalize text-accent text-body-2 "
                           >
                             Guild Messages
                              <v-badge
@@ -273,7 +270,7 @@
                           @click="isVendorMessageOpen=true"
                         >
                           <v-list-item-title
-                            class="font-weight-light text-capitalize accent--text text-body-2"
+                            class="font-weight-light text-capitalize text-accent text-body-2"
                           >Vendor Messages
                            <v-badge
                           overlap
@@ -290,7 +287,7 @@
                           @click="systemMessage"
                         >
                           <v-list-item-title
-                            class="font-weight-light text-capitalize accent--text text-body-2"
+                            class="font-weight-light text-capitalize text-accent text-body-2"
                           >System Messages</v-list-item-title>
                         </v-list-item>
                     </v-list-group>
@@ -299,7 +296,7 @@
 
                   <!-- Safe -->
                   <v-menu left offset-x open-on-hover>
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator="{ props }">
                       <v-img
                         src="/static/safe1-removebg-preview.png"
                         v-if="resident"
@@ -308,7 +305,7 @@
                           width: targetWidth_Safe + 'px',
                           height: targetHeight_Safe + 'px',
                         }"
-                        v-on="on"
+                        v-bind="props"
                         @mouseenter="mouseEnterSize_safe"
                         @mouseleave="mouseLeaveSize_safe"
                       ></v-img>
@@ -321,12 +318,12 @@
                         @click="openSafeHandler(index)"
                         :disabled="isDisabled(item.title)"
                       >
-                        <v-list-item-title v-if="item.title == 'Silver'" class="accent--text"
+                        <v-list-item-title v-if="item.title == 'Silver'" class="text-accent"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
                           >{{ item.title }}
                           {{ $filters.formatIntAmount(resident.silverCoins) }}</v-list-item-title
                         >
-                        <v-list-item-title v-else class="accent--text"
+                        <v-list-item-title v-else class="text-accent"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
                           >{{ item.title }}</v-list-item-title
                         >
@@ -336,7 +333,7 @@
 
                   <!-- Guild  -->
                   <v-menu left offset-x open-on-hover>
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator="{ props }">
                       <v-img
                         :src="guildLogo"
                         v-if="resident"
@@ -345,7 +342,7 @@
                           width: targetWidth_Guild + 'px',
                           height: targetHeight_Guild + 'px',
                         }"
-                        v-on="on"
+                        v-bind="props"
                         @mouseenter="mouseEnterSize_guild"
                         @mouseleave="mouseLeaveSize_guild"
                       ></v-img>
@@ -358,7 +355,7 @@
                         @click="guildHandler(index)"
                         v-show="guildItemShow(item.title)"
                       >
-                        <v-list-item-title class="accent--text">
+                        <v-list-item-title class="text-accent">
                           <v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
                           >
                           {{ item.title }}</v-list-item-title>
@@ -375,7 +372,7 @@
       <!-- Guild Info -->
       <v-col cols="2"  v-if="resident.guild">
               <v-sheet
-                dark
+                theme="dark"
                 color="primary lighten-1"
                 elevation="10"
                 :height="viewPortDimension.height*0.38"
@@ -390,7 +387,7 @@
 
                    Guild
                   </span><br>
-                <span class="text-subtitle-1 white--text font-weight-bold d-block text-left">
+                <span class="text-subtitle-1 text-white font-weight-bold d-block text-left">
                    
                   [&nbsp;{{resident.guild.guildFullName}}&nbsp;]
                 <span v-if="resident.guildOwned">(leader)</span>
@@ -400,16 +397,15 @@
                    open-on-hover 
                     v-if="resident.guild.isRulingGuild && resident.guild.guildLeader == resident.residentName" 
                    :close-on-content-click="false" >
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator="{ props }">
                        <v-avatar 
                        class="mb-3" 
-                          v-on="on"
+                          v-bind="props"
                        >
                           <v-img 
                           src="https://www.animatedimages.org/data/media/1299/animated-king-image-0026.gif" 
                           height="40" 
-                          width="40" 
-                          contain  />
+                          width="40"  />
                       </v-avatar>
                     </template>
 
@@ -418,11 +414,11 @@
                         v-for="(item, index) in governorItems"
                         :key="index"
                         @click="openGovernorHandler(index)"
-                        class="accent--text"
+                        class="text-accent"
                       >
-                       <v-list-item-icon>
+                       <template #prepend>
                           <v-icon  color="accent">{{ item.icon }}</v-icon>
-                        </v-list-item-icon>
+                        </template>
                         <v-list-item-title >{{ item.title }}</v-list-item-title>
                       </v-list-item>
                     
@@ -468,7 +464,7 @@
         >
           <template v-slot:item.actions="{ item }">
             <v-avatar tile height="40" width="40" class="rounded-lg">
-              <v-img :src="item.logo" contain></v-img>
+              <v-img :src="item.logo"></v-img>
             </v-avatar>
           </template>
           
@@ -523,7 +519,7 @@
         >
           <template v-slot:item.logo="{ item }">
             <v-avatar tile height="40" width="40" class="rounded-lg">
-              <v-img :src="item.logo" contain></v-img>
+              <v-img :src="item.logo"></v-img>
             </v-avatar>
           </template>
 
@@ -598,7 +594,7 @@
             <v-row>
               <v-col cols="12">
                 <v-card outlined hover>
-                  <v-card-title class="primary--text"
+                  <v-card-title class="text-primary"
                     >Pick a guild logo</v-card-title
                   >
                   <v-slide-group
@@ -649,21 +645,19 @@
 
             <v-row>
               <v-col cols="6">
-                <v-select
+                <v-select variant="outlined"
                   label="Perk"
                   v-model="perk"
-                  hint="% of guild silver balance by month "
-                  outlined
+                  hint="% of guild silver balance by month " 
                   required
                   :items="guildPerkSelection">
                 </v-select>
               </v-col>
               <v-col cols="6">
-                 <v-select
+                 <v-select variant="outlined"
                   label="Contribution"
                   hint="% of transaction"
-                  v-model="contributionRatio"
-                  outlined
+                  v-model="contributionRatio" 
                   required
                   :items="guildContributionRatio">
                 </v-select>
@@ -684,11 +678,10 @@
 
             <v-row class="d-flex justify-end">
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="handleCancel"> Cancel </v-btn>
+              <v-btn variant="text" color="primary"  @click="handleCancel"> Cancel </v-btn>
 
-              <v-btn
-                color="#ff9800"
-                text
+              <v-btn variant="text"
+                color="#ff9800" 
                 :disabled="!isGuildFormOk"
                 type="submit"
               >
@@ -746,7 +739,7 @@
             <v-row>
               <v-col cols="12">
                 <v-card outlined hover>
-                  <v-card-title class="primary--text"
+                  <v-card-title class="text-primary"
                     >Pick a guild logo</v-card-title
                   >
                   <v-slide-group
@@ -797,21 +790,19 @@
 
             <v-row>
               <v-col cols="6">
-                <v-select
+                <v-select variant="outlined"
                   label="Perk"
                   v-model="perk"
-                  hint="% of guild silver balance by month "
-                  outlined
+                  hint="% of guild silver balance by month " 
                   required
                   :items="guildPerkSelection">
                 </v-select>
               </v-col>
               <v-col cols="6">
-                 <v-select
+                 <v-select variant="outlined"
                   label="Contribution"
                   hint="% of transaction"
-                  v-model="contributionRatio"
-                  outlined
+                  v-model="contributionRatio" 
                   required
                   :items="guildContributionRatio">
                 </v-select>
@@ -832,11 +823,10 @@
 
             <v-row class="d-flex justify-end">
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="handleCancel"> Cancel </v-btn>
+              <v-btn variant="text" color="primary"  @click="handleCancel"> Cancel </v-btn>
 
-              <v-btn
-                color="#ff9800"
-                text
+              <v-btn variant="text"
+                color="#ff9800" 
                 :disabled="!isEditGuildFormOk"
                 type="submit"
               >
@@ -856,7 +846,7 @@
           
           <v-row no-gutters>
             <v-col cols="12">
-              <v-simple-table fixed-header height="500">
+              <v-table fixed-header height="500">
                 <template v-slot:default>
                   <thead>
                     <tr>
@@ -873,16 +863,15 @@
                   </thead>
                   <tbody>
                     <v-tooltip top>
-                      <template v-slot:activator="{on}">
+                      <template v-slot:activator="{ props }">
                         <tr
                           v-for="(item, i) in guilds"
                           :key="i"
                           @mouseover="showGuildPost(item.guildPost)"
-                          v-on="on"
+                          v-bind="props"
                         >
                           <td>
                             <v-img
-                              contain
                               width="100"
                               height="100"
                               :src="`/guildLogos/${item.guildLogo}`"
@@ -908,21 +897,20 @@
                     </v-tooltip>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-table>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-end">
             <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              depressed
+            <v-btn variant="flat"
+              color="primary" 
               :disabled="!guildChose"
               @click="joinGuild"
             >
               Join Guild
             </v-btn>
 
-            <v-btn color="primary" text plain @click="isJoinGuildOpen = false">
+            <v-btn variant="text" color="primary"  @click="isJoinGuildOpen = false">
               Cancel
             </v-btn>
           </v-row>
@@ -937,7 +925,7 @@
         <v-card-text>
           <v-row>
             <v-col cols="12">
-              <v-simple-table height="500" fixed-header>
+              <v-table height="500" fixed-header>
                 <template v-slot:default>
                   <thead>
                     <tr>
@@ -954,16 +942,15 @@
                   <tbody>
                      <v-tooltip top v-for="(item, i) in guilds"
                       :key="i" >
-                      <template v-slot:activator="{on}">
+                      <template v-slot:activator="{ props }">
                     <tr
                       
                       @mouseover="showGuildPost(item.guildPost)"
-                      v-on="on"
+                      v-bind="props"
                       v-if="item.guildFullName!=resident.guild.guildFullName"
                     >
                       <td>
                         <v-img
-                          contain
                           width="100"
                           height="100"
                           :src="`/guildLogos/${item.guildLogo}`"
@@ -981,10 +968,10 @@
                         </v-radio-group>
                       </td>
                       <td v-else>
-                        <v-btn text disabled="true" ><v-icon size="28" class="ml-n9">mdi-account-switch</v-icon></v-btn>
+                        <v-btn variant="text"  disabled="true" ><v-icon size="28" class="ml-n9">mdi-account-switch</v-icon></v-btn>
                       </td>
                       <td v-if="isAllied(item.guildFullName)&&isRequest(item.guildFullName)">
-                        <v-btn x-small depressed color="primary" @click="disally(item.guildFullName)">Disally</v-btn>
+                        <v-btn variant="flat" x-small  color="primary" @click="disally(item.guildFullName)">Disally</v-btn>
                       </td>
                       <td v-else><v-spacer></v-spacer></td>
                     </tr>
@@ -995,28 +982,27 @@
                     </v-tooltip>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-table>
             </v-col>
           </v-row>
          
           <v-row class="d-flex justify-center">
-            <p class="text-center accent--text">
+            <p class="text-center text-accent">
             To ally with a guild, your guild commits a  tribute amounted to 10% of monthly guild income to the ally for at least a month
             </p>
           </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              depressed
+            <v-btn variant="flat"
+              color="primary" 
               :disabled="!guildToAlly || !resident.guildOwned"
               @click="allyGuild"
             >
               Ally Guild
             </v-btn>
 
-            <v-btn color="primary" text plain @click="isAllyGuildOpen = false">
+            <v-btn variant="text" color="primary"  @click="isAllyGuildOpen = false">
               Cancel
             </v-btn>
         </v-card-actions>
@@ -1031,7 +1017,7 @@
         <v-card-text>
           <v-row>
             <v-col cols="12">
-              <v-simple-table height="500" fixed-header>
+              <v-table height="500" fixed-header>
                 <template v-slot:default>
                   <thead>
                     <tr>
@@ -1048,16 +1034,15 @@
                   <tbody>
                      <v-tooltip top v-for="(item, i) in guilds"
                       :key="i" >
-                      <template v-slot:activator="{on}">
+                      <template v-slot:activator="{ props }">
                     <tr
                       
                       @mouseover="showGuildPost(item.guildPost)"
-                      v-on="on"
+                      v-bind="props"
                       v-if="isAllied(item.guildFullName)"
                     >
                       <td>
                         <v-img
-                          contain
                           width="100"
                           height="100"
                           :src="`/guildLogos/${item.guildLogo}`"
@@ -1082,28 +1067,27 @@
                     </v-tooltip>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-table>
             </v-col>
           </v-row>
          
           <v-row class="d-flex justify-center">
-            <p class="text-center accent--text">
+            <p class="text-center text-accent">
             If ally commits the guild deal referred, your guild can be rewarded lump sum 1,000 silver plus 1% of the total purchase your ally makes under the deal.
             </p>
           </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              depressed
+            <v-btn variant="flat"
+              color="primary" 
               :disabled="guildSelected.length==0"
               @click="isrReferDealOpen = false"
             >
               Send Referral
             </v-btn>
 
-            <v-btn color="primary" text plain @click="isrReferDealOpen = false">
+            <v-btn variant="text" color="primary"  @click="isrReferDealOpen = false">
               Cancel
             </v-btn>
         </v-card-actions>
@@ -1123,7 +1107,6 @@
             <v-col cols="3">
               <!-- <v-row class="d-flex flex-row justify-start align-center"> -->
                   <v-img
-                contain
                 width="65"
                 height="65"
                 :src="`/guildLogos/${resident.guild.guildLogo}`"
@@ -1131,7 +1114,7 @@
               > 
               
               </v-img>
-               <span  v-if="resident.guild!=null" class="accent--text text--darken-3  text-button" style="z-index: 100;">{{
+               <span  v-if="resident.guild!=null" class="text-accent  text-button" style="z-index: 100;">{{
               `${resident.guild.guildFullName} (${resident.guild.guildShortName})`
             }}</span>
               <!-- </v-row> -->
@@ -1139,23 +1122,23 @@
 
             </v-col>
           
-            <v-col cols="2" class="primary--text  font-weight-bold">Leader: {{ guildLeader }}</v-col>
-            <v-col cols="2" class="primary--text  font-weight-bold"
+            <v-col cols="2" class="text-primary  font-weight-bold">Leader: {{ guildLeader }}</v-col>
+            <v-col cols="2" class="text-primary  font-weight-bold"
               >Members: {{ resident.guild.guildMembers.length }}</v-col
             >
-            <v-col cols="2" class="primary--text text--darken-2 font-weight-bold" 
+            <v-col cols="2" class="text-primary font-weight-bold" 
               >Treasure:
               {{ $filters.formatIntAmount(resident.guild.guildSilver) }}</v-col
             >
 
-            <v-col cols="2" class="primary--text  font-weight-bold">Contribution:&nbsp;{{ resident.guild.contributionRatio * 100 + '%' }}</v-col>
-            <v-col cols="1" class="primary--text  font-weight-bold">Perk/Mo:&nbsp;{{ resident.guild.perk * 100 + '%' }}</v-col>
+            <v-col cols="2" class="text-primary  font-weight-bold">Contribution:&nbsp;{{ resident.guild.contributionRatio * 100 + '%' }}</v-col>
+            <v-col cols="1" class="text-primary  font-weight-bold">Perk/Mo:&nbsp;{{ resident.guild.perk * 100 + '%' }}</v-col>
           </v-row>
         </v-card-subtitle>
         <v-card-text>
           <v-row>
             <v-col cols="12">
-              <v-simple-table fixed-header height="500">
+              <v-table fixed-header height="500">
                 <template v-slot:default>
                   <thead>
                     <tr>
@@ -1199,14 +1182,11 @@
                           bottom
                           :close-on-content-click="true"
                         >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn 
-                              dark 
-                              x-small 
-                              depressed 
-                              color="primary" 
-                              v-bind="attrs"
-                              v-on="on">Manage</v-btn>
+                          <template v-slot:activator="{ props }">
+                            <v-btn variant="flat" 
+                              theme="dark" 
+                              x-small  
+                              color="primary" v-bind="props">Manage</v-btn>
                           </template>
 
                           <v-list>
@@ -1216,7 +1196,7 @@
                               @click="manageGuildMember(member.name, member.nickName, member.rank, index)"
                               :disabled="index==1&&!canReward(member.name)"
                             >
-                              <v-list-item-title class="accent--text text-body-1">
+                              <v-list-item-title class="text-accent text-body-1">
                                 <v-icon class="mr-3" color="accent" small>{{ item.icon }}</v-icon>
                                 {{ item.title }}</v-list-item-title>
                             </v-list-item>
@@ -1229,19 +1209,15 @@
                           bottom
                           :close-on-content-click="true"
                         >
-                          <template v-slot:activator="{ on, attrs }">
-                            <!-- <v-btn 
-                              dark 
-                              x-small 
-                              depressed 
+                          <template v-slot:activator="{ props }">
+                            <!-- <v-btn variant="flat" 
+                              theme="dark" 
+                              x-small  
                               color="primary" 
                              >Manage</v-btn> -->
-                               <v-btn 
-                               v-bind="attrs"
-                              v-on="on"
-                              dark 
-                              x-small 
-                              depressed 
+                               <v-btn variant="flat" v-bind="props"
+                              theme="dark" 
+                              x-small  
                               color="primary" 
                               >Guild Leader</v-btn>
 
@@ -1254,7 +1230,7 @@
                               @click="leaderOrders(index)"
                               
                             >
-                              <v-list-item-title class="accent--text text-body-1">
+                              <v-list-item-title class="text-accent text-body-1">
                                 <v-icon class="mr-3" color="accent" small>{{ item.icon }}</v-icon>
                                 {{ item.title }}</v-list-item-title>
                             </v-list-item>
@@ -1265,7 +1241,7 @@
                     </tr>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-table>
             </v-col>
           </v-row>
         </v-card-text>
@@ -1281,7 +1257,7 @@
       fullscreen
     >
       <v-card class="pa-10" flat rounded="3" style="border-top: 15px solid #7986CB">
-        <v-card-title class="fontColor--text text--darken-3">Guild Deals</v-card-title>
+        <v-card-title class="text-fontColor">Guild Deals</v-card-title>
         <v-card-text>
           <!-- Active Guild Deals -->
           <v-container fluid >
@@ -1298,36 +1274,31 @@
             >
               <!-- toolbar -->
               <template v-slot:header>
-                <v-toolbar dark flat dense color="primary" class="mb-1">
+                <v-toolbar theme="dark" flat density="compact" color="primary" class="mb-1">
                   <v-toolbar-title class="text-h6">Deals Available</v-toolbar-title>
                   <v-spacer></v-spacer>
-                  <v-text-field
-                    v-model="search"
-                    dense
+                  <v-text-field variant="solo"
+                    v-model="search" density="compact"
                     clearable
-                    flat
-                    solo-inverted
+                    flat -inverted
                     hide-details
                     prepend-inner-icon="mdi-magnify"
                     label="Search"
                   ></v-text-field>
                   <v-spacer></v-spacer>
-                   <v-select
+                   <v-select variant="filled"
                         v-model="filterDealByCate"
                         :items="restaurantCategories"
-                        clearable
-                        filled
-                        dense
+                        clearable density="compact"
                         flat
                         label="Filter by"
                         class="mt-6"
                       ></v-select>
-                  <template v-if="$vuetify.breakpoint.mdAndUp">
+                  <template v-if="$vuetify.display.mdAndUp">
                     <v-spacer></v-spacer>
-                    <!-- <v-select
+                    <!-- <v-select variant="solo"
                           v-model="sortBy"
-                          flat
-                          solo-inverted
+                          flat -inverted
                           hide-details
                           :items="keys"
                           prepend-inner-icon="mdi-magnify"
@@ -1335,10 +1306,10 @@
                         ></v-select>
                         <v-spacer></v-spacer> -->
                     <v-btn-toggle v-model="sortDesc" mandatory>
-                      <v-btn small depressed color="primary lighten-1" :value="false">
+                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
                         <v-icon>mdi-arrow-up</v-icon>
                       </v-btn>
-                      <v-btn small depressed color="primary lighten-1" :value="true">
+                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
                         <v-icon>mdi-arrow-down</v-icon>
                       </v-btn>
                     </v-btn-toggle>
@@ -1358,12 +1329,10 @@
                     lg="3"
                   >
                     <v-tooltip top color="#424242">
-                      <template v-slot:activator="{ on, attrs }">
+                      <template v-slot:activator="{ props }">
                         <v-card
                           class="pa-2"
-                          v-if="item.active"
-                          v-bind="attrs"
-                          v-on="on"
+                          v-if="item.active" v-bind="props"
                           
                         >
                           <v-card-subtitle>
@@ -1371,7 +1340,7 @@
                               <v-col cols="5">
                                 <v-btn x-small icon @click="toVendorInter(item.vendor)"><v-icon color="primary">mdi-feature-search-outline</v-icon></v-btn>
                                 <v-avatar tile size="60" class="rounded-lg"
-                                  ><v-img :src="item.vendorLogo" contain height="50" width="50"/>
+                                  ><v-img :src="item.vendorLogo" height="50" width="50"/>
                                   </v-avatar>
                               </v-col>
                               <v-col
@@ -1397,7 +1366,7 @@
 
                           <v-card-text>
                             <v-row no-gutters>
-                              <v-col cols="7" class="pr-1 secondary--text"
+                              <v-col cols="7" class="pr-1 text-secondary"
                                 >Type: {{ item.guildDealType }}
                                 <v-col
                                   cols="12"
@@ -1494,16 +1463,13 @@
               
               <template v-slot:footer>
                 <v-row class="mt-2" align="center" justify="center">
-                  <!-- <span class="grey--text">Items per page</span>
+                  <!-- <span class="text-grey">Items per page</span>
                       <v-menu offset-y>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            dark
-                            text
+                        <template v-slot:activator="{ props }">
+                          <v-btn variant="text"
+                            theme="dark" 
                             color="primary"
-                            class="ml-2"
-                            v-bind="attrs"
-                            v-on="on"
+                            class="ml-2" v-bind="props"
                           >
                             {{ itemsPerPage }}
                             <v-icon>mdi-chevron-down</v-icon>
@@ -1522,23 +1488,19 @@
 
                   <v-spacer></v-spacer>
 
-                  <span class="mr-4 fontColor--text">
+                  <span class="mr-4 text-fontColor">
                     Page {{ page }} of {{ numberOfPages }}
                   </span>
-                  <v-btn
-                    fab
-                    dark
+                  <v-btn icon
+                    theme="dark"
                     color="primary"
                     class="mr-1"
-                    @click="formerPage"
-                    small
+                    @click="formerPage" size="small"
                   >
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
-                  <v-btn
-                    small
-                    fab
-                    dark
+                  <v-btn size="small" icon
+                    theme="dark"
                     color="primary"
                     class="ml-1"
                     @click="nextPage"
@@ -1567,29 +1529,26 @@
               hide-default-footer
             >
               <template v-slot:header>
-                <v-toolbar dark dense flat color="primary" class="mb-1">
-                  <!-- <v-btn text plain color="#fff" dark
+                <v-toolbar theme="dark" density="compact" flat color="primary" class="mb-1">
+                  <!-- <v-btn variant="text"  color="#fff" theme="dark"
                     >Commited Deals Status</v-btn
                   > -->
                    <v-toolbar-title class="text-h6">Commited Deals Status</v-toolbar-title>
 
                   <v-spacer></v-spacer>
-                  <v-text-field
+                  <v-text-field variant="solo"
                     v-model="searchStatus"
                     clearable
-                    flat
-                    dense
-                    solo-inverted
+                    flat density="compact" -inverted
                     hide-details
                     prepend-inner-icon="mdi-magnify"
                     label="Search"
                   ></v-text-field>
-                  <template v-if="$vuetify.breakpoint.mdAndUp">
+                  <template v-if="$vuetify.display.mdAndUp">
                     <v-spacer></v-spacer>
-                    <!-- <v-select
+                    <!-- <v-select variant="solo"
                           v-model="sortBy"
-                          flat
-                          solo-inverted
+                          flat -inverted
                           hide-details
                           :items="keys"
                           prepend-inner-icon="mdi-magnify"
@@ -1597,10 +1556,10 @@
                         ></v-select>
                         <v-spacer></v-spacer> -->
                     <v-btn-toggle v-model="sortDesc" mandatory>
-                      <v-btn small depressed color="primary lighten-1" :value="false">
+                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
                         <v-icon>mdi-arrow-up</v-icon>
                       </v-btn>
-                      <v-btn small depressed color="primary lighten-1" :value="true">
+                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
                         <v-icon>mdi-arrow-down</v-icon>
                       </v-btn>
                     </v-btn-toggle>
@@ -1619,23 +1578,23 @@
                     lg="3"
                   >
                     <v-tooltip top color="#424242">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-card class="pa-2" v-bind="attrs" v-on="on">
+                      <template v-slot:activator="{ props }">
+                        <v-card class="pa-2" v-bind="props">
                           <v-card-subtitle>
                             <v-row class="d-flex align-center">
                               <v-col cols="4">
                                 <v-avatar tile size="40"
-                                  ><v-img :src="item.vendorLogo" contain
+                                  ><v-img :src="item.vendorLogo"
                                 /></v-avatar>
                               </v-col>
                               <v-col
                                 cols="4"
-                                class="text-subtitle-1 font-weight-bold accent--text"
+                                class="text-subtitle-1 font-weight-bold text-accent"
                               >
                                 {{ item.vendor }}
                               </v-col>
                               <v-col cols="4">
-                                <v-btn text plain @click="referDeal">
+                                <v-btn variant="text"  @click="referDeal">
                                   <v-icon  large color="primary">mdi-share-all</v-icon>
                                 </v-btn>
                               </v-col>
@@ -1649,7 +1608,7 @@
 
                           <v-card-text>
                             <v-row no-gutters>
-                              <v-col cols="7" class="secondary--text"
+                              <v-col cols="7" class="text-secondary"
                                 >Type: {{ item.guildDealType }}
                               <v-col
                                 cols="12"
@@ -1665,7 +1624,7 @@
                                 >
                               </v-col>
                               </v-col>
-                              <v-col cols="5" class="pl-3 fontColor--text text--darken-2"
+                              <v-col cols="5" class="pl-3 text-fontColor"
                                 >Redeem: {{ item.redeemTerm }}</v-col
                               >
                             </v-row>
@@ -1684,7 +1643,7 @@
                           </v-card-text>
                           <v-card-actions >
                             <v-spacer></v-spacer>
-                            <v-btn text plain @click="showGuildTransactions(item.transactions)" v-if="item.transactions.length>0">
+                            <v-btn variant="text"  @click="showGuildTransactions(item.transactions)" v-if="item.transactions.length>0">
                               <v-icon medium color="primary">mdi-feature-search-outline</v-icon>
                             </v-btn>
                             <v-spacer></v-spacer>
@@ -1751,16 +1710,13 @@
 
               <template v-slot:footer>
                 <v-row class="mt-2" align="center" justify="center">
-                  <!-- <span class="grey--text">Items per page</span>
+                  <!-- <span class="text-grey">Items per page</span>
                       <v-menu offset-y>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            dark
-                            text
+                        <template v-slot:activator="{ props }">
+                          <v-btn variant="text"
+                            theme="dark" 
                             color="primary"
-                            class="ml-2"
-                            v-bind="attrs"
-                            v-on="on"
+                            class="ml-2" v-bind="props"
                           >
                             {{ itemsPerPage }}
                             <v-icon>mdi-chevron-down</v-icon>
@@ -1779,25 +1735,19 @@
 
                   <v-spacer></v-spacer>
 
-                  <span class="mr-4 grey--text">
+                  <span class="mr-4 text-grey">
                     Page {{ page }} of {{ numberOfPages }}
                   </span>
-                  <v-btn
-                    fab
-                    dark
-                    depressed
+                  <v-btn variant="flat" icon
+                    theme="dark" 
                     color="primary"
                     class="mr-1"
-                    @click="formerPage"
-                    small
+                    @click="formerPage" size="small"
                   >
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
-                  <v-btn
-                    small
-                    fab
-                    dark
-                    depressed
+                  <v-btn variant="flat" size="small" icon
+                    theme="dark" 
                     color="primary"
                     class="ml-1"
                     @click="nextPage"
@@ -1811,13 +1761,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" depressed  @click="exitDialogue = true" large>
+          <v-btn variant="flat" color="primary"   @click="exitDialogue = true" size="large">
             Exit
           </v-btn>
-          <v-btn
-          large
-            color="primary"
-            text
+          <v-btn variant="text" size="large"
+            color="primary" 
             @click="commit"
             :disabled="
               (!dealsCommited.length > 0 && resident.guildOwned != null) ||
@@ -1848,13 +1796,13 @@
     <!-- Exit dialogue -->
     <v-dialog v-model="exitDialogue" max-width="500px">
       <v-card class="pa-5"  style="border-top: 15px solid #B75420">
-        <v-card-text class="text-h6 accent--text">Exit, Are you sure ?</v-card-text>
+        <v-card-text class="text-h6 text-accent">Exit, Are you sure ?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="accent" text outlined @click="exitDialogue = false"
+          <v-btn variant="text" color="accent" @click="exitDialogue = false"
             >Cancel</v-btn
           >
-          <v-btn color="primary" text @click="close">OK</v-btn>
+          <v-btn variant="text" color="primary"  @click="close">OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -1880,7 +1828,6 @@
                         :src="'data:image/jpeg;base64,' + item.base64"
                         class="text-right pa-3"
                         @click="handleSinglePage(item)"
-                        contain
                       >
                       </v-img>
                     </v-card>
@@ -1922,7 +1869,7 @@
     <!-- Guild Deal Transaction  Dialog -->
     <v-dialog v-model="isGuildTransactionOpen" max-width="800" max-height="780" v-if="guildTransactions.length>0">
       <v-card max-width="1000" class="pa-2">
-         <v-simple-table
+         <v-table
                   fixed-header
                   :height="viewPortDimension.height * 0.38"
                 >
@@ -1959,9 +1906,9 @@
                     </tr>
                 </tbody>
                 </template>
-                </v-simple-table>
+                </v-table>
 
-                <v-card-actions class="primary--text font-weight-bold text-subtitle-1">
+                <v-card-actions class="text-primary font-weight-bold text-subtitle-1">
                   <v-spacer></v-spacer>
                   Total:&nbsp;{{ $filters.formatCurrencyAmount(guildTransactionTotal) }}&nbsp;for month &nbsp;{{(new Date().getMonth() + 1).toString()}}
                   </v-card-actions>
@@ -1978,7 +1925,6 @@
             class="text-right pa-3"
             :width="singlePage.width * 2.5"
             :height="singlePage.height * 1.8"
-            contain
           />
         </v-container>
       </v-card>
@@ -1987,7 +1933,7 @@
     <!-- Reward Dialog -->
     <v-dialog v-model="isRewardWindowOpen" max-width="400" max-height="200" v-if="resident.guild!=null">
       <v-card width="400" height="200" class="pt-2">
-        <v-card-subtitle class="accent--text text-center" v-if="memberSelected">{{memberSelected.nickName}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-center" v-if="memberSelected">{{memberSelected.nickName}}</v-card-subtitle>
           <v-card-text>
             <v-spacer/>
                 <v-col cols="12">
@@ -2003,7 +1949,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn depressed color="primary" :disabled="silverToReward==0" @click="rewardGuildMember">Confirm</v-btn>
+              <v-btn variant="flat"  color="primary" :disabled="silverToReward==0" @click="rewardGuildMember">Confirm</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
       </v-card>
@@ -2013,7 +1959,7 @@
     <!-- Welfare Dialog -->
     <v-dialog v-model="isWelfareOpen" max-width="400" max-height="200">
       <v-card width="400" height="200" class="pt-2">
-        <v-card-subtitle class="accent--text text-center text-subtitle-1 font-weight-bold" >Share Benefit Equally</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-center text-subtitle-1 font-weight-bold" >Share Benefit Equally</v-card-subtitle>
           <v-card-text>
             <v-spacer/>
                 <v-col cols="12">
@@ -2029,7 +1975,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn depressed color="primary" :disabled="silverForWelfare==0" @click="distributeWelfare">Confirm</v-btn>
+              <v-btn variant="flat"  color="primary" :disabled="silverForWelfare==0" @click="distributeWelfare">Confirm</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
       </v-card>
@@ -2039,7 +1985,7 @@
     <!-- promote Dialog -->
     <v-dialog v-model="isPromoteWindowOpen" max-width="400" max-height="200">
       <v-card width="400" height="200" class="pt-2">
-        <v-card-subtitle class="accent--text text-center" v-if="memberSelected">{{memberSelected.nickName}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-center" v-if="memberSelected">{{memberSelected.nickName}}</v-card-subtitle>
          <v-card-text>
             <v-select
               :items="guildRank"
@@ -2049,7 +1995,7 @@
          </v-card-text>
          <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn depressed color="primary" @click="promoteGuildMember">Confirm</v-btn>
+              <v-btn variant="flat"  color="primary" @click="promoteGuildMember">Confirm</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
       </v-card>
@@ -2059,7 +2005,7 @@
     <v-dialog v-model="isTransferWindowOpen" max-width="450" max-height="150">
       <v-card width="400" height="200" class="pt-2">
         
-        <!-- <v-card-subtitle class="accent--text text-center" v-if="memberSelected"></v-card-subtitle> -->
+        <!-- <v-card-subtitle class="text-accent text-center" v-if="memberSelected"></v-card-subtitle> -->
          <v-card-text>
            <v-card-title v-if="memberSelected">
            Transfer leadership to &nbsp;{{memberSelected.nickName}}&nbsp;?
@@ -2068,9 +2014,9 @@
          
          <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn text plain color="primary" @click="isTransferWindowOpen=false">Cancel</v-btn>
+              <v-btn variant="text"  color="primary" @click="isTransferWindowOpen=false">Cancel</v-btn>
               <v-spacer></v-spacer>
-              <v-btn depressed color="primary" @click="transferLeadership">Confirm</v-btn>
+              <v-btn variant="flat"  color="primary" @click="transferLeadership">Confirm</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
       </v-card>
@@ -2080,7 +2026,7 @@
     <!-- Group Purchase Dialog -->
     <v-dialog v-model="isGroupPurchaseOpen" max-width="450" max-height="350">
       <v-card width="450" height="350" >
-         <v-toolbar dark  dense color="primary" flat>
+         <v-toolbar theme="dark"  density="compact" color="primary" flat>
               <v-toolbar-title>Call Group Purchase</v-toolbar-title>
           </v-toolbar>
          <v-card-text>
@@ -2094,9 +2040,9 @@
          
          <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn text plain color="primary" @click="isGroupPurchaseOpen=false">Cancel</v-btn>
+              <v-btn variant="text"  color="primary" @click="isGroupPurchaseOpen=false">Cancel</v-btn>
               <v-spacer></v-spacer>
-              <v-btn depressed :disabled="!groupPurchasePost" color="primary" @click="callGroupPurchase">Start</v-btn>
+              <v-btn variant="flat"  :disabled="!groupPurchasePost" color="primary" @click="callGroupPurchase">Start</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
       </v-card>
@@ -2110,7 +2056,7 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
+          theme="dark"
         >
           <v-toolbar-title>Vendor Messages</v-toolbar-title>
 
@@ -2126,14 +2072,10 @@
         </v-toolbar>
 
     <v-list three-line>
-      <v-list-item-group
-        active-class="pink--text"
-        multiple
-      >
-        <template v-for="(message, index) in resident.messages">
-          <v-list-item :key="index" @click="showSingleMessage(message, 'vendor')" class="ma-1">
+        <template v-for="(message, index) in resident.messages" :key="index">
+          <v-list-item @click="showSingleMessage(message, 'vendor')" class="ma-1">
             <!-- <template v-slot:default="{ active }"> -->
-              <v-list-item-icon >
+              <template #prepend>
               <v-icon
                 color="primary"
                 v-if="!message.isRead"
@@ -2148,17 +2090,15 @@
               >
                 mdi-email-open-outline
               </v-icon>
-            </v-list-item-icon>
+            </template>
 
-              <v-list-item-content>
                 <v-list-item-title v-text="message.sender"></v-list-item-title>
-                <v-list-item-subtitle v-text="message.title" class="d-inLine-block accent--text text-truncate"></v-list-item-subtitle>
+                <v-list-item-subtitle v-text="message.title" class="d-inLine-block text-accent text-truncate"></v-list-item-subtitle>
                 <v-list-item-subtitle v-text="message.text" class="d-inLine-block text-truncate"></v-list-item-subtitle>
-              </v-list-item-content>
 
-              <v-list-item-action>
-                <v-list-item-action-text >{{ $filters.convertCustomerRatingTime(message.time) }}</v-list-item-action-text>
-              </v-list-item-action>
+              <template #append>
+                <span class="text-caption" >{{ $filters.convertCustomerRatingTime(message.time) }}</span>
+              </template>
             <!-- </template> -->
           </v-list-item>
 
@@ -2168,7 +2108,6 @@
             class="shade"
           ></v-divider>
         </template>
-      </v-list-item-group>
     </v-list>
       </v-card>
     </v-dialog>
@@ -2182,7 +2121,7 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
+          theme="dark"
         >
           <v-toolbar-title>Guild Messages</v-toolbar-title>
 
@@ -2198,14 +2137,10 @@
         </v-toolbar>
 
     <v-list three-line>
-      <v-list-item-group
-        active-class="pink--text"
-        multiple
-      >
-        <template v-for="(message, index) in resident.guildMessages">
-          <v-list-item :key="index" @click="showSingleMessage(message,'guild')" class="ma-1">
+        <template v-for="(message, index) in resident.guildMessages" :key="index">
+          <v-list-item @click="showSingleMessage(message,'guild')" class="ma-1">
             <!-- <template v-slot:default="{ active }"> -->
-              <v-list-item-icon >
+              <template #prepend>
               <v-icon
                 color="primary"
                 v-if="!message.isRead"
@@ -2220,17 +2155,15 @@
               >
                 mdi-email-open-outline
               </v-icon>
-            </v-list-item-icon>
+            </template>
 
-              <v-list-item-content>
                 <v-list-item-title v-text="message.fullName+' ['+message.guild+']'"></v-list-item-title>
-                <v-list-item-subtitle v-text="message.title" class="d-inLine-block accent--text text-truncate"></v-list-item-subtitle>
+                <v-list-item-subtitle v-text="message.title" class="d-inLine-block text-accent text-truncate"></v-list-item-subtitle>
                 <v-list-item-subtitle v-text="message.text" class="d-inLine-block text-truncate"></v-list-item-subtitle>
-              </v-list-item-content>
 
-              <v-list-item-action>
-                <v-list-item-action-text >{{ $filters.convertCustomerRatingTime(message.time) }}</v-list-item-action-text>
-              </v-list-item-action>
+              <template #append>
+                <span class="text-caption" >{{ $filters.convertCustomerRatingTime(message.time) }}</span>
+              </template>
             <!-- </template> -->
           </v-list-item>
 
@@ -2240,7 +2173,6 @@
             class="shade"
           ></v-divider>
         </template>
-      </v-list-item-group>
     </v-list>
       </v-card>
     </v-dialog>
@@ -2251,13 +2183,13 @@
         max-width="500"
         class="mx-auto"
       >
-         <v-toolbar dark color="primary" flat>
+         <v-toolbar theme="dark" color="primary" flat>
                     <v-toolbar-title>Transfer Leader Remuneration&nbsp;{{ $filters.formatIntAmount(resident.guild.guildLeaderRemun) }}</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text >
                      <v-row class="justify-center align-center flex-row d-flex" no-gutters>
                                 <v-spacer/>
-                                    <span class="accent--text">Transfer To Guild Leader</span>
+                                    <span class="text-accent">Transfer To Guild Leader</span>
                                    
                                     <span class="mx-1"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(resident.guild.guildLeaderRemun - amountToTransfer) }}</span>
                                     <v-slider
@@ -2274,7 +2206,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn depressed class="mb-4" color="primary" @click="transfer" :disabled="amountToTransfer==0">Transfer</v-btn>
+                    <v-btn variant="flat"  class="mb-4" color="primary" @click="transfer" :disabled="amountToTransfer==0">Transfer</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
       </v-card>
@@ -2288,7 +2220,7 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
+          theme="dark"
         >
           <v-toolbar-title>{{singleMessageToShow.type=='guild'?'Guild':'Vendor'}}&nbsp; Message</v-toolbar-title>
 
@@ -2302,10 +2234,10 @@
             <v-icon>mdi-trash-can</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-subtitle class="accent--text text-subtitle-1 mt-3" >From:&nbsp;{{singleMessageToShow.type=='guild'?
+        <v-card-subtitle class="text-accent text-subtitle-1 mt-3" >From:&nbsp;{{singleMessageToShow.type=='guild'?
           singleMessageToShow.message.fullName+' ['+singleMessageToShow.message.guild+']':singleMessageToShow.message.sender}}</v-card-subtitle>
        
-        <v-card-subtitle class="accent--text text-subtitle-1" >Title:&nbsp;{{singleMessageToShow.message.title}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-subtitle-1" >Title:&nbsp;{{singleMessageToShow.message.title}}</v-card-subtitle>
         <v-divider></v-divider>
         <v-card outlined flat>
           <v-card-text class="pa-3">
@@ -2314,13 +2246,12 @@
         </v-card>
         <v-card outlined flat v-if="isReplyMsgOpen">
           <v-card-text>
-              <v-textarea
+              <v-textarea variant="filled"
                 shaped
                 auto-grow
                 v-model="replyMessage"
                 placeholder="Reply Message"
-                required
-                filled
+                required 
                 clearable
                 lg='12'
               ></v-textarea>
@@ -2343,7 +2274,7 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
+          theme="dark"
         >
           <v-toolbar-title>Guild Message</v-toolbar-title>
 
@@ -2354,12 +2285,11 @@
           </v-btn>
         </v-toolbar>
        
-        <v-card-subtitle class="accent--text text-subtitle-1 mt-3" >From:&nbsp;{{resident.nickName+' ['+resident.guild.guildFullName+']'}}</v-card-subtitle>
-        <v-card-subtitle class="accent--text text-subtitle-1" >To:&nbsp;{{guildMemberToMessage.nickName+' ['+resident.guild.guildFullName+']'}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-subtitle-1 mt-3" >From:&nbsp;{{resident.nickName+' ['+resident.guild.guildFullName+']'}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-subtitle-1" >To:&nbsp;{{guildMemberToMessage.nickName+' ['+resident.guild.guildFullName+']'}}</v-card-subtitle>
          <v-card-text>
           <v-text-field
-          label="Title"
-          dense
+          label="Title" density="compact"
           type="text"
           v-model="guildMessageTitle"
           clearable
@@ -2368,11 +2298,10 @@
          </v-card-text>
         <v-card  flat >
           <v-card-text>
-              <v-textarea
+              <v-textarea variant="filled"
                 shaped
                 auto-grow
-                v-model="guildMessageText"
-                filled
+                v-model="guildMessageText" 
                 placeholder="Text"
                 clearable
                 lg='12'
@@ -2394,17 +2323,19 @@
                                           :key="index"
                                           :class="item.role=='assistant' ? 'float-left' : 'float-right'"
                                         >
-                                          <v-list-item-avatar v-if="item.role=='assistant'">
-                                            <v-img :src="petUrl" contain></v-img>
-                                          </v-list-item-avatar>
+                                          <!-- Two mutually exclusive avatars: the bot's before the
+                                               message, the resident's after. Vuetify 2 expressed both
+                                               as v-list-item-avatar and relied on document order; in
+                                               Vuetify 3 they are the prepend and append slots. -->
+                                          <template #prepend v-if="item.role=='assistant'">
+                                            <v-img :src="petUrl"></v-img>
+                                          </template>
 
-                                          <v-list-item-content>
                                             <v-list-item-subtitle >{{item.content}}</v-list-item-subtitle>
-                                          </v-list-item-content>
 
-                                          <v-list-item-avatar v-if="item.role=='user'">
-                                            <v-img :src="resident.avatarPic" contain></v-img>
-                                          </v-list-item-avatar>
+                                          <template #append v-if="item.role=='user'">
+                                            <v-img :src="resident.avatarPic"></v-img>
+                                          </template>
 
                                         </v-list-item>
                                   </v-list>
@@ -2415,16 +2346,15 @@
           <v-col cols="11">
             <v-text-field
               placeholder="message"
-              v-model="AIPrompt"
-              dense
+              v-model="AIPrompt" density="compact"
               :disabled='isAIThinking'></v-text-field>
           </v-col>
           <v-col cols="1" class="ml-n3">
-            <v-btn :disabled='!AIPrompt || isAIThinking' @click="chatToBot" text plain :loading='isAIThinking' >
+            <v-btn variant="text" :disabled='!AIPrompt || isAIThinking' @click="chatToBot"  :loading='isAIThinking' >
               <v-icon large color="primary">mdi-send-outline</v-icon>
-              <span slot="loader" class="custom-loader">
+              <template #loader><span class="custom-loader">
                         <v-icon>cached</v-icon>
-                      </span>
+                      </span></template>
               </v-btn>
           </v-col>
         </v-row>
@@ -2485,7 +2415,7 @@
      <v-snackbar
         v-model="snackbar"
         centered
-        dark
+        theme="dark"
         color="primary lighten-2"
         class="pa-3"
         timeout="3000"

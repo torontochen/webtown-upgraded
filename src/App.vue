@@ -3,9 +3,9 @@
     <!-- d-flex flex-column justify-space-between align-center -->
     <!-- Side Navbar -->
     <v-navigation-drawer app temporary fixed v-model="drawer">
-      <v-toolbar color="white" dark flat>
+      <v-toolbar color="white" theme="dark" flat>
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-        <router-link to="/" tag="a" style="cursor: pointer">
+        <router-link to="/" style="cursor: pointer">
           <!-- <h1 class="title pl-3">Cybertown</h1> -->
           <v-img
             src="./assets/images/Screen_Shot_2022-10-14_at_11.56.26_AM-removebg-preview.png"
@@ -20,19 +20,15 @@
       <v-divider></v-divider>
 
       <!-- Side Navbar Links -->
-      <v-list nav dense>
-        <v-list-item-group>
+      <v-list nav density="compact">
           <v-list-item v-for="(item, i) in items" :key="i">
-            <v-list-item-icon>
+            <template #prepend>
               <v-icon color="primary">{{ item.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
+            </template>
               <v-list-item-title class="primary-text">{{
                 item.title
               }}</v-list-item-title>
-            </v-list-item-content>
           </v-list-item>
-        </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -55,7 +51,7 @@
         <!-- boundary logo -->
         <!-- <v-toolbar-title class="hidden-xs-only ml-10"> -->
         <v-container class="ml-6 mb-1">
-          <router-link to="/" tag="a" style="cursor: pointer">
+          <router-link to="/" style="cursor: pointer">
             <v-img
               src="./assets/images/Screen_Shot_2022-10-14_at_11.56.26_AM-removebg-preview.png"
               max-height="150"
@@ -110,7 +106,7 @@
               z-index="10"
             >
             </v-img>
-            <h5 class="primary--text text--lighten-3 d-block ml-n2">
+            <h5 class="text-primary d-block ml-n2">
               Vendor Parlour
             </h5>
           </v-avatar>
@@ -123,62 +119,52 @@
         >
           <v-btn-toggle v-model="btn" tile color="" group>
             <!-- metro -->
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               icon
               class="mr-16 ml-n3"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
-              <v-icon left dark class="ml-1"> mdi-map-marker-radius </v-icon>
+              <v-icon start theme="dark" class="ml-1"> mdi-map-marker-radius </v-icon>
               {{ cityHall.metro }}
             </v-btn>
 
             <!-- treasure -->
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               icon
               class="mx-16"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
-              <v-icon left dark class="ml-3"> mdi-treasure-chest </v-icon>
+              <v-icon start theme="dark" class="ml-3"> mdi-treasure-chest </v-icon>
               {{ $filters.formatIntAmount(cityHall.treasure) }}
             </v-btn>
 
             <!-- Population -->
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               icon
               class="mr-6 ml-8"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
-              <v-icon left dark class="ml-3"> mdi-account-group </v-icon>
+              <v-icon start theme="dark" class="ml-3"> mdi-account-group </v-icon>
               {{ $filters.formatIntAmount(cityHall.population) }}
             </v-btn>
 
             <!-- Strength -->
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               icon
               class="mx-16"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
-              <v-icon left dark class="ml-3"> mdi-arm-flex </v-icon>
+              <v-icon start theme="dark" class="ml-3"> mdi-arm-flex </v-icon>
               {{ $filters.formatIntAmount(cityHall.might) }}
             </v-btn>
             <v-spacer></v-spacer>
 
             <!-- Polyfill -->
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               icon
               class="mx-2"
               color="primary"
@@ -189,15 +175,13 @@
             <v-spacer></v-spacer>
 
             <!-- Governor -->
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               icon
               class="ml-16"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
-              <v-icon left dark class="ml-3"> mdi-crown </v-icon>
+              <v-icon start theme="dark" class="ml-3"> mdi-crown </v-icon>
               {{ cityHall.governor }}
             </v-btn>
           </v-btn-toggle>
@@ -208,28 +192,21 @@
 
         <!-- signin and signup -->
         <v-container
-          dense
+          density="compact"
           v-if="!resident && !vendorParlour && !vendor"
           class="mt-4 ml-10 pl-10 d-flex justify-center align-center"
         >
-          <v-btn
-            text
-            plain
+          <v-btn variant="text" 
             color="primary"
             :disabled="signUp"
-            @click="signIn = true"
-            medium
+            @click="signIn = true" 
           >
             Login
           </v-btn>
 
-          <v-btn
-            color="secondary"
-            text
-            plain
-            outlined
-            @click="signUp = true"
-            medium
+          <v-btn variant="text"
+            color="secondary" 
+            @click="signUp = true" 
           >
             Sign up
           </v-btn>
@@ -240,7 +217,7 @@
         <!-- resident navbar -->
         <v-container
           v-if="resident && !vendorParlour && !vendor"
-          dense
+          density="compact"
           class="d-flex justify-center align-center"
         >
           <!-- shopping cart icon -->
@@ -260,14 +237,12 @@
           </v-badge>
 
           <v-tooltip right>
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-card
                 flat
                 class="pa-1"
                 max-width="200"
-                :height="navbarHeight"
-                v-on="on"
-                v-bind="attrs"
+                :height="navbarHeight" v-bind="props"
               >
                 <v-menu
                   right
@@ -278,19 +253,19 @@
                   transition="slide-x-reverse-transition"
                   :disabled="displayValid"
                 >
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ props }">
                     <v-container class="mt-3">
-                      <v-avatar v-on="on" size="64" color="white" right>
+                      <v-avatar v-bind="props" size="64" color="white" right>
                         <v-img :src="resident.avatarPic" height="30" width="30">
                         </v-img>
-                        <v-icon left small class="ml-n2 mt-n2" color="primary">
+                        <v-icon start small class="ml-n2 mt-n2" color="primary">
                           arrow_drop_down
                         </v-icon>
                       </v-avatar>
                     </v-container>
                   </template>
 
-                  <v-list dense>
+                  <v-list density="compact">
                     <v-list-item
                       v-for="(dropdownItem, index) in accountDropdown"
                       :key="index"
@@ -307,7 +282,7 @@
                     >
                       <v-icon
                         class="mr-2"
-                        dense
+                        density="compact"
                         :color="
                           dropdownItem.title == 'Sign Out'
                             ? displayColor
@@ -317,7 +292,7 @@
                       >
                       <v-list-item-title
                         :class="
-                          !displayValid ? 'primary--text' : 'fontColor--text'
+                          !displayValid ? 'text-primary' : 'text-fontColor'
                         "
                         >{{ dropdownItem.title }}</v-list-item-title
                       >
@@ -327,7 +302,7 @@
                 <!-- </v-row> -->
               </v-card>
             </template>
-            <span class="white--text">
+            <span class="text-white">
               {{
                 resident.firstName || resident.lastName
                   ? resident.firstName + "  " + resident.lastName
@@ -339,35 +314,27 @@
 
         <!-- Search and Sort Button -->
         <template v-slot:extension v-if="!vendor && !vendorParlour">
-          <v-toolbar flat dense>
+          <v-toolbar flat density="compact">
             <v-spacer></v-spacer>
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               color="primary"
               @click="openEventSortDia"
               :disabled="isSearchBtnDisabled"
               >Event</v-btn
             >
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               color="primary"
               @click="openSearchProductDia"
               :disabled="isSearchBtnDisabled"
               >Search By Product</v-btn
             >
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               color="primary"
               @click="openSearchServiceDia"
               :disabled="isSearchBtnDisabled"
               >Search By Service</v-btn
             >
-            <v-btn
-              text
-              plain
+            <v-btn variant="text" 
               color="primary"
               @click="openSearchRestDia"
               :disabled="isSearchBtnDisabled"
@@ -407,7 +374,7 @@
           <h3 class="text-center mr-2">
             You are now Signed in!<v-icon>check_circle</v-icon>
           </h3>
-          <!-- <v-btn dark text  @click="authSnackbar = false"> Close </v-btn> -->
+          <!-- <v-btn variant="text" theme="dark"   @click="authSnackbar = false"> Close </v-btn> -->
         </v-snackbar>
 
         <!-- News Snackbar -->
@@ -440,7 +407,7 @@
         >
           <v-icon>check_circle</v-icon>
           <h3>You send the wish out</h3>
-          <v-btn dark text @click="wishSnackbar = false"> Close </v-btn>
+          <v-btn variant="text" theme="dark"  @click="wishSnackbar = false"> Close </v-btn>
         </v-snackbar>
 
         <!-- Auth Error Snackbar -->
@@ -453,22 +420,20 @@
         >
           <v-icon class="mr-3">cancel</v-icon>
           <h3>{{ authError.message }}</h3>
-          <v-btn dark text @click="signIn = true"> Sign in </v-btn>
+          <v-btn variant="text" theme="dark"  @click="signIn = true"> Sign in </v-btn>
         </v-snackbar>
 
         <!-- House Floating Button -->
         <v-tooltip top v-if="resident">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
+          <template v-slot:activator="{ props }">
+            <v-btn icon
               color="primary"
               bottom
               right
-              fixed
-              large
-              dark
+              fixed size="large"
+              theme="dark"
               to="/openhouse"
-              v-on="on"
+              v-bind="props"
             >
               <v-icon size="50">home </v-icon>
             </v-btn>
@@ -503,7 +468,7 @@
               <v-avatar
                 ><v-img :src="`/guildLogos/${resident.guild.guildLogo}`"
               /></v-avatar>
-              <v-btn text dark class="mt-1">{{
+              <v-btn variant="text"  theme="dark" class="mt-1">{{
                 resident.guild.guildFullName
               }}</v-btn>
             </template>
@@ -523,27 +488,27 @@
               class="d-flex flex-column justify-start align-start"
             >
               <span
-                class="text-subtitle-1 text-left d-block fontColor--text text--darken-3"
+                class="text-subtitle-1 text-left d-block text-fontColor"
                 >about boundary</span
               >
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >our story</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >management</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >work with us</router-link
               >
             </v-col>
@@ -554,27 +519,27 @@
               class="d-flex flex-column justify-start align-start"
             >
               <span
-                class="text-subtitle-1 text-left d-block fontColor--text text--darken-3"
+                class="text-subtitle-1 text-left d-block text-fontColor"
                 >resident</span
               >
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >virtual life</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >make money</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >benefits</router-link
               >
             </v-col>
@@ -585,27 +550,27 @@
               class="d-flex flex-column justify-start align-start"
             >
               <span
-                class="text-subtitle-1 text-left d-block fontColor--text text--darken-3"
+                class="text-subtitle-1 text-left d-block text-fontColor"
                 >game</span
               >
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >meta world</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >real life in game</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >upgrade</router-link
               >
             </v-col>
@@ -616,7 +581,7 @@
               class="d-flex flex-column justify-start align-start"
             >
               <span
-                class="text-subtitle-1 text-center d-block fontColor--text text--darken-3"
+                class="text-subtitle-1 text-center d-block text-fontColor"
                 >vendor parlour</span
               >
 
@@ -629,13 +594,13 @@
                 <router-link
                   to="/signupvendor"
                   style="cursor: pointer; text-decoration: none"
-                  class="text-body-2 fontColor--text"
+                  class="text-body-2 text-fontColor"
                   :class="{ disabled: !vendorActive || vendor || resident }"
-                  @click.native="vendorParlour = true"
+                  @click="vendorParlour = true"
                   >become a vendor</router-link
                 >
                 <router-link
-                  class="accent--text text--lighten-1 text-subtitle-2"
+                  class="text-accent text-subtitle-2"
                   to="/signinvendor"
                   :class="{ disabled: !vendorActive || vendor || resident }"
                 >
@@ -646,21 +611,21 @@
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >business</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >how it works</router-link
               >
 
               <router-link
                 to="/underConstruction"
                 style="cursor: pointer; text-decoration: none"
-                class="text-body-2 fontColor--text d-block my-1"
+                class="text-body-2 text-fontColor d-block my-1"
                 >improve business</router-link
               >
             </v-col>
@@ -672,11 +637,11 @@
                 max-height="100"
                 max-width="150"
                 class="ml-2 d-block"
-                dense
+                density="compact"
               ></v-img>
 
               <!-- </v-avatar> -->
-              <h5 class="font-weight-regular primary--text d-block ml-n2 mt-2">
+              <h5 class="font-weight-regular text-primary d-block ml-n2 mt-2">
                 Live Real Life In A Virtual World
               </h5>
 
@@ -696,7 +661,7 @@
     <!-- Wish Dialog -->
     <v-dialog v-model="isWishDialogOpen" max-width="700" max-height="550">
       <v-card width="700" height="550">
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>You Wish</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
@@ -711,25 +676,23 @@
               deletable-chips
               class="my-4"
             ></v-select>
-            <v-textarea
+            <v-textarea variant="outlined"
               placeholder="your wish"
               v-model="wishText"
-              required
-              outlined
+              required 
             ></v-textarea>
           </v-col>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            depressed
+          <v-btn variant="flat"
+            color="primary" 
             :disabled="wishKeywords.length == 0 || wishText == null"
             @click="sendWish"
             >Send</v-btn
           >
-          <v-btn outlined color="primary" @click="cancelWish">Cancel</v-btn>
+          <v-btn variant="outlined"  color="primary" @click="cancelWish">Cancel</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -738,7 +701,7 @@
     <!-- Event Sort Dialog -->
     <v-dialog v-model="isSortEventOpen" max-width="600" max-height="300">
       <v-card width="600" height="400">
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>Sort Promotion Events</v-toolbar-title>
         </v-toolbar>
         <v-col cols="9" class="ma-auto">
@@ -763,7 +726,7 @@
               productEventSelections.length > 0 ||
               restEventSelections.length > 0
             "
-            dense
+            density="compact"
             :items="serviceCategory"
             small-chips
             label="Service "
@@ -790,7 +753,7 @@
         </v-col>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" depressed @click="sortEvent"
+          <v-btn variant="flat" color="primary"  @click="sortEvent"
             >Sort Events</v-btn
           >
           <v-spacer></v-spacer>
@@ -803,7 +766,7 @@
     <!-- Product Search Dialog -->
     <v-dialog v-model="isProductDialogOpen" max-width="600" max-height="300">
       <v-card width="600" height="400">
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>Search By Product</v-toolbar-title>
         </v-toolbar>
         <v-col cols="9" class="ma-auto">
@@ -832,9 +795,8 @@
         </v-col>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            depressed
+          <v-btn variant="flat"
+            color="primary" 
             :disabled="productDetailedSelections.length == 0"
             @click="search('product')"
             >Search</v-btn
@@ -847,7 +809,7 @@
     <!-- Service Search Dialog -->
     <v-dialog v-model="isServiceDialogOpen" max-width="600" max-height="300">
       <v-card width="600" height="400">
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>Search By Service</v-toolbar-title>
         </v-toolbar>
         <v-col cols="9" class="ma-auto">
@@ -876,9 +838,8 @@
         </v-col>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            depressed
+          <v-btn variant="flat"
+            color="primary" 
             :disabled="serviceDetailedSelections.length == 0"
             @click="search('service')"
             >Search</v-btn
@@ -891,7 +852,7 @@
     <!-- Restaurant Search Dialog -->
     <v-dialog v-model="isRestDialogOpen" max-width="600" max-height="300">
       <v-card width="600" height="300">
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>Search Restaurant</v-toolbar-title>
         </v-toolbar>
         <v-col cols="9" class="ma-auto">
@@ -908,9 +869,8 @@
         </v-col>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            depressed
+          <v-btn variant="flat"
+            color="primary" 
             :disabled="restSelections.length == 0"
             @click="search('rest')"
             >Search</v-btn
@@ -923,45 +883,42 @@
     <!-- News Dialog -->
     <v-dialog v-model="isNewsDialogOpen" max-width="700" max-height="600">
       <v-card width="700" height="600">
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>News</v-toolbar-title>
         </v-toolbar>
         <!-- <v-card-text> -->
         <v-virtual-scroll :items="news" :item-height="60" :height="500">
           <template v-slot:default="{ item, index }">
             <v-list-item :key="index" two-line class="mt-4">
-              <v-list-item-icon>
+              <template #prepend>
                 <v-icon color="primary" size="30">
                   mdi-newspaper-variant-outline
                 </v-icon>
-              </v-list-item-icon>
+              </template>
 
-              <v-list-item-content class="mt-2 accent--text">
                 <v-list-item-title v-text="item.newsTitle"></v-list-item-title>
                 <v-list-item-subtitle
                   v-text="item.headLine"
                   class="d-inLine-block text-truncate"
                 ></v-list-item-subtitle>
-              </v-list-item-content>
 
-              <v-list-item-action>
-                <v-list-item-action-text
+              <template #append>
+                <span class="text-caption"
                   >{{ $filters.convertCustomerRatingTime(item.date) }}&nbsp;
-                  <v-btn
-                    text
+                  <v-btn variant="text" 
                     v-if="isVendorNews(item.newsTitle)"
                     @click="gotoVendor(item.newsTitle)"
                     ><v-icon color="primary"
                       >mdi-feature-search-outline</v-icon
                     ></v-btn
                   >
-                  <v-btn text v-else @click="openGuildNewsDetails(item)"
+                  <v-btn variant="text"  v-else @click="openGuildNewsDetails(item)"
                     ><v-icon color="primary"
                       >mdi-feature-search-outline</v-icon
                     ></v-btn
                   >
-                </v-list-item-action-text>
-              </v-list-item-action>
+                </span>
+              </template>
             </v-list-item>
             <v-divider v-if="index < news.length - 1" inset></v-divider>
           </template>
@@ -978,7 +935,7 @@
       v-if="guildNewsDetails"
     >
       <v-card>
-        <v-toolbar dark dense color="primary" flat>
+        <v-toolbar theme="dark" density="compact" color="primary" flat>
           <v-toolbar-title>{{ guildNewsDetails.newsTitle }}</v-toolbar-title>
         </v-toolbar>
         <v-card-subtitle class="mt-2"
@@ -995,7 +952,7 @@
 import moment from "moment";
 import { mapGetters } from "vuex";
 import VueDraggableResizable from "vue-draggable-resizable";
-import "vue-draggable-resizable/dist/VueDraggableResizable.css";
+import "vue-draggable-resizable/style.css";
 
 import {
   eventBus_vendorParlour,

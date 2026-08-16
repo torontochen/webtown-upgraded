@@ -533,7 +533,7 @@ export default {
     }
   },
   
-  destroyed() {
+  unmounted() {
     eventBus_pickVendor.$off("pickVendor")
     eventBus_pickVendor.$off("leaveVendor")
   }

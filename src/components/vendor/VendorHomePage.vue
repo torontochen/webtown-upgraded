@@ -24,13 +24,13 @@
           
           <!-- Active Orders -->
           <v-expansion-panel :disabled="vendorOrders.length==0">
-            <v-expansion-panel-header class="accent--text font-weight-bold">
+            <v-expansion-panel-title class="text-accent font-weight-bold">
               Active Orders
               <template v-slot:actions>
                 <v-icon color="primary"> $expand </v-icon>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
                 <v-data-iterator
                   :items="vendorOrders"
                   :items-per-page="itemsPerPage"
@@ -44,41 +44,35 @@
                 >
                   <template v-slot:header>
                     <v-toolbar
-                      dark
-                      dense
+                      theme="dark"
+                      density="compact"
                       flat
                       color="primary"
                       class="mb-1"
                     >
                       <v-toolbar-title>Orders</v-toolbar-title>
                       <v-spacer></v-spacer>
-                      <v-text-field
+                      <v-text-field variant="solo"
                         v-model="searchStatus"
                         clearable
-                        flat
-                        dense
-                        solo-inverted
+                        flat density="compact" -inverted
                         hide-details
                         prepend-inner-icon="mdi-magnify"
                         label="Search"
                       ></v-text-field>
-                      <template v-if="$vuetify.breakpoint.mdAndUp">
+                      <template v-if="$vuetify.display.mdAndUp">
                         <v-spacer></v-spacer>
                         <v-btn-toggle
                           v-model="sortDesc"
                           mandatory
                         >
-                          <v-btn
-                            small
-                            depressed
+                          <v-btn variant="flat" size="small" 
                             color="primary lighten-1"
                             :value="false"
                           >
                             <v-icon>mdi-arrow-up</v-icon>
                           </v-btn>
-                          <v-btn
-                            small
-                            depressed
+                          <v-btn variant="flat" size="small" 
                             color="primary lighten-1"
                             :value="true"
                           >
@@ -101,7 +95,7 @@
                       >
                         <!-- iterated items -->
                         <v-card class="pa-1" @click.prevent="showOrderDetails(item)" >
-                            <v-card-title class="text-subtitle-1 accent--text font-weight-bold">
+                            <v-card-title class="text-subtitle-1 text-accent font-weight-bold">
                               Order: {{item.orderNo}}
                             </v-card-title>
                           <v-card-text>
@@ -111,21 +105,21 @@
                               <span class="d-block" v-if="item.deliveryType=='pickup'">Pick Up at: &nbsp;{{item.pickupAddress}}</span>
                               <span class="d-block" v-else>Ship to: &nbsp;{{item.deliveryAddress}}</span><br>
                               <v-card-subtitle>{{totalItemCount(item.orderItems)}}&nbsp;items</v-card-subtitle>
-                              <v-row dense>
+                              <v-row density="compact">
                                  <v-checkbox 
                                 v-model="item.isConfirmed"
                                 :color="item.isConfirmed?'success':'primary'"
                                 @click.stop="confirm(item)"
                                 :disabled='item.isConfirmed||item.isCanceled'
-                                dense
+                                density="compact"
                                 class="mr-3"
                               >
                                 <template v-slot:label>
                                   <div v-if="item.isConfirmed">
-                                   <span class="success--text">confirmed</span>
+                                   <span class="text-success">confirmed</span>
                                   </div>
                                   <div v-else>
-                                   <span class="primary--text">confirm order</span>
+                                   <span class="text-primary">confirm order</span>
                                   </div>
                                 </template>
                               </v-checkbox>
@@ -136,15 +130,15 @@
                                 :label="item.isFulfilled?'filled':'fill'"
                                 @click.stop="fulfill(item)"
                                 :disabled='item.isFulfilled ||item.isCanceled'
-                                dense
+                                density="compact"
                                 v-if="item.isConfirmed"
                               >
                                  <template v-slot:label>
                                   <div v-if="item.isFulfilled">
-                                   <span class="success--text">filled</span>
+                                   <span class="text-success">filled</span>
                                   </div>
                                   <div v-else>
-                                   <span class="primary--text">fill</span>
+                                   <span class="text-primary">fill</span>
                                   </div>
                                 </template>
                               </v-checkbox>
@@ -158,8 +152,8 @@
                             <!-- <v-spacer></v-spacer> -->
                             <span class="text-caption">{{ $filters.convertCustomerRatingTime(item.date) }}&nbsp;
                             <v-btn icon  @click.stop="messageCustomer(item)" :disabled="item.isFulfilled"><v-icon  color="primary" >mdi-message-text</v-icon></v-btn>
-                            <v-btn text plain x-small color="accent" class="mx-2" v-if="item.isUnderDispute">Disputed</v-btn>
-                            <v-btn text plain x-small  class="mx-2" color="accent" v-if="item.isCanceled">Canceled</v-btn>
+                            <v-btn variant="text"  x-small color="accent" class="mx-2" v-if="item.isUnderDispute">Disputed</v-btn>
+                            <v-btn variant="text"  x-small  class="mx-2" color="accent" v-if="item.isCanceled">Canceled</v-btn>
 
                             </span>
                             
@@ -181,26 +175,20 @@
 
                       <span
                         class="mr-4
-                        grey--text"
+                        text-grey"
                       >
                         Page {{ page }} of {{ numberOfPages }}
                       </span>
-                      <v-btn
-                        fab
-                        dark
-                        depressed
+                      <v-btn variant="flat" icon
+                        theme="dark" 
                         color="primary"
                         class="mr-1"
-                        @click="formerPage"
-                        small
+                        @click="formerPage" size="small"
                       >
                         <v-icon>mdi-chevron-left</v-icon>
                       </v-btn>
-                      <v-btn
-                      small
-                        fab
-                        depressed
-                        dark
+                      <v-btn variant="flat" size="small" icon 
+                        theme="dark"
                         color="primary"
                         class="ml-1"
                         @click="nextPage"
@@ -210,18 +198,18 @@
                     </v-row>
                   </template>
         </v-data-iterator>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
           <!-- On Sale -->
           <v-expansion-panel :disabled="allItemsOnSale.length==0">
-            <v-expansion-panel-header class="accent--text font-weight-bold">
+            <v-expansion-panel-title class="text-accent font-weight-bold">
               On Sale
               <template v-slot:actions>
                 <v-icon color="primary"> $expand </v-icon>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-row v-if="allItemsCatalog" class="d-flex justify-start">
                 <v-col
                   v-for="(catalog, i) in allItemsOnSale"
@@ -231,16 +219,15 @@
                   <v-card class="pa-1">
                     <v-img
                       :src="catalog.photo"
-                      class="white--text align-end"
-                      contain
+                      class="text-white align-end"
                       aspect-ratio='1'
                     >
                       <!-- gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" -->
                     </v-img>
-                      <v-card-subtitle class=" d-block text-subtitle-1 fontColor--text text--darken-3 text-truncate">{{catalog.description}}</v-card-subtitle>
+                      <v-card-subtitle class=" d-block text-subtitle-1 text-fontColor text-truncate">{{catalog.description}}</v-card-subtitle>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                        <span   class="text-h6 red--text mx-1" >{{ $filters.formatCurrencyAmount(catalog.promoRate) }}</span>
+                        <span   class="text-h6 text-red mx-1" >{{ $filters.formatCurrencyAmount(catalog.promoRate) }}</span>
                         <span  class="text-subtitle-2 text--lighten-2 font-weight-light" ><del>{{ $filters.formatCurrencyAmount(catalog.rate) }}</del></span>
                         <!-- <span class="text-h6 mx-2" v-if="!catalog.promoRate > 0">${{catalog.rate}}</span> -->
                       
@@ -260,12 +247,12 @@
                   </v-card>
                 </v-col>
               </v-row>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
           <!-- Customer Message -->
           <v-expansion-panel :disabled="vendor.messages.length==0">
-            <v-expansion-panel-header class="accent--text font-weight-bold">
+            <v-expansion-panel-title class="text-accent font-weight-bold">
               Customer Messsages
                
               <template v-slot:actions>
@@ -279,22 +266,18 @@
                         </v-badge>
                 <v-icon color="primary"> $expand </v-icon>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-virtual-scroll
                   :items="vendor.messages"
                   :item-height="80"
                   :height="viewPortDimension.height * 0.38">
                   <template v-slot:default="{ item, index }" class="my-1">
                       <!-- <v-list two-line>
-                      <v-list-item-group
-                        active-class="pink--text"
-                        multiple
-                      >
                         <template v-for="(message, index) in resident.messages"> -->
                           <v-list-item :key="index" @click="showSingleMessage(item, 'resident')" three-line class="mt-4">
                             <!-- <template v-slot:default="{ active }"> -->
-                              <v-list-item-icon >
+                              <template #prepend>
                               <v-icon
                                 color="primary"
                                 v-if="!item.isRead"
@@ -309,17 +292,15 @@
                               >
                                 mdi-email-open-outline
                               </v-icon>
-                            </v-list-item-icon>
+                            </template>
 
-                              <v-list-item-content class="mt-2">
                                 <v-list-item-title v-text="item.fullName" ></v-list-item-title>
-                                <v-list-item-subtitle v-text="item.title" class="d-inLine-block text-truncate accent--text"></v-list-item-subtitle>
+                                <v-list-item-subtitle v-text="item.title" class="d-inLine-block text-truncate text-accent"></v-list-item-subtitle>
                                 <v-list-item-subtitle v-text="item.text" class="d-inLine-block text-truncate"></v-list-item-subtitle>
-                              </v-list-item-content>
 
-                              <v-list-item-action>
-                                <v-list-item-action-text >{{ $filters.convertCustomerRatingTime(item.time) }}</v-list-item-action-text>
-                              </v-list-item-action>
+                              <template #append>
+                                <span class="text-caption" >{{ $filters.convertCustomerRatingTime(item.time) }}</span>
+                              </template>
                             <!-- </template> -->
 
                           </v-list-item>
@@ -329,21 +310,20 @@
                               inset
                             ></v-divider>
                   <!-- </template>
-                      </v-list-item-group>
                     </v-list> -->
                   </template>
                 </v-virtual-scroll>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
 
 
           <!-- Customer Ratings -->
           <v-expansion-panel :disabled="customerRatings.length==0">
-            <v-expansion-panel-header class="accent--text font-weight-bold">
+            <v-expansion-panel-title class="text-accent font-weight-bold">
               Customer Ratings
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-virtual-scroll
                   :items="customerRatings"
                   :item-height="80"
@@ -353,11 +333,10 @@
    
                    <v-list-item :key="item.time" two-line class="mt-10">
             <!-- <template v-slot:default="{ active }"> -->
-                        <v-list-item-avatar>
+                        <template #prepend>
                           <v-img :src="item.customerAvatar"></v-img>
-                        </v-list-item-avatar>
+                        </template>
 
-                        <v-list-item-content>
                           <v-list-item-title v-text="item.customerName"></v-list-item-title>
 
                           <!-- <v-list-item-subtitle
@@ -366,10 +345,9 @@
                           ></v-list-item-subtitle> -->
 
                           <v-list-item-subtitle v-text="item.comments"></v-list-item-subtitle>
-                        </v-list-item-content>
 
-                        <v-list-item-action>
-                          <v-list-item-action-text>
+                        <template #append>
+                          <span class="text-caption">
                           <v-rating
                               :value="item.rating"
                               background-color="orange lighten-3"
@@ -381,7 +359,7 @@
                               half-icon="mdi-star-half"
                               readonly
                           ></v-rating>
-                          </v-list-item-action-text>
+                          </span>
                            
                           {{ $filters.convertCustomerRatingTime(item.time) }}
                           <!-- <v-icon
@@ -397,7 +375,7 @@
                           >
                             mdi-star
                           </v-icon> -->
-                        </v-list-item-action>
+                        </template>
                       <!-- </template> -->
                     </v-list-item>
                   <v-divider
@@ -407,32 +385,32 @@
        
                   </template>
                 </v-virtual-scroll>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
           <!-- Events Ongoing -->
           <v-expansion-panel :disabled="vendorPromotionEvents.length==0">
-            <v-expansion-panel-header class="accent--text font-weight-bold">
+            <v-expansion-panel-title class="text-accent font-weight-bold">
               Events Ongoing
               <template v-slot:actions>
                 <v-icon color="primary"> $expand </v-icon>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content> 
+            </v-expansion-panel-title>
+            <v-expansion-panel-text> 
                         <Events :events="vendorPromotionEvents"/>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
           <!-- Flyer Performance -->
           <v-expansion-panel :disabled="vendorFlyers.length==0">
-            <v-expansion-panel-header class="accent--text font-weight-bold">
+            <v-expansion-panel-title class="text-accent font-weight-bold">
               Campaign Performance
               <template v-slot:actions>
                 <v-icon color="primary"> $expand </v-icon>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content> 
-                <v-simple-table
+            </v-expansion-panel-title>
+            <v-expansion-panel-text> 
+                <v-table
                   fixed-header
                   :height="viewPortDimension.height * 0.38"
                 >
@@ -482,13 +460,13 @@
                     </tr>
                 </tbody>
                 </template>
-                </v-simple-table>
-            </v-expansion-panel-content>
+                </v-table>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
            <!-- Existing Customer -->
           <v-expansion-panel :disabled="vendor.existingCustomerList==null">
-            <v-expansion-panel-header class="accent--text font-weight-bold">
+            <v-expansion-panel-title class="text-accent font-weight-bold">
               Current Customer
               <template v-slot:actions>
                 <v-badge
@@ -501,9 +479,9 @@
                         </v-badge>
                 <v-icon color="primary"> $expand </v-icon>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content> 
-                <v-simple-table
+            </v-expansion-panel-title>
+            <v-expansion-panel-text> 
+                <v-table
                   fixed-header
                   :height="viewPortDimension.height * 0.38"
                 >
@@ -544,19 +522,19 @@
                     </tr>
                 </tbody>
                 </template>
-                </v-simple-table>
-            </v-expansion-panel-content>
+                </v-table>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
           <!-- Daily Report -->
           <!-- <v-expansion-panel>
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               Daily Report
               <template v-slot:actions>
                 <v-icon color="primary"> $expand </v-icon>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content> </v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text> </v-expansion-panel-text>
           </v-expansion-panel> -->
         </v-expansion-panels>
       </slot>
@@ -582,8 +560,8 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
-          dense
+          theme="dark"
+          density="compact"
           flat
         >
           <v-toolbar-title>{{singleMessageToShow.type=='guild'?'Guild':'Vendor'}}&nbsp; Message</v-toolbar-title>
@@ -598,9 +576,9 @@
             <v-icon>mdi-trash-can</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-subtitle class="accent--text text-subtitle-1 mt-3" >From:&nbsp;{{singleMessageToShow.message.fullName + '('  + singleMessageToShow.message.sender + ')'}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-subtitle-1 mt-3" >From:&nbsp;{{singleMessageToShow.message.fullName + '('  + singleMessageToShow.message.sender + ')'}}</v-card-subtitle>
        
-        <v-card-subtitle class="accent--text text-subtitle-1" >Title:&nbsp;{{singleMessageToShow.message.title}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-subtitle-1" >Title:&nbsp;{{singleMessageToShow.message.title}}</v-card-subtitle>
         <v-divider></v-divider>
         <v-card outlined flat>
           <v-card-text class="pa-3">
@@ -609,13 +587,12 @@
         </v-card>
         <v-card outlined flat v-if="isReplyMsgOpen">
           <v-card-text>
-              <v-textarea
+              <v-textarea variant="filled"
                 shaped
                 auto-grow
                 v-model="replyMessage"
                 placeholder="Reply Message"
-                required
-                filled
+                required 
                 clearable
                 lg='12'
               ></v-textarea>
@@ -638,9 +615,9 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
+          theme="dark"
           flat
-          dense
+          density="compact"
         >
           <v-toolbar-title>Message To&nbsp;{{customerToMessage.customerName}}</v-toolbar-title>
 
@@ -651,11 +628,10 @@
           </v-btn>
         </v-toolbar>
        
-        <v-card-subtitle class="accent--text text-subtitle-1 mt-3" >From:&nbsp;{{customerToMessage.vendor}}</v-card-subtitle>
+        <v-card-subtitle class="text-accent text-subtitle-1 mt-3" >From:&nbsp;{{customerToMessage.vendor}}</v-card-subtitle>
        <v-card-text>
           <v-text-field
-          label="Title"
-          dense
+          label="Title" density="compact"
           type="text"
           v-model="messageToCustomerTitle"
           clearable
@@ -664,11 +640,10 @@
        </v-card-text>
         <v-card  flat >
           <v-card-text>
-              <v-textarea
+              <v-textarea variant="filled"
                 shaped
                 auto-grow
-                v-model="messageToCustomer"
-                filled
+                v-model="messageToCustomer" 
                 placeholder="Text"
                 clearable
                 lg='12'
@@ -689,7 +664,7 @@
       >
         <v-toolbar
           color="primary lighten-1"
-          dark
+          theme="dark"
         >
           <v-toolbar-title>Order&nbsp;{{orderToFulfill.orderNo}}</v-toolbar-title>
 
@@ -697,11 +672,10 @@
         </v-toolbar>
         <v-card  flat >
           <v-card-text>
-              <v-textarea
+              <v-textarea variant="filled"
                 shaped
                 auto-grow
-                v-model="fulfillNote"
-                filled
+                v-model="fulfillNote" 
                 placeholder="Text"
                 clearable
                 lg='12'
@@ -710,7 +684,7 @@
         </v-card>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn depressed color="primary" :disabled="fulfillNote==''" @click="confirmFulfill">confirm</v-btn>
+          <v-btn variant="flat"  color="primary" :disabled="fulfillNote==''" @click="confirmFulfill">confirm</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -720,7 +694,7 @@
      <v-snackbar
         v-model="snackbar"
         centered
-        dark
+        theme="dark"
         color="primary lighten-2"
         class="pa-3"
         timeout="3000"

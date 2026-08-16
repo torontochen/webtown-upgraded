@@ -2,11 +2,11 @@
   <!-- vendor page-->
   <v-container fluid style="{'background-color': 'shade5'}" v-if="vendor">
     <v-toolbar flat color="shade5" fixed id="toolbar">
-      <v-toolbar-title class="text-h6 primary--text ml-12 pl-10"
+      <v-toolbar-title class="text-h6 text-primary ml-12 pl-10"
         >Welcome ! {{ vendor.businessTitle }}</v-toolbar-title
       >
       <v-spacer></v-spacer>
-      <span class="text-subtitle-1 primary--text"
+      <span class="text-subtitle-1 text-primary"
         >Vendor Page Visited:
         {{ $filters.formatIntAmount(vendor.homePageVisit) }}</span
       >
@@ -26,35 +26,37 @@
           close-delay="100"
           :close-on-content-click="false"
         >
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text class="mr-3 text-capitalize">flyers</v-btn>
+          <template v-slot:activator="{ props }">
+            <v-btn variant="text" v-bind="props"  class="mr-3 text-capitalize">flyers</v-btn>
           </template>
           <v-card class="mx-auto" width="250">
-            <v-list dense expand>
+            <v-list density="compact" expand>
               <!-- Design Flyer -->
               <v-list-group no-action>
-                <template v-slot:activator>
-                  <v-list-item-icon>
-                    <v-icon
-                      class="mr-2"
-                      dense
-                      color="
-                     primary
-                    "
-                      >mdi-pencil</v-icon
+                <template v-slot:activator="{ props }">
+                  <v-list-item v-bind="props">
+                    <template #prepend>
+                      <v-icon
+                        class="mr-2"
+                        density="compact"
+                        color="
+                       primary
+                      "
+                        >mdi-pencil</v-icon
+                      >
+                    </template>
+                    <v-list-item-title
+                      :class="inDesign ? '' : 'text-primary'"
+                      class="font-weight-bold"
+                      >Design Flyer</v-list-item-title
                     >
-                  </v-list-item-icon>
-                  <v-list-item-title
-                    :class="inDesign ? '#C9C9C9--text' : 'primary--text'"
-                    class="font-weight-bold"
-                    >Design Flyer</v-list-item-title
-                  >
+                  </v-list-item>
                 </template>
 
                 <!-- New Flyer -->
                 <v-list-item @click="designFlyerHandler">
                   <v-list-item-title
-                    :class="inDesign ? '#C9C9C9--text' : 'primary--text'"
+                    :class="inDesign ? '' : 'text-primary'"
                     class="font-weight-regular text-capitalize"
                   >
                     <span v-html="'&nbsp;&nbsp;&nbsp;'"></span>new
@@ -70,8 +72,8 @@
                   <v-list-item-title
                     :class="
                       templateList.length == 0
-                        ? '#C9C9C9--text'
-                        : 'primary--text'
+                        ? ''
+                        : 'text-primary'
                     "
                     class="font-weight-regular text-capitalize"
                   >
@@ -86,17 +88,17 @@
                 @click="showSketchList = true"
                 :disabled="sketchList.length == 0"
               >
-                <v-list-item-icon>
+                <template #prepend>
                   <v-icon
                     class="mr-2"
-                    dense
+                    density="compact"
                     :color="sketchList.length == 0 ? '#c6c6c6' : '#6F5FC6'"
                     >mdi-pencil-box</v-icon
                   >
-                </v-list-item-icon>
+                </template>
                 <v-list-item-title
                   :class="
-                    sketchList.length == 0 ? '#C9C9C9--text' : 'primary--text'
+                    sketchList.length == 0 ? '' : 'text-primary'
                   "
                   class="font-weight-bold"
                   >Edit Draft Saved</v-list-item-title
@@ -105,21 +107,23 @@
 
               <!-- Manage Flyers -->
               <v-list-group no-action>
-                <template v-slot:activator>
-                  <v-list-item-icon>
-                    <v-icon
-                      class="mr-2"
-                      dense
-                      :color="inDesign ? '#c6c6c6' : '#6F5FC6'"
-                      >sort</v-icon
-                    >
-                  </v-list-item-icon>
+                <template v-slot:activator="{ props }">
+                  <v-list-item v-bind="props">
+                    <template #prepend>
+                      <v-icon
+                        class="mr-2"
+                        density="compact"
+                        :color="inDesign ? '#c6c6c6' : '#6F5FC6'"
+                        >sort</v-icon
+                      >
+                    </template>
 
-                  <v-list-item-title
-                    :class="inDesign ? '#C9C9C9--text' : 'primary--text'"
-                    class="font-weight-bold"
-                    >Manage Flyers</v-list-item-title
-                  >
+                    <v-list-item-title
+                      :class="inDesign ? '' : 'text-primary'"
+                      class="font-weight-bold"
+                      >Manage Flyers</v-list-item-title
+                    >
+                  </v-list-item>
                 </template>
 
                 <!-- Saved Flyers -->
@@ -130,8 +134,8 @@
                   <v-list-item-title
                     :class="
                       savedFlyerList.length == 0
-                        ? '#C9C9C9--text'
-                        : 'primary--text'
+                        ? ''
+                        : 'text-primary'
                     "
                     class="font-weight-regular text-capitalize"
                   >
@@ -155,47 +159,47 @@
           :disabled="inDesign"
           close-delay="100"
         >
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text class="mr-3 text-capitalize">business</v-btn>
+          <template v-slot:activator="{ props }">
+            <v-btn variant="text" v-bind="props"  class="mr-3 text-capitalize">business</v-btn>
           </template>
           <v-card>
-            <v-list dense expand>
+            <v-list density="compact" expand>
               <!-- product & service  -->
               <v-list-item @click="vendorProductServiceHandler">
-                <v-list-item-icon>
-                  <v-icon class="mr-2" dense color="primary"
+                <template #prepend>
+                  <v-icon class="mr-2" density="compact" color="primary"
                     >mdi-factory</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text"
+                </template>
+                <v-list-item-title class="text-primary"
                   >Product and Service</v-list-item-title
                 >
               </v-list-item>
               <!-- Promotions  -->
               <v-list-item @click="promotionsHandler">
-                <v-list-item-icon>
-                  <v-icon class="mr-2" dense color="primary"
+                <template #prepend>
+                  <v-icon class="mr-2" density="compact" color="primary"
                     >mdi-calendar-clock</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text"
+                </template>
+                <v-list-item-title class="text-primary"
                   >Promotion Events</v-list-item-title
                 >
               </v-list-item>
               <!-- Gallery  -->
               <!-- :disabled="vendor.photoList.length == 0" -->
               <v-list-item @click="vendorGalleryHandler">
-                <v-list-item-icon>
+                <template #prepend>
                   <v-icon
                     class="mr-2"
-                    dense
+                    density="compact"
                     color="
                      primary
                     "
                     >mdi-panorama</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text"
+                </template>
+                <v-list-item-title class="text-primary"
                   >Gallery</v-list-item-title
                 >
               </v-list-item>
@@ -214,46 +218,46 @@
           :disabled="inDesign"
           close-delay="100"
         >
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text class="mr-3 text-capitalize"
+          <template v-slot:activator="{ props }">
+            <v-btn variant="text" v-bind="props"  class="mr-3 text-capitalize"
               >guild deal</v-btn
             >
           </template>
           <v-card>
-            <v-list dense expand>
+            <v-list density="compact" expand>
               <!-- guild deal  -->
               <v-list-item @click="guildDealsHandler">
-                <v-list-item-icon>
-                  <v-icon class="mr-2" dense color="primary"
+                <template #prepend>
+                  <v-icon class="mr-2" density="compact" color="primary"
                     >mdi-newspaper-variant-multiple</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text"
+                </template>
+                <v-list-item-title class="text-primary"
                   >New Guild Deals</v-list-item-title
                 >
               </v-list-item>
               <!-- deals commited  -->
               <v-list-item @click="dealsCommittedHandler">
-                <v-list-item-icon>
-                  <v-icon class="mr-2" dense color="primary">mdi-group</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text"
+                <template #prepend>
+                  <v-icon class="mr-2" density="compact" color="primary">mdi-group</v-icon>
+                </template>
+                <v-list-item-title class="text-primary"
                   >Deal Status</v-list-item-title
                 >
               </v-list-item>
               <!-- Manage Guild Deals  -->
               <!-- <v-list-item @click="manageGuildDealsHandler">
-                <v-list-item-icon>
+                <template #prepend>
                   <v-icon
                     class="mr-2"
-                    dense
+                    density="compact"
                     color="
                      primary
                     "
                     >mdi-counter</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text"
+                </template>
+                <v-list-item-title class="text-primary"
                   >Manage Guild Deals</v-list-item-title
                 >
               </v-list-item> -->
@@ -273,67 +277,67 @@
           close-delay="100"
           :close-on-content-click="false"
         >
-          <template v-slot:activator="{ on }">
-            <v-btn text v-on="on" class="mr-8 text-capitalize subtitle"
+          <template v-slot:activator="{ props }">
+            <v-btn variant="text"  v-bind="props" class="mr-8 text-capitalize subtitle"
               >accounting</v-btn
             >
           </template>
           <v-card>
-            <v-list dense expand>
+            <v-list density="compact" expand>
               <!-- Statistics  -->
               <v-list-item
                 @click="vendorStatisticHandler"
                 :disabled="!vendorSalesInfo"
               >
-                <v-list-item-icon>
-                  <v-icon class="mr-0" dense color="primary"
+                <template #prepend>
+                  <v-icon class="mr-0" density="compact" color="primary"
                     >mdi-chart-areaspline</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text ml-n3"
+                </template>
+                <v-list-item-title class="text-primary ml-n3"
                   >Statistics</v-list-item-title
                 >
               </v-list-item>
               <!-- Promotions  -->
               <!-- <v-list-item @click="promotionsHandler">
-                <v-list-item-icon>
-                  <v-icon class="mr-2" dense color="primary"
+                <template #prepend>
+                  <v-icon class="mr-2" density="compact" color="primary"
                     >mdi-chart-gantt</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text"
+                </template>
+                <v-list-item-title class="text-primary"
                   >Promotion Performance</v-list-item-title
                 >
               </v-list-item> -->
               <!-- Treasure -->
               <v-list-item @click="vendorSettlementHandler">
-                <v-list-item-icon>
+                <template #prepend>
                   <v-icon
                     class="mr-0"
-                    dense
+                    density="compact"
                     color="
                      primary
                     "
                     >mdi-treasure-chest</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text ml-n3"
+                </template>
+                <v-list-item-title class="text-primary ml-n3"
                   >Treasure</v-list-item-title
                 >
               </v-list-item>
               <!-- Membership -->
               <v-list-item @click="vendorMembershipHandler">
-                <v-list-item-icon>
+                <template #prepend>
                   <v-icon
                     class="mr-0"
-                    dense
+                    density="compact"
                     color="
                      primary
                     "
                     >mdi-credit-card-outline</v-icon
                   >
-                </v-list-item-icon>
-                <v-list-item-title class="primary--text ml-n3"
+                </template>
+                <v-list-item-title class="text-primary ml-n3"
                   >Membership</v-list-item-title
                 >
               </v-list-item>
@@ -354,10 +358,10 @@
               :close-on-content-click="clickClose"
               close-delay="100"
             >
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <!-- <v-container class=" de-flex align-center justify-center ">
                   <v-avatar
-                    v-on="on"
+                    v-bind="props"
                     max-height="100"
                     max-width="100"
                     size="60"
@@ -365,23 +369,23 @@
                     class="rounded-lg"
                   > -->
 
-                <v-card v-on="on" flat class="rounded" width="75">
-                  <!-- <v-img contain  :src="event.vendorLogo"  >
+                <v-card v-bind="props" flat class="rounded" width="75">
+                  <!-- <v-img  :src="event.vendorLogo"  >
                                           </v-img> -->
 
-                  <v-img contain :src="vendor.logo"> </v-img>
+                  <v-img :src="vendor.logo"> </v-img>
                 </v-card>
 
-                <!-- <v-icon left small> arrow_drop_down </v-icon> -->
+                <!-- <v-icon start small> arrow_drop_down </v-icon> -->
                 <!-- </v-avatar> -->
-                <!-- <h4 class="primary--text d-block justify-left">{{ vendor.businessTitle }}</h4> -->
+                <!-- <h4 class="text-primary d-block justify-left">{{ vendor.businessTitle }}</h4> -->
                 <!-- </v-container> -->
 
                 <!-- </v-btn> -->
               </template>
 
               <v-card>
-                <v-list dense expand>
+                <v-list density="compact" expand>
                   <v-list-item
                     v-for="(dropdownItem, index) in vendorAccountDropdown"
                     :key="index"
@@ -397,7 +401,7 @@
                   >
                     <v-icon
                       class="mr-2"
-                      dense
+                      density="compact"
                       :color="
                         dropdownItem.title == 'Sign Out' && inDesign
                           ? '#c6c6c6'
@@ -406,7 +410,7 @@
                       >{{ dropdownItem.icon }}</v-icon
                     >
                     <v-list-item-title
-                      :class="inDesign ? '#C9C9C9--text' : 'primary--text'"
+                      :class="inDesign ? '' : 'text-primary'"
                       class="font-weight-medium"
                       >{{ dropdownItem.title }}</v-list-item-title
                     >
@@ -523,13 +527,19 @@
           // top: '130px',
           // left: '10px',
           'z-index': '10',
+          // The column is position:fixed, so cols=1 only ever set a max-width
+          // of 8.33% — about 76px. Vuetify 2's radio label sat outside the
+          // control's flex row and overflowed happily; Vuetify 3 puts it inside,
+          // where it shrank to 12px and wrapped one character per line. An
+          // explicit width is what this fixed column always needed.
+          'min-width': '120px',
         }"
       >
-        <!-- <v-btn fab  color="primary" left absolute top @click="redraw">
+        <!-- <v-btn icon  color="primary" left absolute top @click="redraw">
                     <v-icon  large>mdi-redo-variant</v-icon>
                   </v-btn> -->
 
-        <br /><span class="text-subtitle-1 primary--text font-weight-medium"
+        <br /><span class="text-subtitle-1 text-primary font-weight-medium"
           >sort by:</span
         >
 
@@ -548,18 +558,14 @@
           v-model="sortDesc"
           @change="processPromotionEvents"
         >
-          <v-btn
-            small
-            depressed
+          <v-btn variant="flat" size="small" 
             color="primary lighten-1"
             :value="false"
             :disabled="!canProcessEvents"
           >
             <v-icon>mdi-arrow-up</v-icon>
           </v-btn>
-          <v-btn
-            small
-            depressed
+          <v-btn variant="flat" size="small" 
             color="primary lighten-1"
             :value="true"
             :disabled="!canProcessEvents"
@@ -606,7 +612,6 @@
                     >
                       <v-img
                         :src="event.eventPhoto"
-                        contain
                         height="220"
                         class="my-1"
                       >
@@ -625,15 +630,15 @@
                           class="d-flex flex-column justify-start align-center"
                         >
                           <v-card flat class="rounded mb-1" width="70">
-                            <v-img contain :src="event.vendorLogo"> </v-img>
+                            <v-img :src="event.vendorLogo"> </v-img>
                           </v-card>
                           <span
-                            class="text-subtitle-2 text-center primary--text d-inline"
+                            class="text-subtitle-2 text-center text-primary d-inline"
                           >
                             {{ event.vendor }}</span
                           >
                           <v-card-subtitle
-                            class="text-subtitle-2 accent--text"
+                            class="text-subtitle-2 text-accent"
                             >{{ event.eventTitle }}</v-card-subtitle
                           >
                         </v-col>
@@ -657,7 +662,7 @@
                           color="#036358"
                           class="d-flex justify-center align-center"
                         >
-                          <!-- <v-row class="text-h3 white--text my-6">{{event.vendor}}</v-row> -->
+                          <!-- <v-row class="text-h3 text-white my-6">{{event.vendor}}</v-row> -->
                           <v-row>
                             <v-icon
                               color="white"
@@ -715,10 +720,10 @@
                             class="d-flex flex-column justify-start align-center"
                           >
                             <v-card flat class="rounded mb-1" width="70">
-                              <v-img contain :src="event.vendorLogo"> </v-img>
+                              <v-img :src="event.vendorLogo"> </v-img>
                             </v-card>
                             <span
-                              class="text-subtitle-2 text-center primary--text d-inline"
+                              class="text-subtitle-2 text-center text-primary d-inline"
                             >
                               {{ event.vendor }}</span
                             >
@@ -732,16 +737,16 @@
                               full-icon="mdi-star"
                               half-icon="mdi-star-half"
                               readonly
-                              dense
+                              density="compact"
                             ></v-rating>
                             <span
-                              class="primary--text d-block-inline text-caption my-1"
+                              class="text-primary d-block-inline text-caption my-1"
                               ><v-icon small color="primary" class="mb-1"
                                 >mdi-phone-classic</v-icon
                               >&nbsp;{{ event.vendorPhone[0] }}</span
                             >
                             <span
-                              class="primary--text d-block-inline text-caption my-1 text-center"
+                              class="text-primary d-block-inline text-caption my-1 text-center"
                             >
                               <!-- <v-icon small color="primary">mdi-email-box</v-icon> -->
                               &nbsp;{{ address(event) }}</span
@@ -792,7 +797,7 @@
       >
         <!-- Search Single Vendor -->
         <v-row class="mb-2 mt-4">
-          <v-autocomplete
+          <v-autocomplete variant="solo"
             v-model="vendorSelected"
             :loading="vendorSearchLoading"
             :items="vendorListFiltered"
@@ -800,14 +805,12 @@
             @update:search-input="vendorSearch = $event"
             cache-items
             full-width
-            flat
-            solo-inverted
+            flat -inverted
             hide-no-data
             hide-details
             placeholder="Search A Vendor..."
             append-icon="mdi-magnify"
-            class="ml-3"
-            dense
+            class="ml-3" density="compact"
             color="primary"
             :style="{ width: `${(viewportWidth * 2.3) / 10}` + 'px' }"
           ></v-autocomplete>
@@ -860,7 +863,6 @@
           >
             <v-card flat class="rounded mb-1 mr-3" width="80">
               <v-img
-                contain
                 :src="pickedVendor.logo"
                 class="ma-auto"
                 max-height="60"
@@ -877,11 +879,11 @@
                 full-icon="mdi-star"
                 half-icon="mdi-star-half"
                 readonly
-                dense
+                density="compact"
               ></v-rating>
             </v-card>
             <span
-              class="text-subtitle-1 text-center primary--text d-inine-block my-1"
+              class="text-subtitle-1 text-center text-primary d-inine-block my-1"
               >{{ pickedVendor.vendor }}
             </span>
           </v-row>
@@ -898,11 +900,11 @@
           <!-- </v-card-text> -->
           <v-card-actions>
             <v-row no-gutters>
-              <span class="primary--text d-block-inline text-caption my-1"
+              <span class="text-primary d-block-inline text-caption my-1"
                 ><v-icon small color="primary">mdi-phone-classic</v-icon
                 >&nbsp;{{ pickedVendor.vendorPhone }}</span
               ><br />
-              <span class="primary--text d-block-inline text-caption my-1"
+              <span class="text-primary d-block-inline text-caption my-1"
                 ><v-icon small color="primary">mdi-email-box</v-icon>&nbsp;{{
                   pickedVendor.vendorEmail
                 }}</span
@@ -910,7 +912,7 @@
             </v-row>
             <v-spacer></v-spacer>
             <v-row no-gutters>
-              <span class="text-caption text-center primary--text">{{
+              <span class="text-caption text-center text-primary">{{
                 pickedVendor.address
               }}</span>
             </v-row>
@@ -923,7 +925,7 @@
       <v-dialog v-model="isFinishProfileOpen" max-width="500" max-height="330">
         <v-card width="500" height="330" style="border-top: 20px solid #7986cb">
           <v-card-text class="mt-8">
-            <span class="text-subtitle-1 primary--text"
+            <span class="text-subtitle-1 text-primary"
               >Finish your profile now to earn 10,000 Boundary Silver</span
             ><br />
             <v-img
@@ -935,13 +937,12 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              depressed
+            <v-btn variant="flat"
+              color="primary" 
               @click="isFinishProfileOpen = false"
               >Later</v-btn
             >
-            <v-btn color="primary" text plain @click="goFinishProfile"
+            <v-btn variant="text" color="primary"  @click="goFinishProfile"
               >Go Finish</v-btn
             >
           </v-card-actions>

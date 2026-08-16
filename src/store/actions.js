@@ -235,39 +235,48 @@ commitGuildDeals: ({commit}, payload) => {
         variables: payload,
         update:(cache, {data: { feedPet }}) => {
           console.log(feedPet)
-          const data = cache.readQuery({ query: GET_CURRENT_RESIDENT })
-          if (data.getCurrentResident.flyersFedToPet) {
-            data.getCurrentResident.flyersFedToPet.push(payload.flyerId)
-          } else {
-            let list = []
-            list.push(payload.flyerId)
-            data.getCurrentResident = {...data.getCurrentResident, ...{flyersFedToPet: list}}
-          }
-          if(data.getCurrentResident.stashedFlyers 
-            && data.getCurrentResident.stashedFlyers.length > 0 
-            && payload.stashOrActive == 'Stash') {
-            const index = _.findIndex(data.getCurrentResident.stashedFlyers, flyer => {
+          // Apollo Client 3 freezes what readQuery returns, so this rebuilds
+          // the resident rather than mutating it in place the way Apollo 2
+          // allowed. Same end state, no writes to frozen objects.
+          const cached = cache.readQuery({ query: GET_CURRENT_RESIDENT })
+          const current = cached.getCurrentResident
+
+          const flyersFedToPet = current.flyersFedToPet
+            ? [...current.flyersFedToPet, payload.flyerId]
+            : [payload.flyerId]
+
+          let stashedFlyers = current.stashedFlyers
+          if (stashedFlyers && stashedFlyers.length > 0 && payload.stashOrActive == 'Stash') {
+            const index = _.findIndex(stashedFlyers, flyer => {
                 return payload.flyerId == flyer.flyerId
             })
             if (index >= 0) {
-              data.getCurrentResident.stashedFlyers.splice(index, 1)
+              stashedFlyers = stashedFlyers.filter((_flyer, i) => i !== index)
             }
           }
-          if(data.getCurrentResident.guild) {
-            const guildCut = payload.silverRewarded * data.getCurrentResident.guild.contributionRatio
-            data.getCurrentResident.guild.guildSilver += guildCut
-            data.getCurrentResident.silverCoins += (payload.silverRewarded - guildCut)
+
+          let guild = current.guild
+          let silverCoins = current.silverCoins
+          if (guild) {
+            const guildCut = payload.silverRewarded * guild.contributionRatio
+            guild = {...guild, guildSilver: guild.guildSilver + guildCut}
+            silverCoins += (payload.silverRewarded - guildCut)
           } else {
-            data.getCurrentResident.silverCoins  += payload.silverRewarded
+            silverCoins += payload.silverRewarded
           }
-          
-          data.getCurrentResident.petExperience += payload.petExperienceGained
-          
-          // console.log(data.getCurrentResident)
-          // commit('setResident', data.getCurrentResident)
+
           cache.writeQuery({
             query: GET_CURRENT_RESIDENT,
-            data
+            data: {
+              getCurrentResident: {
+                ...current,
+                flyersFedToPet,
+                stashedFlyers,
+                guild,
+                silverCoins,
+                petExperience: current.petExperience + payload.petExperienceGained,
+              },
+            },
           });
           commit('setResident', feedPet)
         }
@@ -869,7 +878,8 @@ commitGuildDeals: ({commit}, payload) => {
         // console.log(data);
         commit(
           "setRestaurantCategories",
-          data.getRestaurantCategory.items.sort()
+          // Apollo Client 3 freezes query results, so sort a copy.
+          [...data.getRestaurantCategory.items].sort()
         );
       })
       .catch((err) => {
@@ -1566,11 +1576,12 @@ commitGuildDeals: ({commit}, payload) => {
         mutation: STASH_FLYER,
         variables: payload,
         update:(cache, {data: { stashFlyer }}) => {
-          const data = cache.readQuery({ query: GET_CURRENT_RESIDENT });
-          // Create updated data
-          data.getCurrentResident.stashedFlyers.splice(0, data.getCurrentResident.stashedFlyers.length)
-          stashFlyer.map((flyer) => {
-            data.getCurrentResident.stashedFlyers.push({
+          // Apollo Client 3 freezes query results; the old splice-to-empty then
+          // push-each pattern wrote straight into the frozen array. The list is
+          // replaced wholesale instead, which is what it amounted to anyway.
+          const cached = cache.readQuery({ query: GET_CURRENT_RESIDENT });
+          const stashedFlyers = stashFlyer.map((flyer) => {
+            return ({
               vendor: flyer.vendor,
               flyerId: flyer.flyerId,
               flyerTitle: flyer.flyerTitle,
@@ -1584,11 +1595,14 @@ commitGuildDeals: ({commit}, payload) => {
             })
           })
           // Write updated data back to query
-          // console.log(data);
-          // commit('setResident', data.getCurrentResident)
           cache.writeQuery({
             query: GET_CURRENT_RESIDENT,
-            data,
+            data: {
+              getCurrentResident: {
+                ...cached.getCurrentResident,
+                stashedFlyers,
+              },
+            },
           });
         }
       })

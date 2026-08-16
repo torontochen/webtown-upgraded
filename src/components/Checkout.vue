@@ -4,7 +4,7 @@
         <!-- delivery way -->
         <v-card class="rounded-lg mt-2 mx-auto" outlined v-if="!isPrepay" width="1200">
             <v-toolbar color="shade" flat>
-                <v-toolbar-title class="fontColor--text text--darken-3">Deliver</v-toolbar-title>
+                <v-toolbar-title class="text-fontColor">Deliver</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn icon color="primary" @click="isNoteWindowOpen=true">
                     <v-icon >mdi-pencil-box-multiple-outline</v-icon>
@@ -30,19 +30,19 @@
                     <v-card-text> -->
                          <v-img 
                       src="/static/animated-office-worker-image-0058.gif"
-                      height="250" width="250" class="text-center" contain  />
+                      height="250" width="250" class="text-center"  />
 
                     <!-- </v-card-text>
                     <v-card-text> -->
                          <transition-group name="fade-down" v-if="totalRewardSilver>0">
                           <span
                             style="right: 100px; bottom: 100px; position: absolute"
-                            class="text-h5 accent--text font-weight-bold text-center"
+                            class="text-h5 text-accent font-weight-bold text-center"
                             key="2"
                             v-if="placeOrderLoading"
                             >
                             <v-img src="/static/animated-money-image-0013.gif" 
-                            height="60" width="60" contain class="ml-5 mt-10" />
+                            height="60" width="60" class="ml-5 mt-10" />
                              <v-img 
                             src="/static/animated-treasure-image-0041.gif" 
                             height="80" width="80" class="ma-auto" v-if="placeOrderLoading"></v-img> 
@@ -63,10 +63,8 @@
                     ></v-radio>
                     <v-row v-if="deliveryType=='pickup'" class="my-1">
                         <v-list-item two-line v-for="item in pickupAddressList" :key="item.itemCode">
-                        <v-list-item-content>
                             <v-list-item-title class="font-weight-bold">{{item.vendor}}</v-list-item-title>
                             <v-list-item-subtitle>{{item.address}}</v-list-item-subtitle>
-                        </v-list-item-content>
                         </v-list-item>
                     </v-row>
                         <v-radio
@@ -80,10 +78,10 @@
                               
                             <span class="text-subtitle-1 font-weight-black ">{{resident.firstName + ' ' + resident.lastName}}</span><br>
                             <span>{{deliveryAddress}}
-                                <v-btn icon small color="primary" @click="isChangeDeliveryAddress=true" v-if="!isChangeDeliveryAddress">
+                                <v-btn icon size="small" color="primary" @click="isChangeDeliveryAddress=true" v-if="!isChangeDeliveryAddress">
                                     <v-icon small>mdi-pencil</v-icon>
                                 </v-btn>
-                                <!-- <v-btn icon  small color="primary" @click="rollbackDeliveryAddress" v-else>
+                                <!-- <v-btn icon size="small" color="primary" @click="rollbackDeliveryAddress" v-else>
                                     <v-icon small>mdi-backup-restore</v-icon>
                                 </v-btn> -->
                             </span>
@@ -93,8 +91,7 @@
 
                             <v-text-field
                                 id="delivery_address"
-                                label="Address in GTA (ex: 247 Sheppard Ave. East)"
-                                dense
+                                label="Address in GTA (ex: 247 Sheppard Ave. East)" density="compact"
                                 color="primary"
                                 required
                                 type="text"
@@ -107,7 +104,7 @@
                         </v-col>
                     </v-row>
                 </v-radio-group>
-                <v-row class="warning--text text-center" v-if="errorMessage!=''">
+                <v-row class="text-warning text-center" v-if="errorMessage!=''">
                     {{errorMessage}}
                 </v-row>
             </v-card-text>
@@ -122,13 +119,13 @@
         <!-- Order and payment  -->
         <v-card class="rounded-lg mt-2 mx-auto" outlined width='1200'>
             <v-toolbar color="shade" flat>
-                <v-toolbar-title class="fontColor--text text--darken-3">Order&nbsp;{{impendingOrder!=null?impendingOrder.orderNo:''}}</v-toolbar-title>
+                <v-toolbar-title class="text-fontColor">Order&nbsp;{{impendingOrder!=null?impendingOrder.orderNo:''}}</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
                 <v-col>
-                    <span class="text-subtitle-1 fontColor--text text--darken-2 font-weight-bold ml-2">Order Summary</span>
+                    <span class="text-subtitle-1 text-fontColor font-weight-bold ml-2">Order Summary</span>
                 
-                    <v-simple-table>
+                    <v-table>
                         <template v-slot:default>
                         <thead>
                             <tr>
@@ -147,7 +144,7 @@
                             <th class="text-left">
                                 Amount
                             </th>
-                            <th class="text-left red--text">
+                            <th class="text-left text-red">
                                 Discount
                             </th>
                             </tr>
@@ -163,41 +160,39 @@
                             <td>{{ item.quantity }}</td>
                             <td v-if="item.dealPrice>0">
                                 <span class="text-decoration-line-through ">{{ $filters.formatCurrencyAmount(item.price.toFixed(2)) }}&nbsp;&nbsp;&nbsp;</span>
-                                <span class="red--text ml-1">{{ $filters.formatCurrencyAmount(item.dealPrice.toFixed(2)) }}</span>
+                                <span class="text-red ml-1">{{ $filters.formatCurrencyAmount(item.dealPrice.toFixed(2)) }}</span>
                             </td>
                             <td v-else>{{ $filters.formatCurrencyAmount(item.price.toFixed(2)) }}</td>
                             <td v-if="item.dealPrice>0">
                                 <span class="text-decoration-line-through ">{{ $filters.formatCurrencyAmount((item.quantity * item.price).toFixed(2)) }}&nbsp;&nbsp;&nbsp;</span>
-                                <span class="red--text ml-1">{{ $filters.formatCurrencyAmount((item.quantity * item.price - item.discount).toFixed(2)) }}</span>
+                                <span class="text-red ml-1">{{ $filters.formatCurrencyAmount((item.quantity * item.price - item.discount).toFixed(2)) }}</span>
                             </td>
                             <td v-else>{{ $filters.formatCurrencyAmount((item.quantity * item.price).toFixed(2)) }}</td>
-                            <td v-if="item.discount>0" class="red--text">-{{ $filters.formatCurrencyAmount(item.discount.toFixed(2)) }}</td>
+                            <td v-if="item.discount>0" class="text-red">-{{ $filters.formatCurrencyAmount(item.discount.toFixed(2)) }}</td>
                             <td v-else></td>
                             </tr>
                         </tbody>
                         </template>
-                    </v-simple-table>
+                    </v-table>
                    
                     <v-divider class="mt-1"></v-divider>
-                     <v-row v-if="totalRewardSilver>0" class="text-right text-subtitle-2 primary--text ma-3">
+                     <v-row v-if="totalRewardSilver>0" class="text-right text-subtitle-2 text-primary ma-3">
                        Total Reward Silver (Including 15% Bonues From Boundary ):&nbsp;{{ $filters.formatIntAmount(totalRewardSilver + Math.floor((totalBeforeTax - totalDiscount) * 0.035 * 0.15 * 1000)) }}
                     </v-row>
                     <!-- Search Deal Button -->
                     <v-row v-if="noAvailableDeals" class="my-3">
-                        <v-spacer></v-spacer><span class="red--text text-subtitle-2 text-left mr-14">{{noAvailableDeals}}</span>
+                        <v-spacer></v-spacer><span class="text-red text-subtitle-2 text-left mr-14">{{noAvailableDeals}}</span>
                     </v-row>
                     <v-row class="my-2 pr-4" v-if="impendingOrder==null">
                         <v-spacer/>
-                        <v-btn
+                        <v-btn variant="text"
                         class="mr-16"
                         :loading="searchCouponLoading"
                         :disabled="searchCouponLoading"
                         color="shade darken-2"
                         rounded
                         style="background-color: #F5F5F5"
-                        @click="searchCoupon"
-                        small
-                        text
+                        @click="searchCoupon" size="small" 
                         >
                         Search Deals
                         <template v-slot:loader>
@@ -211,17 +206,17 @@
                     <v-row class="my-1  justify-end d-flex" no-gutters>
                         <v-spacer />
                         <v-col cols="4" v-if="totalDiscount>0">
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block red--text" v-for="(item, i) in dealsSoughtTitle" :key="i">Deal:&nbsp;{{item.title}}</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-red" v-for="(item, i) in dealsSoughtTitle" :key="i">Deal:&nbsp;{{item.title}}</span><br>
                         </v-col>
                         <v-col cols="2">
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block red--text" v-if="totalDiscount>0">You Save</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-red" v-if="totalDiscount>0">You Save</span><br>
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block" >{{comboTotalAmount>0?'Combo Total Before Tax':'Total Before Tax'}}</span><br>
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">Shipping</span><br>
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">HST(13%)</span><br>
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">Total Amount</span><br>
                         </v-col>
                         <v-col cols="2">
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block red--text" v-if="totalDiscount>0">{{ $filters.formatCurrencyAmount(totalDiscount.toFixed(2)) }}</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-red" v-if="totalDiscount>0">{{ $filters.formatCurrencyAmount(totalDiscount.toFixed(2)) }}</span><br>
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{ $filters.formatCurrencyAmount(comboTotalAmount > 0 ? comboTotalAmount.toFixed(2):(totalBeforeTax-totalDiscount).toFixed(2)) }}</span><br>
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{ $filters.formatCurrencyAmount(shipping.toFixed(2)) }}</span><br>
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{ $filters.formatCurrencyAmount((totalBeforeTax-totalDiscount+shipping)*0.13.toFixed(2)) }}</span><br>
@@ -246,9 +241,9 @@
                     </v-row>
                     <v-row class="d-flex justify-end">
                         <v-col cols="4">
-                            <span class="ml-24 text-h6 secondary--text font-weight-bold" v-if="impendingOrder == null ">Balance:
+                            <span class="ml-24 text-h6 text-secondary font-weight-bold" v-if="impendingOrder == null ">Balance:
                              {{ $filters.formatCurrencyAmount(((totalBeforeTax-totalDiscount+shipping)*1.13-convertedGold).toFixed(2)) }}</span>
-                            <span class="ml-24 text-subtitle-1 secondary--text font-weight-bold text-start" v-else>Balance:
+                            <span class="ml-24 text-subtitle-1 text-secondary font-weight-bold text-start" v-else>Balance:
                              {{ 'Paid Off! Extra Shipping Will Be Paid By' + ' ' + impendingOrder.paymentMethod + ' ' + 'In File' }}</span>
                         </v-col>
                     </v-row>
@@ -265,14 +260,14 @@
                             value="creditcard"
                         >
                         <template v-slot:label>
-                            <div><v-img src="/static/credit_card-removebg-preview.png" contain max-height="60" max-width="80"></v-img></div>
+                            <div><v-img src="/static/credit_card-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                         </template>
                         </v-radio>
                         <v-radio
                             value="paypal"
                         >
                         <template v-slot:label>
-                            <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80" contain></v-img></div>
+                            <div><v-img src="/static/paypal-logo-no-background-png-removebg-preview.png" max-height="60" max-width="80"></v-img></div>
                         </template>
                         </v-radio>
                         </v-radio-group>
@@ -281,30 +276,26 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <span v-if="!isPrepay">
-                    <v-btn 
+                    <v-btn variant="flat" 
                 color="primary"
-                class="pa-2"
-                large
-                depressed
+                class="pa-2" size="large" 
                 :disabled="errorMessage!=''"
                 @click="placeOrder"
                 
                 >
                     {{impendingOrder==null ? 'Place  Order' : 'Finalize Order'}}
-                </v-btn><v-btn text plain color="primary" @click="isPrepay=!isPrepay" v-if="impendingOrder==null&&!isPrepay">Just Prepay?</v-btn>
+                </v-btn><v-btn variant="text"  color="primary" @click="isPrepay=!isPrepay" v-if="impendingOrder==null&&!isPrepay">Just Prepay?</v-btn>
                 </span>
 
                 <span v-if="impendingOrder==null&&isPrepay">
-                    <v-btn 
+                    <v-btn variant="flat" 
                     color="primary"
-                    class="pa-2"
-                    large
-                    depressed
+                    class="pa-2" size="large" 
                     :disabled="errorMessage!=''"
                     @click="prepay"
                     >
                         Prepay
-                    </v-btn><v-btn text plain color="accent" @click="isPrepay=!isPrepay"  v-if="impendingOrder==null&&isPrepay">Back To Place Order</v-btn>
+                    </v-btn><v-btn variant="text"  color="accent" @click="isPrepay=!isPrepay"  v-if="impendingOrder==null&&isPrepay">Back To Place Order</v-btn>
                 </span>
                 
                 <v-spacer></v-spacer>
@@ -322,12 +313,11 @@
                </v-card-text>
                <v-card-actions>
                    <v-spacer></v-spacer>
-              <v-btn 
-              color="primary" 
-              depressed 
+              <v-btn variant="flat" 
+              color="primary"  
               @click="isNoteWindowOpen=false"
               >OK</v-btn>
-              <v-btn outlined color="primary"  @click="cancelNote">Cancel</v-btn>
+              <v-btn variant="outlined"  color="primary"  @click="cancelNote">Cancel</v-btn>
             <v-spacer></v-spacer>
                </v-card-actions>
            </v-card>

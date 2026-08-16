@@ -1,9 +1,8 @@
 <template>
   <!-- Launcher: shown when the window is closed, same role as the library's fab. -->
   <v-btn
-    v-if="!isOpen"
-    fab
-    dark
+    v-if="!isOpen" icon
+    theme="dark"
     :color="launcherColor"
     @click="$emit('open')"
     aria-label="Open guild chat"
@@ -12,10 +11,10 @@
   </v-btn>
 
   <v-card v-else class="guild-chat d-flex flex-column" :color="listColor">
-    <v-toolbar dense flat :color="headerColor" :dark="true" class="flex-grow-0">
+    <v-toolbar density="compact" flat :color="headerColor" :dark="true" class="flex-grow-0">
       <slot name="header"></slot>
       <v-spacer></v-spacer>
-      <v-btn icon small @click="$emit('close')" aria-label="Close guild chat">
+      <v-btn icon size="small" @click="$emit('close')" aria-label="Close guild chat">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
@@ -60,20 +59,18 @@
     </div>
 
     <div class="guild-chat__input flex-grow-0" :style="{ backgroundColor: inputColor }">
-      <v-textarea
+      <v-textarea variant="solo"
         v-model="draft"
         rows="1"
         auto-grow
-        hide-details
-        dense
-        solo
+        hide-details density="compact" 
         flat
         :background-color="inputColor"
         placeholder="Write a message…"
         @keydown.enter.exact.prevent="send"
       >
         <template v-slot:append>
-          <v-btn icon small :disabled="!draft.trim()" @click="send" aria-label="Send">
+          <v-btn icon size="small" :disabled="!draft.trim()" @click="send" aria-label="Send">
             <v-icon :color="headerColor">mdi-send</v-icon>
           </v-btn>
         </template>

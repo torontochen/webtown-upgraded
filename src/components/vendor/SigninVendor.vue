@@ -31,13 +31,13 @@
 
     <v-card :max-height="(viewportHeight * 10) / 10">
 
-    <!-- <v-btn absolute top right small icon  dark  @click="$emit('closeSignIn')" >
-          <v-icon dark>mdi-close</v-icon>
+    <!-- <v-btn absolute top right size="small" icon  theme="dark"  @click="$emit('closeSignIn')" >
+          <v-icon theme="dark">mdi-close</v-icon>
         </v-btn> -->
-         <v-btn absolute top right small icon  dark @click="handleCancel" class="ml-n5 mr-1" to="/">
+         <v-btn absolute top right size="small" icon  theme="dark" @click="handleCancel" class="ml-n5 mr-1" to="/">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-      <v-card-title class="headline primary  white--text">
+      <v-card-title class="headline primary  text-white">
        
         Welcome Back! Partner
       </v-card-title>
@@ -105,17 +105,16 @@
 
                 <v-row justify="center">
                   <!-- <v-col cols="12"> -->
-                  <v-btn
+                  <v-btn variant="flat"
                     :loading="loading"
                     :disabled="!isFormValid || loading"
                     color="primary lighten-1"
                     type="submit"
-                    right
-                    depressed
+                    right 
                   >
-                    <span slot="loader" class="custom-loader">
+                    <template #loader><span class="custom-loader">
                       <v-icon>cached</v-icon>
-                    </span>
+                    </span></template>
                     Signin
                   </v-btn>
 
@@ -127,7 +126,7 @@
                   <div
                     color="primary"
                     @click="handleSignupVendor"
-                    class="text-center primary--text mt-3"
+                    class="text-center text-primary mt-3"
                   >
                     Don't have an account?
                     <span
@@ -135,7 +134,7 @@
                         text-decoration: underline;
                         cursor: pointer;
                       "
-                      class="secondary--text text--lighten-1 text-subtitle-1"
+                      class="text-secondary text-subtitle-1"
                     >
                       Signup
                     </span>

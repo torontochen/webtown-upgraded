@@ -24,6 +24,15 @@ const vueFiles = (function walk(dir, out = []) {
 const read = (f) => fs.readFileSync(f, "utf8");
 const rel = (f) => path.relative(path.join(__dirname, ".."), f);
 
+// Comments discuss these APIs by name — including the ones in this repo
+// explaining why a `.native` is still load-bearing — so they are stripped
+// before scanning. Only real code counts.
+const stripComments = (src) =>
+  src
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
+
 test("no .sync modifier remains (Vue 3 removed it)", () => {
   // Rewritten in 4b-2 as an explicit `:prop` + `@update:prop` pair, which is
   // what .sync compiled to anyway and is valid in both Vue 2 and Vue 3.
@@ -44,29 +53,17 @@ test("every :prop/@update:prop pair targets the kebab-case event Vuetify emits",
   }
 });
 
-test(".native survives only at the four sites that cannot move yet", () => {
-  // router-link needs vue-router 4 (4b-4); vue-draggable-resizable 2 neither
-  // emits click nor forwards $listeners and is replaced in 4b-3. Every other
-  // site was on v-btn or v-icon, both of which bind $listeners on their root.
-  const counts = vueFiles
-    .map((f) => [rel(f), (read(f).match(/\.native=/g) || []).length])
-    .filter(([, n]) => n > 0)
-    .sort();
-  assert.deepEqual(counts, [
-    ["src/App.vue", 1],
-    ["src/components/vendor/FlyerCoupon.vue", 2],
-    ["src/components/vendor/HtmlConverter.vue", 1],
-  ]);
+test(".native is gone entirely", () => {
+  // 4b-2 removed every .native it could on Vue 2 and left four that were
+  // load-bearing: one router-link, three vue-draggable-resizable. Vue 3 removes
+  // the modifier outright and both of those now forward listeners, so 4b-4
+  // took the last four.
+  const offenders = vueFiles
+    .map((f) => [rel(f), (stripComments(read(f)).match(/\.native=/g) || []).length])
+    .filter(([, n]) => n > 0);
+  assert.deepEqual(offenders, []);
 });
 
-// Comments discuss these APIs by name — including the ones in this repo
-// explaining why a `.native` is still load-bearing — so they are stripped
-// before scanning. Only real code counts.
-const stripComments = (src) =>
-  src
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/^\s*\/\/.*$/gm, "");
 
 test("no Vue 2 API that Vue 3 removed outright is in use", () => {
   // `new Vue(` is deliberately not on this list: the root instance in main.js

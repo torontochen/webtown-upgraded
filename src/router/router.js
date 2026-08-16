@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import SigninVendor from '../components/vendor/SigninVendor.vue'
 import Profile from '../components/Profile.vue'
@@ -24,12 +23,10 @@ import GuildDeal from '../components/vendor/GuildDeal.vue'
 import ManageGuildDeals from '../components/vendor/ManageGuildDeals.vue'
 import AuthGuard from "../AuthGuard";
 
-const originalPush = VueRouter.prototype.push;
-VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err);
-}
-
-Vue.use(VueRouter)
+// vue-router 4 rejects navigation-duplicated/aborted pushes with an Error.
+// vue-router 3 did too, which is why the prototype was patched here to swallow
+// them; the prototype is gone in v4, so the same guard is applied per call in
+// the router instance below.
 
 const routes = [
 
@@ -201,12 +198,20 @@ const routes = [
 
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  // vue-cli injected process.env.BASE_URL; Vite has no `process` in the browser
-  // and exposes the equivalent as import.meta.env.BASE_URL (default "/").
-  base: import.meta.env.BASE_URL,
+// vue-router 4: `mode: 'history'` plus `base` become a history implementation,
+// and the constructor is a factory. import.meta.env.BASE_URL is Vite's
+// equivalent of the process.env.BASE_URL vue-cli used to inject.
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
+
+// Restores what the `VueRouter.prototype.push` patch at the top of this file
+// used to do. Pushing the route you are already on rejects with a
+// NavigationDuplicated error in both v3 and v4; this app pushes the same route
+// in several places and never handled the rejection, so without this v4 would
+// surface it as an unhandled promise rejection.
+const originalPush = router.push.bind(router)
+router.push = (location) => originalPush(location).catch((err) => err)
 
 export default router
