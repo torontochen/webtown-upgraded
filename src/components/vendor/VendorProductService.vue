@@ -278,7 +278,7 @@
               </template>
 
               <template v-slot:item.description="{ item }">
-                <span>{{item.description | ellipsis-description}}</span>
+                <span>{{ $filters.ellipsisDescription(item.description) }}</span>
               </template>
           </v-data-table>
           <v-row justify="center" class="my-10">

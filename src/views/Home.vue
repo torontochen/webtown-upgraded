@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
       <span class="text-subtitle-1 primary--text"
         >Vendor Page Visited:
-        {{ vendor.homePageVisit | format-int-amount }}</span
+        {{ $filters.formatIntAmount(vendor.homePageVisit) }}</span
       >
       <v-spacer></v-spacer>
       <v-row
@@ -642,12 +642,12 @@
                       <!-- </v-card-text> -->
                       <v-divider color="accent"></v-divider>
                       <v-row>
-                        <!-- <v-card-subtitle class="text-caption">{{event.dateFrom | convert-date }}</v-card-subtitle> -->
+                        <!-- <v-card-subtitle class="text-caption">{{ $filters.convertDate(event.dateFrom) }}</v-card-subtitle> -->
                         <!-- <v-card-subtitle class="text-caption"> </v-card-subtitle> -->
                         <v-spacer /><v-card-subtitle
                           class="text-caption text-center"
                           >up to
-                          {{ event.dateTo | convert-date }}</v-card-subtitle
+                          {{ $filters.convertDate(event.dateTo) }}</v-card-subtitle
                         ><v-spacer />
                       </v-row>
                       <v-fade-transition>

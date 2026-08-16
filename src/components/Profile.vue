@@ -505,7 +505,7 @@
                              <v-img 
                             src="/static/animated-treasure-image-0041.gif" 
                             height="80" width="80" class="ma-auto" v-if="tranStart"></v-img> 
-                            +{{ 10000 | format-int-amount }}</span
+                            +{{ $filters.formatIntAmount(10000) }}</span
                           >
                         </transition-group>
                     </v-col>

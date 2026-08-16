@@ -145,7 +145,7 @@
               v-if="cityHall && !vendor && !vendorParlour"
             >
               <v-icon left dark class="ml-3"> mdi-treasure-chest </v-icon>
-              {{ cityHall.treasure | format-int-amount }}
+              {{ $filters.formatIntAmount(cityHall.treasure) }}
             </v-btn>
 
             <!-- Population -->
@@ -158,7 +158,7 @@
               v-if="cityHall && !vendor && !vendorParlour"
             >
               <v-icon left dark class="ml-3"> mdi-account-group </v-icon>
-              {{ cityHall.population | format-int-amount }}
+              {{ $filters.formatIntAmount(cityHall.population) }}
             </v-btn>
 
             <!-- Strength -->
@@ -171,7 +171,7 @@
               v-if="cityHall && !vendor && !vendorParlour"
             >
               <v-icon left dark class="ml-3"> mdi-arm-flex </v-icon>
-              {{ cityHall.might | format-int-amount }}
+              {{ $filters.formatIntAmount(cityHall.might) }}
             </v-btn>
             <v-spacer></v-spacer>
 
@@ -426,9 +426,7 @@
           <span @click="isNewsDialogOpen = true" style="cursor: pointer">
             <!-- <v-slide-y-transition hide-on-leave v-if="changeNews"> -->
             <h4>{{ newsLine.newsTitle }}</h4>
-            :&nbsp;&nbsp;{{ newsLine.headLine }}&nbsp;&nbsp;at&nbsp;{{
-              newsLine.date | convert-customer-rating-time
-            }}
+            :&nbsp;&nbsp;{{ newsLine.headLine }}&nbsp;&nbsp;at&nbsp;{{ $filters.convertCustomerRatingTime(newsLine.date) }}
             <!-- </v-slide-y-transition> -->
           </span>
         </v-snackbar>
@@ -976,7 +974,7 @@
 
               <v-list-item-action>
                 <v-list-item-action-text
-                  >{{ item.date | convert-customer-rating-time }}&nbsp;
+                  >{{ $filters.convertCustomerRatingTime(item.date) }}&nbsp;
                   <v-btn
                     text
                     v-if="isVendorNews(item.newsTitle)"
@@ -1012,9 +1010,7 @@
           <v-toolbar-title>{{ guildNewsDetails.newsTitle }}</v-toolbar-title>
         </v-toolbar>
         <v-card-subtitle class="mt-2"
-          >Posted at:&nbsp;{{
-            guildNewsDetails.date | convert-customer-rating-time
-          }}</v-card-subtitle
+          >Posted at:&nbsp;{{ $filters.convertCustomerRatingTime(guildNewsDetails.date) }}</v-card-subtitle
         >
         <v-divider class="mb-1"></v-divider>
         <v-card-text>{{ guildNewsDetails.headLine }}</v-card-text>

@@ -78,9 +78,7 @@
               <v-card-actions>
                 <!-- <v-spacer></v-spacer> -->
                 <span class="fontColor--text text--darken-2 text-caption ml-3"
-                  >{{
-                    item.date|convert-customer-rating-time
-                  }}&nbsp;
+                  >{{ $filters.convertCustomerRatingTime(item.date) }}&nbsp;
                 <v-btn x-small text plain color="primary" v-if="canCancel(item)&&!item.isGameSubstitueBuy" @click.stop="cancel(item)">Cancel</v-btn>
                 <v-btn x-small text plain color="primary" v-if="!canCancel(item)&&!item.impending&&!item.isGameSubstitueBuy&&!item.isUnderDispute&&!item.isCanceled" @click.stop="dispute(item)">Dispute</v-btn>
                 <v-btn x-small text plain color="primary" v-if="!canCancel(item)&&!item.impending&&!item.isGameSubstitueBuy&&item.isUnderDispute&&!item.isCanceled" @click.stop="cancelDispute(item)">Cancel Dispute</v-btn>
@@ -205,29 +203,17 @@
          
          
           <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >subtotal:&nbsp;{{
-              
-                      (orderToCancel.totalAmount -  orderToCancel.totalDiscount ) | format-currency-amount
-
-            }}</span>
+            >subtotal:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.totalAmount -  orderToCancel.totalDiscount) }}</span>
          
          
           <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >shipping:&nbsp;{{ 
-             
-                      (orderToCancel.shipping) | format-currency-amount
-              }}</span>
+            >shipping:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.shipping) }}</span>
          
           <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >tax:&nbsp;{{ 
-             
-                      (orderToCancel.tax + orderToCancel.shipping * 0.13) | format-currency-amount
-              }}</span>
+            >tax:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.tax + orderToCancel.shipping * 0.13) }}</span>
          
           <span class="ma-1 d-block text-right accent--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >total:&nbsp;{{ 
-                      (orderToCancel.totalAmount-orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13) | format-currency-amount
-              }}</span>
+            >total:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.totalAmount-orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13) }}</span>
          
           <!-- <v-spacer></v-spacer><span>Paid By:&nbsp;${{orderDetails.totalAmount.toFixed(2)}}</span> -->
           <v-toolbar dark dense flat height="30" rounded color="primary lighten-2"
@@ -239,33 +225,19 @@
             <v-spacer></v-spacer>
               </v-toolbar>
           <span class=" d-block ma-1 text-right secondary--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
-            >Boundary Silver Converted From Payment:&nbsp;{{
-                     Math.round((orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13)* 1000 - orderToCancel.silverSpand) | format-int-amount
-            }}</span>
+            >Boundary Silver Converted From Payment:&nbsp;{{ $filters.formatIntAmount(Math.round((orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13)* 1000 - orderToCancel.silverSpand)) }}</span>
           <span class=" d-block ma-1 text-right secondary--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
-            >Boundary Silver Spand:&nbsp;{{
-                      (orderToCancel.silverSpand) | format-int-amount
-            }}</span>
+            >Boundary Silver Spand:&nbsp;{{ $filters.formatIntAmount(orderToCancel.silverSpand) }}</span>
           <span class=" d-block ma-1 text-right warning--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
-            >Boundary Silver Rewarded After Deduction:&nbsp;-&nbsp;{{
-                    Math.round(orderToCancel.totalRewardSilver * 1.1) | format-int-amount
-            }}</span>
+            >Boundary Silver Rewarded After Deduction:&nbsp;-&nbsp;{{ $filters.formatIntAmount(Math.round(orderToCancel.totalRewardSilver * 1.1)) }}</span>
           <span class="ma-1 d-block text-right warning--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
-            >Cancellation Fees&nbsp;-&nbsp;{{
-                      Math.round(cancelFees) * 1000 | format-int-amount
-            }}</span>
+            >Cancellation Fees&nbsp;-&nbsp;{{ $filters.formatIntAmount(Math.round(cancelFees) * 1000) }}</span>
           <span class="ma-1 d-block text-right secondary--text text-caption" v-if="orderToCancel.silverSpand>0||orderToCancel.totalRewardSilver>0"
-            >Boundary Silver Refund&nbsp;{{
-                      Math.round((orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13)* 1000 - orderToCancel.totalRewardSilver * 1.1 - cancelFees * 1000) | format-int-amount
-            }}</span>
+            >Boundary Silver Refund&nbsp;{{ $filters.formatIntAmount(Math.round((orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13)* 1000 - orderToCancel.totalRewardSilver * 1.1 - cancelFees * 1000)) }}</span>
           <span class="ma-1 d-block text-right warning--text text-caption" v-if="!orderToCancel.silverSpand>0&&!orderToCancel.totalRewardSilver>0"
-            >Cancellation Fees&nbsp;-&nbsp;{{
-                      (cancelFees) | format-currency-amount
-            }}</span>
+            >Cancellation Fees&nbsp;-&nbsp;{{ $filters.formatCurrencyAmount(cancelFees) }}</span>
           <span class="ma-1 d-block text-right secondary--text text-caption" v-if="!orderToCancel.silverSpand>0&&!orderToCancel.totalRewardSilver>0"
-            >Refund&nbsp;{{
-                      (orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13 - cancelFees) | format-currency-amount
-            }}&nbsp;To&nbsp;{{ orderToCancel.paymentMethod }}</span>
+            >Refund&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.totalAmount -orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13 - cancelFees) }}&nbsp;To&nbsp;{{ orderToCancel.paymentMethod }}</span>
           
           
           <v-divider class="mb-3"></v-divider>

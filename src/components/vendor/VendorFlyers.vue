@@ -845,7 +845,7 @@
                         :value='metroSpec.insideBoundary' 
                         :label="`Resident inside GTA boundary: ${insideBoundary}`" class="mx-2"/>
                       <span class="text-subtitle-2 mx-2 ">rate:&nbsp; ${{distributeBasicRate}}&nbsp;/&nbsp;Address</span>
-                      <span class="text-subtitle-2 mx-2 accent--text font-weight-bold">Item Total: {{ insideBoundary * distributeBasicRate | format-currency-amount}}</span>
+                      <span class="text-subtitle-2 mx-2 accent--text font-weight-bold">Item Total: {{ $filters.formatCurrencyAmount(insideBoundary * distributeBasicRate) }}</span>
                       </v-row>
                       <v-row class="d-flex flex-row justify-start align-center" v-if="vendor.crossBoundaryBusiness">
                         <v-checkbox 
@@ -853,7 +853,7 @@
                         :value="metroSpec.outsideBoundary" 
                         :label="`Resident outside GTA boundary: ${outsideBoundary}`" class="mx-2"/>
                          <span class="text-subtitle-2 mx-2 ">rate: ${{distributeBasicRate}}/send</span>
-                      <span class="text-subtitle-2 mx-2 accent--text font-weight-bold">Item Total: {{ outsideBoundary * distributeBasicRate   | format-currency-amount}}</span>
+                      <span class="text-subtitle-2 mx-2 accent--text font-weight-bold">Item Total: {{ $filters.formatCurrencyAmount(outsideBoundary * distributeBasicRate) }}</span>
                       </v-row>
                     </v-card-text>
                   </v-card>
@@ -862,9 +862,9 @@
                   <v-card outlined v-if="distributeType=='target'" class="pa-3">
                     <v-card-title>
                       <span class="primary--text text-subtitle-1 text-center">
-                      target distribute to specific resident qualified ( surcharge: $0.05 / metric ): {{(residentTargeted ? targetDistributeNumber : 0) | format-int-amount}} 
+                      target distribute to specific resident qualified ( surcharge: $0.05 / metric ): {{ $filters.formatIntAmount(residentTargeted ? targetDistributeNumber : 0) }} 
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rate:&nbsp;${{(distributeBasicRate + distributeAdditionRate * distributeAddition).toFixed(2)}}&nbsp;/&nbsp;Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span class="accent--text text-subtitle-1">subtotal: {{ distributeSubTotal  | format-currency-amount}}</span></span>
+                      <span class="accent--text text-subtitle-1">subtotal: {{ $filters.formatCurrencyAmount(distributeSubTotal) }}</span></span>
                       <v-spacer></v-spacer>
                        <v-switch
                                   v-model="crossBoundary"
@@ -1034,13 +1034,13 @@
                                 <v-col cols="5" class="mr-5">
                                   <v-row no-gutters align="stretch">
                                          <span >Pay by Boundary Gold</span> 
-                                          <span class="mx-1"><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{vendor.goldCoins | format-int-amount}}</span>
+                                          <span class="mx-1"><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{ $filters.formatIntAmount(vendor.goldCoins) }}</span>
                                           <v-slider
                                               :max="vendor.goldCoins"
                                               v-model="goldSpand"
                                               step="1"
                                           ></v-slider>
-                                          <span><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{goldSpand| format-int-amount}}</span>
+                                          <span><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{ $filters.formatIntAmount(goldSpand) }}</span>
                                     </v-row>
                                 </v-col>
                         </v-row>
@@ -1050,10 +1050,10 @@
                           <v-col cols="2">
 
                           
-                         <v-spacer></v-spacer> <span class='text-right my-2'>Subtotal:&nbsp;{{distributeSubTotal  | format-currency-amount}}</span><br>
-                         <v-spacer></v-spacer> <span class='text-right my-2'>Tax:&nbsp;{{distributeSubTotal * 0.13 | format-currency-amount}}</span><br>
-                         <v-spacer></v-spacer> <span class='text-right my-2'>Total:&nbsp;{{distributeSubTotal * 1.13 | format-currency-amount}}</span><br>
-                         <v-spacer></v-spacer> <span class='text-right my-2'>Balance:&nbsp;{{(distributeSubTotal * 1.13 - goldSpand) | format-currency-amount}}</span>
+                         <v-spacer></v-spacer> <span class='text-right my-2'>Subtotal:&nbsp;{{ $filters.formatCurrencyAmount(distributeSubTotal) }}</span><br>
+                         <v-spacer></v-spacer> <span class='text-right my-2'>Tax:&nbsp;{{ $filters.formatCurrencyAmount(distributeSubTotal * 0.13) }}</span><br>
+                         <v-spacer></v-spacer> <span class='text-right my-2'>Total:&nbsp;{{ $filters.formatCurrencyAmount(distributeSubTotal * 1.13) }}</span><br>
+                         <v-spacer></v-spacer> <span class='text-right my-2'>Balance:&nbsp;{{ $filters.formatCurrencyAmount(distributeSubTotal * 1.13 - goldSpand) }}</span>
                         </v-col>
                         </v-row>
                         <v-divider></v-divider>

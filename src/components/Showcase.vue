@@ -27,22 +27,12 @@
                         </v-card-text>
                         <v-card-actions v-if="item.promoRate>0">
                         <v-spacer></v-spacer>
-                            <span   class="text-h6 red--text font-weight-bold mr-1" >{{
-                                
-                                    (item.promoRate) | format-currency-amount
-                                }}</span>
-                            <span  class="text-subtitle-2 text--lighten-1  fontColor--text" ><del>{{
-                                
-                                    (item.rate) | format-currency-amount
-                                }}</del></span>
+                            <span   class="text-h6 red--text font-weight-bold mr-1" >{{ $filters.formatCurrencyAmount(item.promoRate) }}</span>
+                            <span  class="text-subtitle-2 text--lighten-1  fontColor--text" ><del>{{ $filters.formatCurrencyAmount(item.rate) }}</del></span>
                         </v-card-actions>
                         <v-card-actions v-else>
                         <v-spacer></v-spacer>
-                            <span  class="text-h6 font-weight-bold  fontColor--text text--darken-2" >{{
-                                
-                                 
-                                    (item.rate) | format-currency-amount
-                                }}</span>
+                            <span  class="text-h6 font-weight-bold  fontColor--text text--darken-2" >{{ $filters.formatCurrencyAmount(item.rate) }}</span>
                         </v-card-actions>
                 </v-card>
             </v-col>

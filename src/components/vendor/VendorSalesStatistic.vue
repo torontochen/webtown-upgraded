@@ -6,7 +6,7 @@
                 <v-card-title class="text-center text-h3 font-weight-bold accent--text">{{today}}</v-card-title>
                 <v-card-text>
                     <v-row class="d-flex flex-row justify-space-around align-center">
-                        <v-card-title>Sales:&nbsp;{{vendorSalesInfo.dailySales.sales | format-currency-amount}}</v-card-title>
+                        <v-card-title>Sales:&nbsp;{{ $filters.formatCurrencyAmount(vendorSalesInfo.dailySales.sales) }}</v-card-title>
                         <v-card-title>Orders:&nbsp;{{vendorSalesInfo.dailySales.orders}}</v-card-title>
                     </v-row>
                 </v-card-text>
@@ -21,11 +21,11 @@
             <!-- monthToDate Sales -->
             <v-card-text>
                 <v-col cols="12">
-                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Sales &nbsp;(&nbsp;{{salesMTD | format-currency-amount}}&nbsp;)</span>
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Sales &nbsp;(&nbsp;{{ $filters.formatCurrencyAmount(salesMTD) }}&nbsp;)</span>
                     <v-row class="d-flex flex-row justify-space-around align-center my-2" no-gutters>
                         <v-col cols="1" v-for="(item, i) in vendorSalesInfo.monthToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
                             <span class="text-body-2 my-1 font-weight-bold accent--text" >{{i+1}}</span>
-                            <span class="text-body-2 my-1">{{item.sales | format-currency-amount}}</span>
+                            <span class="text-body-2 my-1">{{ $filters.formatCurrencyAmount(item.sales) }}</span>
                         </v-col>
                     </v-row>
 
@@ -51,12 +51,12 @@
 
                 <!-- monToDate Orders -->
                 <v-col cols="12">
-                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Orders&nbsp;(&nbsp;{{ordersMTD | format-int-amount}}&nbsp;)</span>
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Orders&nbsp;(&nbsp;{{ $filters.formatIntAmount(ordersMTD) }}&nbsp;)</span>
 
                     <v-row class="d-flex flex-row justify-space-around align-center my-2">
                          <v-col cols="1" v-for="(item, i) in vendorSalesInfo.monthToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
                             <span class="text-body-2 my-1  font-weight-bold accent--text">{{i+1}}</span>
-                            <span class="text-body-2 my-1">{{item.orders | format-int-amount}}</span>
+                            <span class="text-body-2 my-1">{{ $filters.formatIntAmount(item.orders) }}</span>
                         </v-col>
                       </v-row>  
 
@@ -87,12 +87,12 @@
             <!-- YearToDate Sales -->
             <v-card-text>
                 <v-col cols="12">
-                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Sales&nbsp;(&nbsp;{{salesYTD | format-currency-amount}}&nbsp;)</span>
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Sales&nbsp;(&nbsp;{{ $filters.formatCurrencyAmount(salesYTD) }}&nbsp;)</span>
 
                     <v-row class="d-flex flex-row justify-space-around align-center my-2">
                         <v-col cols="1" v-for="(item, i) in vendorSalesInfo.yearToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
                             <span class="text-body-2 font-weight-bold my-1 accent--text">{{i+1}}</span>
-                            <span class="text-body-2 my-1">{{item.sales | format-currency-amount}}</span>
+                            <span class="text-body-2 my-1">{{ $filters.formatCurrencyAmount(item.sales) }}</span>
                         </v-col>
                     </v-row>
 
@@ -117,12 +117,12 @@
                <v-card-text>
                 
                 <v-col cols="12">
-                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Orders&nbsp;(&nbsp;{{ordersYTD | format-int-amount}}&nbsp;)</span>
+                    <span class="d-block text-h5 accent--text font-weight-bold text-center">Orders&nbsp;(&nbsp;{{ $filters.formatIntAmount(ordersYTD) }}&nbsp;)</span>
 
                     <v-row class="d-flex flex-row justify-space-around align-center my-2">
                          <v-col cols="1" v-for="(item, i) in vendorSalesInfo.yearToDateSales" :key="i" class="d-flex flex-column justify-start align-center ">
                             <span class="text-body-2 font-weight-bold my-1 accent--text">{{i+1}}</span>
-                            <span class="text-body-2 my-1">{{item.orders | format-int-amount}}</span>
+                            <span class="text-body-2 my-1">{{ $filters.formatIntAmount(item.orders) }}</span>
                         </v-col>
                       </v-row>  
 

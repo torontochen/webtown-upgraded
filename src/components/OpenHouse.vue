@@ -18,9 +18,9 @@
         rounded="lg"
         >
           <span class="text-h6 font-weight-bold d-block text-center">Treasure</span><br>
-          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="yellow">mdi-coin</v-icon>&nbsp;&nbsp;Gold: {{resident.goldCoins| format-int-amount}}</span><br>
-          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-coin</v-icon>&nbsp;&nbsp;Silver: {{resident.silverCoins| format-int-amount}}</span><br>
-          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-cash</v-icon>&nbsp;&nbsp;Property Tax: {{resident.propertyTax * 100 | format-int-amount}}%</span><br>
+          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="yellow">mdi-coin</v-icon>&nbsp;&nbsp;Gold: {{ $filters.formatIntAmount(resident.goldCoins) }}</span><br>
+          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-coin</v-icon>&nbsp;&nbsp;Silver: {{ $filters.formatIntAmount(resident.silverCoins) }}</span><br>
+          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-cash</v-icon>&nbsp;&nbsp;Property Tax: {{ $filters.formatIntAmount(resident.propertyTax * 100) }}%</span><br>
         </v-sheet>
         <v-sheet
         dark
@@ -31,7 +31,7 @@
         rounded="lg"
         >
           <span class="text-h6 font-weight-bold d-block text-center">{{resident.pet.petName}}</span><br>
-          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-trophy</v-icon>&nbsp;&nbsp;Experience: {{resident.petExperience| format-int-amount}}</span><br>
+          <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-trophy</v-icon>&nbsp;&nbsp;Experience: {{ $filters.formatIntAmount(resident.petExperience) }}</span><br>
 
         </v-sheet>
       </v-col>
@@ -150,7 +150,7 @@
                         <v-list-item-title v-if="item.title == 'Experience'" class="accent--text"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
                           >{{ item.title }}&nbsp;
-                          {{ resident.petExperience | format-int-amount}}</v-list-item-title
+                          {{ $filters.formatIntAmount(resident.petExperience) }}</v-list-item-title
                         >
                         <v-list-item-title v-else class="accent--text" @click="isAIChatOpen=true"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
@@ -324,7 +324,7 @@
                         <v-list-item-title v-if="item.title == 'Silver'" class="accent--text"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
                           >{{ item.title }}
-                          {{ resident.silverCoins | format-int-amount}}</v-list-item-title
+                          {{ $filters.formatIntAmount(resident.silverCoins) }}</v-list-item-title
                         >
                         <v-list-item-title v-else class="accent--text"
                           ><v-icon class="mr-3" color="accent">{{ item.icon }}</v-icon
@@ -432,12 +432,12 @@
                 </span><br>
                 <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-account-tie</v-icon>&nbsp;&nbsp;Members:&nbsp;&nbsp;{{resident.guild.guildMembers.length}}</span><br>
                 <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-chevron-triple-up</v-icon>&nbsp;&nbsp;Level:&nbsp;&nbsp;{{resident.guild.guildLevel}}</span><br>
-                <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-counter</v-icon>&nbsp;&nbsp;Scores:&nbsp;&nbsp;{{resident.guild.guildScores | format-int-amount}}</span><br>
-                <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-coin</v-icon>&nbsp;&nbsp;Guild Silver:&nbsp;&nbsp;{{resident.guild.guildSilver | format-int-amount}}</span><br>
+                <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-counter</v-icon>&nbsp;&nbsp;Scores:&nbsp;&nbsp;{{ $filters.formatIntAmount(resident.guild.guildScores) }}</span><br>
+                <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-coin</v-icon>&nbsp;&nbsp;Guild Silver:&nbsp;&nbsp;{{ $filters.formatIntAmount(resident.guild.guildSilver) }}</span><br>
                 <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-account-cash</v-icon>&nbsp;&nbsp;Perk/Mo.:&nbsp;&nbsp;{{  resident.guild.perk * 100 + '%' }}</span><br>
                 <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-offer </v-icon>&nbsp;&nbsp;Contribution:&nbsp;&nbsp;{{  resident.guild.contributionRatio * 100 +  '%'}}</span><br>
                 <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-shield-star</v-icon>&nbsp;&nbsp;My Rank:&nbsp;&nbsp;{{myRank}}</span><br>
-                <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-arm-flex</v-icon>&nbsp;&nbsp;Might:&nbsp;&nbsp;{{myMight | format-int-amount}}</span><br>
+                <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-arm-flex</v-icon>&nbsp;&nbsp;Might:&nbsp;&nbsp;{{ $filters.formatIntAmount(myMight) }}</span><br>
                 <span class="text-subtitle-2 font-weight-bold d-block text-left"><v-icon size="20" color="white">mdi-account-group</v-icon>&nbsp;&nbsp;Allies:&nbsp;&nbsp;{{allies}}</span><br>
                 
                 </v-sheet>
@@ -485,10 +485,10 @@
               >
 
           <template v-slot:item.dateFrom="{ item }">
-            <span>{{item.dateFrom | convert-date}}</span>
+            <span>{{ $filters.convertDate(item.dateFrom) }}</span>
           </template>
           <template v-slot:item.dateTo="{ item }">
-            <span>{{item.dateTo | convert-date}}</span>
+            <span>{{ $filters.convertDate(item.dateTo) }}</span>
           </template>
               </v-data-table>
               <v-spacer></v-spacer>
@@ -526,10 +526,10 @@
           </template>
 
           <template v-slot:item.dateFrom="{ item }">
-            <span>{{item.dateFrom | convert-date}}</span>
+            <span>{{ $filters.convertDate(item.dateFrom) }}</span>
           </template>
           <template v-slot:item.dateTo="{ item }">
-            <span>{{item.dateTo | convert-date}}</span>
+            <span>{{ $filters.convertDate(item.dateTo) }}</span>
           </template>
 
           <!-- <template v-slot:expanded-item="{ item }">
@@ -1143,9 +1143,7 @@
             >
             <v-col cols="2" class="primary--text text--darken-2 font-weight-bold" 
               >Treasure:
-              {{
-                resident.guild.guildSilver | format-int-amount
-              }}</v-col
+              {{ $filters.formatIntAmount(resident.guild.guildSilver) }}</v-col
             >
 
             <v-col cols="2" class="primary--text  font-weight-bold">Contribution:&nbsp;{{ resident.guild.contributionRatio * 100 + '%' }}</v-col>
@@ -1186,8 +1184,8 @@
                       <td>{{ member.nickName }}</td>
                       <td>{{ member.rank }}</td>
                       <td>{{ member.might }}</td>
-                      <td>{{ member.contriLast | format-int-amount}}</td>
-                      <td>{{ member.contriCurrent | format-int-amount}}</td>
+                      <td>{{ $filters.formatIntAmount(member.contriLast) }}</td>
+                      <td>{{ $filters.formatIntAmount(member.contriCurrent) }}</td>
                       <td v-if="member.name!=resident.residentName">
                         <v-btn icon @click="messageGuildMember(member)">
                           <v-icon medium color="primary">mdi-message-text</v-icon>
@@ -1421,10 +1419,10 @@
                               <v-col cols="6" v-convert-date="{toOrFrom: 'To: ', date: item.dateTo}"></v-col> -->
                               <v-col cols="6"
                                 >From:
-                                {{ item.dateFrom | convert-date }}</v-col
+                                {{ $filters.convertDate(item.dateFrom) }}</v-col
                               >
                               <v-col cols="6"
-                                >To: {{ item.dateTo | convert-date }}</v-col
+                                >To: {{ $filters.convertDate(item.dateTo) }}</v-col
                               >
                             </v-row>
                           </v-card-text>
@@ -1456,7 +1454,7 @@
                             v-for="(level, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ level.guildDealAmount | format-currency-amount}}</v-row
+                            >{{ $filters.formatCurrencyAmount(level.guildDealAmount) }}</v-row
                           >
                         </v-col>
                         <v-col cols="3">
@@ -1478,7 +1476,7 @@
                             v-for="(level, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ level.rewardAmount | format-int-amount}}</v-row
+                            >{{ $filters.formatIntAmount(level.rewardAmount) }}</v-row
                           >
                         </v-col>
                       </v-row>
@@ -1671,10 +1669,10 @@
                               <v-col cols="6" v-convert-date="{toOrFrom: 'To: ', date: item.dateTo}"></v-col> -->
                               <v-col cols="6"
                                 >From:
-                                {{ item.dateFrom | convert-date }}</v-col
+                                {{ $filters.convertDate(item.dateFrom) }}</v-col
                               >
                               <v-col cols="6"
-                                >To: {{ item.dateTo | convert-date }}</v-col
+                                >To: {{ $filters.convertDate(item.dateTo) }}</v-col
                               >
                             </v-row>
                           </v-card-text>
@@ -1713,7 +1711,7 @@
                             v-for="(level, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ level.guildDealAmount | format-currency-amount }}</v-row
+                            >{{ $filters.formatCurrencyAmount(level.guildDealAmount) }}</v-row
                           >
                         </v-col>
                         <v-col cols="3">
@@ -1735,7 +1733,7 @@
                             v-for="(level, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ level.rewardAmount | format-int-amount}}</v-row
+                            >{{ $filters.formatIntAmount(level.rewardAmount) }}</v-row
                           >
                         </v-col>
                         <!-- Transaction -->
@@ -1948,10 +1946,10 @@
                     :key="item.transactionId"
                     >
                     <td>{{ item.resident }}</td>
-                    <td>{{ item.date | convert-date}}</td>
+                    <td>{{ $filters.convertDate(item.date) }}</td>
                     <td>{{ item.vendor }}</td>
                     <td>{{ item.transactionId }}</td>
-                    <td>{{ item.purchaseAmount |  format-currency-amount}}</td>
+                    <td>{{ $filters.formatCurrencyAmount(item.purchaseAmount) }}</td>
                     </tr>
                 </tbody>
                 </template>
@@ -1959,7 +1957,7 @@
 
                 <v-card-actions class="primary--text font-weight-bold text-subtitle-1">
                   <v-spacer></v-spacer>
-                  Total:&nbsp;{{guildTransactionTotal | format-currency-amount}}&nbsp;for month &nbsp;{{(new Date().getMonth() + 1).toString()}}
+                  Total:&nbsp;{{ $filters.formatCurrencyAmount(guildTransactionTotal) }}&nbsp;for month &nbsp;{{(new Date().getMonth() + 1).toString()}}
                   </v-card-actions>
       </v-card>
     </v-dialog>
@@ -1987,13 +1985,13 @@
           <v-card-text>
             <v-spacer/>
                 <v-col cols="12">
-                    <v-row><span class="mx-1 font-weight-bold"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{(resident.guild.guildSilver-silverToReward) | format-int-amount}}</span>
+                    <v-row><span class="mx-1 font-weight-bold"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(resident.guild.guildSilver-silverToReward) }}</span>
                 <v-slider
                     :max="Math.round(resident.guild.guildSilver * resident.guild.perk / resident.guild.guildMembers.length)"
                     v-model="silverToReward"
                     step="100"
                 ></v-slider>
-                <span class="font-weight-bold"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{silverToReward | format-int-amount}}</span></v-row>
+                <span class="font-weight-bold"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(silverToReward) }}</span></v-row>
                 </v-col>
                 <v-spacer/>
             </v-card-text>
@@ -2019,7 +2017,7 @@
                     v-model="silverForWelfare"
                     step="1"
                 ></v-slider>
-                <span class="font-weight-bold"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{silverForWelfare | format-int-amount}}</span></v-row>
+                <span class="font-weight-bold"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(silverForWelfare) }}</span></v-row>
                 </v-col>
                 <v-spacer/>
             </v-card-text>
@@ -2153,7 +2151,7 @@
               </v-list-item-content>
 
               <v-list-item-action>
-                <v-list-item-action-text >{{message.time | convert-customer-rating-time}}</v-list-item-action-text>
+                <v-list-item-action-text >{{ $filters.convertCustomerRatingTime(message.time) }}</v-list-item-action-text>
               </v-list-item-action>
             <!-- </template> -->
           </v-list-item>
@@ -2225,7 +2223,7 @@
               </v-list-item-content>
 
               <v-list-item-action>
-                <v-list-item-action-text >{{message.time | convert-customer-rating-time}}</v-list-item-action-text>
+                <v-list-item-action-text >{{ $filters.convertCustomerRatingTime(message.time) }}</v-list-item-action-text>
               </v-list-item-action>
             <!-- </template> -->
           </v-list-item>
@@ -2248,14 +2246,14 @@
         class="mx-auto"
       >
          <v-toolbar dark color="primary" flat>
-                    <v-toolbar-title>Transfer Leader Remuneration&nbsp;{{resident.guild.guildLeaderRemun | format-int-amount}}</v-toolbar-title>
+                    <v-toolbar-title>Transfer Leader Remuneration&nbsp;{{ $filters.formatIntAmount(resident.guild.guildLeaderRemun) }}</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text >
                      <v-row class="justify-center align-center flex-row d-flex" no-gutters>
                                 <v-spacer/>
                                     <span class="accent--text">Transfer To Guild Leader</span>
                                    
-                                    <span class="mx-1"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{(resident.guild.guildLeaderRemun - amountToTransfer) | format-int-amount}}</span>
+                                    <span class="mx-1"><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(resident.guild.guildLeaderRemun - amountToTransfer) }}</span>
                                     <v-slider
                                         :max="resident.guild.guildLeaderRemun"
                                         v-model="amountToTransfer"
@@ -2263,7 +2261,7 @@
                                         step="50"
                                         width="300"
                                     ></v-slider>
-                                    <span><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{amountToTransfer | format-int-amount}}</span>
+                                    <span><v-icon class="mr-1" color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(amountToTransfer) }}</span>
                                    
                                     <v-spacer/>
                             </v-row>

@@ -46,7 +46,7 @@
                              <v-img 
                             src="/static/animated-treasure-image-0041.gif" 
                             height="80" width="80" class="ma-auto" v-if="placeOrderLoading"></v-img> 
-                            +{{ (totalRewardSilver + Math.floor((totalBeforeTax - totalDiscount) * 0.035 * 0.15 * 1000)) | format-int-amount }}</span
+                            +{{ $filters.formatIntAmount(totalRewardSilver + Math.floor((totalBeforeTax - totalDiscount) * 0.035 * 0.15 * 1000)) }}</span
                           >
                         </transition-group>
                     <!-- </v-card-text> -->
@@ -162,16 +162,16 @@
                             <td>{{ item.vendor }}</td>
                             <td>{{ item.quantity }}</td>
                             <td v-if="item.dealPrice>0">
-                                <span class="text-decoration-line-through ">{{item.price.toFixed(2) | format-currency-amount}}&nbsp;&nbsp;&nbsp;</span>
-                                <span class="red--text ml-1">{{item.dealPrice.toFixed(2) | format-currency-amount}}</span>
+                                <span class="text-decoration-line-through ">{{ $filters.formatCurrencyAmount(item.price.toFixed(2)) }}&nbsp;&nbsp;&nbsp;</span>
+                                <span class="red--text ml-1">{{ $filters.formatCurrencyAmount(item.dealPrice.toFixed(2)) }}</span>
                             </td>
-                            <td v-else>{{item.price.toFixed(2) | format-currency-amount}}</td>
+                            <td v-else>{{ $filters.formatCurrencyAmount(item.price.toFixed(2)) }}</td>
                             <td v-if="item.dealPrice>0">
-                                <span class="text-decoration-line-through ">{{(item.quantity * item.price).toFixed(2) | format-currency-amount}}&nbsp;&nbsp;&nbsp;</span>
-                                <span class="red--text ml-1">{{(item.quantity * item.price - item.discount).toFixed(2) | format-currency-amount}}</span>
+                                <span class="text-decoration-line-through ">{{ $filters.formatCurrencyAmount((item.quantity * item.price).toFixed(2)) }}&nbsp;&nbsp;&nbsp;</span>
+                                <span class="red--text ml-1">{{ $filters.formatCurrencyAmount((item.quantity * item.price - item.discount).toFixed(2)) }}</span>
                             </td>
-                            <td v-else>{{ (item.quantity * item.price).toFixed(2) | format-currency-amount}}</td>
-                            <td v-if="item.discount>0" class="red--text">-{{item.discount.toFixed(2) | format-currency-amount}}</td>
+                            <td v-else>{{ $filters.formatCurrencyAmount((item.quantity * item.price).toFixed(2)) }}</td>
+                            <td v-if="item.discount>0" class="red--text">-{{ $filters.formatCurrencyAmount(item.discount.toFixed(2)) }}</td>
                             <td v-else></td>
                             </tr>
                         </tbody>
@@ -180,7 +180,7 @@
                    
                     <v-divider class="mt-1"></v-divider>
                      <v-row v-if="totalRewardSilver>0" class="text-right text-subtitle-2 primary--text ma-3">
-                       Total Reward Silver (Including 15% Bonues From Boundary ):&nbsp;{{(totalRewardSilver + Math.floor((totalBeforeTax - totalDiscount) * 0.035 * 0.15 * 1000))| format-int-amount}}
+                       Total Reward Silver (Including 15% Bonues From Boundary ):&nbsp;{{ $filters.formatIntAmount(totalRewardSilver + Math.floor((totalBeforeTax - totalDiscount) * 0.035 * 0.15 * 1000)) }}
                     </v-row>
                     <!-- Search Deal Button -->
                     <v-row v-if="noAvailableDeals" class="my-3">
@@ -221,11 +221,11 @@
                             <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">Total Amount</span><br>
                         </v-col>
                         <v-col cols="2">
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block red--text" v-if="totalDiscount>0">{{totalDiscount.toFixed(2) | format-currency-amount}}</span><br>
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{(comboTotalAmount > 0 ? comboTotalAmount.toFixed(2):(totalBeforeTax-totalDiscount).toFixed(2)) | format-currency-amount}}</span><br>
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{shipping.toFixed(2) | format-currency-amount}}</span><br>
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{(totalBeforeTax-totalDiscount+shipping)*0.13.toFixed(2) | format-currency-amount}}</span><br>
-                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{(totalBeforeTax-totalDiscount+shipping)*1.13.toFixed(2) | format-currency-amount}}</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block red--text" v-if="totalDiscount>0">{{ $filters.formatCurrencyAmount(totalDiscount.toFixed(2)) }}</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{ $filters.formatCurrencyAmount(comboTotalAmount > 0 ? comboTotalAmount.toFixed(2):(totalBeforeTax-totalDiscount).toFixed(2)) }}</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{ $filters.formatCurrencyAmount(shipping.toFixed(2)) }}</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{ $filters.formatCurrencyAmount((totalBeforeTax-totalDiscount+shipping)*0.13.toFixed(2)) }}</span><br>
+                            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block">{{ $filters.formatCurrencyAmount((totalBeforeTax-totalDiscount+shipping)*1.13.toFixed(2)) }}</span><br>
                         </v-col>
                     </v-row>
                     <v-divider class="my-1" v-if="impendingOrder==null"></v-divider>
@@ -234,20 +234,20 @@
                             <span class="mx-1">Pay by Silver to Gold</span>
                             <span>(Silver 1000 -> Gold 1)</span>
                             <v-col cols="6">
-                                <v-row><span class="mx-1"><v-icon class="mr-1">mdi-coin</v-icon>{{(resident.silverCoins-silverToConvert) | format-amount}}</span>
+                                <v-row><span class="mx-1"><v-icon class="mr-1">mdi-coin</v-icon>{{ $filters.formatAmount(resident.silverCoins-silverToConvert) }}</span>
                             <v-slider
                                 :max="resident.silverCoins"
                                 v-model="silverToConvert"
                                 step="100"
                             ></v-slider>
-                            <span><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{convertedGold | format-int-amount}}</span></v-row>
+                            <span><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{ $filters.formatIntAmount(convertedGold) }}</span></v-row>
                             </v-col>
                             <v-spacer/>
                     </v-row>
                     <v-row class="d-flex justify-end">
                         <v-col cols="4">
                             <span class="ml-24 text-h6 secondary--text font-weight-bold" v-if="impendingOrder == null ">Balance:
-                             {{((totalBeforeTax-totalDiscount+shipping)*1.13-convertedGold).toFixed(2) | format-currency-amount}}</span>
+                             {{ $filters.formatCurrencyAmount(((totalBeforeTax-totalDiscount+shipping)*1.13-convertedGold).toFixed(2)) }}</span>
                             <span class="ml-24 text-subtitle-1 secondary--text font-weight-bold text-start" v-else>Balance:
                              {{ 'Paid Off! Extra Shipping Will Be Paid By' + ' ' + impendingOrder.paymentMethod + ' ' + 'In File' }}</span>
                         </v-col>

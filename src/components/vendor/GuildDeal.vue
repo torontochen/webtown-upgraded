@@ -10,7 +10,7 @@
                            <v-card-subtitle  v-bind="attrs" v-on="on" class="my-1"><v-icon color="primary">mdi-file-document</v-icon>&nbsp;Posted Deal:&nbsp;&nbsp;
                                 <span class="primary--text font-weight-bold"><i class="accent--text font-weight-bold">{{item.dealNo}}</i>&nbsp;&nbsp;&nbsp;{{item.guildDealType}}
                                 &nbsp;<i v-if='item.specificItemList.length>0'>({{specificItem(item.specificItemList)}})</i></span> 
-                                &nbsp;&nbsp;{{item.dateFrom | convert-date}}&nbsp;&nbsp;to&nbsp;&nbsp;{{item.dateTo | convert-date}}
+                                &nbsp;&nbsp;{{ $filters.convertDate(item.dateFrom) }}&nbsp;&nbsp;to&nbsp;&nbsp;{{ $filters.convertDate(item.dateTo) }}
                             </v-card-subtitle>
                        
                       </template>
@@ -40,7 +40,7 @@
                             v-for="(l, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ l.guildDealAmount | format-currency-amount}}</v-row
+                            >{{ $filters.formatCurrencyAmount(l.guildDealAmount) }}</v-row
                           >
                         </v-col>
                         <v-col cols="3">
@@ -62,7 +62,7 @@
                             v-for="(l, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ l.rewardAmount | format-int-amount }}</v-row
+                            >{{ $filters.formatIntAmount(l.rewardAmount) }}</v-row
                           >
                         </v-col>
                         <!-- Transaction -->
@@ -94,7 +94,7 @@
                            <v-card-subtitle  v-bind="attrs" v-on="on" class="my-1"><v-icon color="primary">mdi-file-document</v-icon>&nbsp;Posted Deal:&nbsp;&nbsp;
                                 <span class="primary--text font-weight-bold"><i class="accent--text font-weight-bold">{{item.dealNo}}</i>&nbsp;&nbsp;&nbsp;{{item.guildDealType}}
                                 &nbsp;<i v-if='item.specificItemList.length>0'>{{specificItem(item.specificItemList)}}</i></span> 
-                                &nbsp;&nbsp;{{item.dateFrom | convert-date}}&nbsp;&nbsp;to&nbsp;&nbsp;{{item.dateTo | convert-date}}
+                                &nbsp;&nbsp;{{ $filters.convertDate(item.dateFrom) }}&nbsp;&nbsp;to&nbsp;&nbsp;{{ $filters.convertDate(item.dateTo) }}
                             </v-card-subtitle>
                        
                       </template>
@@ -124,7 +124,7 @@
                             v-for="(l, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ l.guildDealAmount | format-currency-amount}}</v-row
+                            >{{ $filters.formatCurrencyAmount(l.guildDealAmount) }}</v-row
                           >
                         </v-col>
                         <v-col cols="3">
@@ -146,7 +146,7 @@
                             v-for="(l, i) in item.guildDealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ l.rewardAmount | format-int-amount }}</v-row
+                            >{{ $filters.formatIntAmount(l.rewardAmount) }}</v-row
                           >
                         </v-col>
                         <!-- Transaction -->
@@ -305,7 +305,7 @@
                         <v-row v-for="(level, i) in guildDealLevels" :key="i" class="my-2">{{level.guildDealCondition}}</v-row>
                     </td>
                     <td>                        
-                        <v-row v-for="(level, i) in guildDealLevels" :key="i" class="my-2 ml-1">{{level.guildDealAmount | format-currency-amount}}</v-row>
+                        <v-row v-for="(level, i) in guildDealLevels" :key="i" class="my-2 ml-1">{{ $filters.formatCurrencyAmount(level.guildDealAmount) }}</v-row>
                     </td>
                     <td>
                         <v-row v-for="(level, i) in guildDealLevels" :key="i" class="my-2">
@@ -313,7 +313,7 @@
                         </v-row>
                         </td>
                     <td>
-                        <v-row v-for="(level, i) in guildDealLevels" :key="i" class="my-2 ml-1">{{level.rewardAmount | format-amount}}</v-row>
+                        <v-row v-for="(level, i) in guildDealLevels" :key="i" class="my-2 ml-1">{{ $filters.formatAmount(level.rewardAmount) }}</v-row>
                     </td>
                     <td>{{ dealTerm }}</td>
                     <!-- <td v-convert-date="{toOrFrom: 'From: ', date: item.dateFrom}"></td>

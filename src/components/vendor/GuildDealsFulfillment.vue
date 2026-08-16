@@ -114,7 +114,7 @@
 
                             <v-row no-gutters class="my-2">
                                 <v-col cols="9" class="text-caption">
-                                     Amount:&nbsp;{{item.purchaseAmount | format-currency-amount}}
+                                     Amount:&nbsp;{{ $filters.formatCurrencyAmount(item.purchaseAmount) }}
                                 </v-col>
                                 <v-col cols="3" class="text-caption accent--text">
                                     {{item.active?'Active':'Expired'}}
@@ -126,10 +126,10 @@
                               <v-col cols="6" v-convert-date="{toOrFrom: 'To: ', date: item.dateTo}"></v-col> -->
                               <v-col cols="6" class="text-caption"
                                 >
-                                {{ item.dateFrom | convert-date }}</v-col
+                                {{ $filters.convertDate(item.dateFrom) }}</v-col
                               >
                               <v-col cols="6" class="text-caption"
-                                >To: &nbsp;&nbsp;&nbsp;{{ item.dateTo | convert-date }}</v-col
+                                >To: &nbsp;&nbsp;&nbsp;{{ $filters.convertDate(item.dateTo) }}</v-col
                               >
                             </v-row>
                           </v-card-text>
@@ -161,7 +161,7 @@
                             v-for="(level, i) in item.dealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ level.guildDealAmount | format-currency-amount}}</v-row
+                            >{{ $filters.formatCurrencyAmount(level.guildDealAmount) }}</v-row
                           >
                         </v-col>
                         <v-col cols="3">
@@ -183,7 +183,7 @@
                             v-for="(level, i) in item.dealLevels"
                             :key="i"
                             class="ma-1"
-                            >{{ level.rewardAmount | format-int-amount }}</v-row
+                            >{{ $filters.formatIntAmount(level.rewardAmount) }}</v-row
                           >
                         </v-col>
                         <!-- Transaction -->

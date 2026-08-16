@@ -154,7 +154,7 @@
                           </v-card-text>
                           <v-card-actions>
                             <!-- <v-spacer></v-spacer> -->
-                            <span class="text-caption">{{item.date | convert-customer-rating-time}}&nbsp;
+                            <span class="text-caption">{{ $filters.convertCustomerRatingTime(item.date) }}&nbsp;
                             <v-btn icon  @click.stop="messageCustomer(item)" :disabled="item.isFulfilled"><v-icon  color="primary" >mdi-message-text</v-icon></v-btn>
                             <v-btn text plain x-small color="accent" class="mx-2" v-if="item.isUnderDispute">Disputed</v-btn>
                             <v-btn text plain x-small  class="mx-2" color="accent" v-if="item.isCanceled">Canceled</v-btn>
@@ -238,8 +238,8 @@
                       <v-card-subtitle class=" d-block text-subtitle-1 fontColor--text text--darken-3 text-truncate">{{catalog.description}}</v-card-subtitle>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                        <span   class="text-h6 red--text mx-1" >{{catalog.promoRate | format-currency-amount}}</span>
-                        <span  class="text-subtitle-2 text--lighten-2 font-weight-light" ><del>{{catalog.rate | format-currency-amount}}</del></span>
+                        <span   class="text-h6 red--text mx-1" >{{ $filters.formatCurrencyAmount(catalog.promoRate) }}</span>
+                        <span  class="text-subtitle-2 text--lighten-2 font-weight-light" ><del>{{ $filters.formatCurrencyAmount(catalog.rate) }}</del></span>
                         <!-- <span class="text-h6 mx-2" v-if="!catalog.promoRate > 0">${{catalog.rate}}</span> -->
                       
 
@@ -316,7 +316,7 @@
                               </v-list-item-content>
 
                               <v-list-item-action>
-                                <v-list-item-action-text >{{item.time | convert-customer-rating-time}}</v-list-item-action-text>
+                                <v-list-item-action-text >{{ $filters.convertCustomerRatingTime(item.time) }}</v-list-item-action-text>
                               </v-list-item-action>
                             <!-- </template> -->
 
@@ -381,7 +381,7 @@
                           ></v-rating>
                           </v-list-item-action-text>
                            
-                          {{item.time | convert-customer-rating-time}}
+                          {{ $filters.convertCustomerRatingTime(item.time) }}
                           <!-- <v-icon
                             v-if="!active"
                             color="grey lighten-1"
@@ -471,12 +471,12 @@
                     >
                     <td>{{ item.flyerTitle }}</td>
                     <td>{{ item.type }}</td>
-                    <td>{{ item.dateFrom | convert-date }}</td>
-                    <td>{{ item.dateTo | convert-date }}</td>
-                    <td>{{ item.quantityDistributed |  format-int-amount}}</td>
-                    <td>{{ item.quantityRead |  format-int-amount}}</td>
-                    <td>{{ item.quantityRedeemed |  format-int-amount}}</td>
-                    <td>{{ item.salesGenerated |  format-amount}}</td>
+                    <td>{{ $filters.convertDate(item.dateFrom) }}</td>
+                    <td>{{ $filters.convertDate(item.dateTo) }}</td>
+                    <td>{{ $filters.formatIntAmount(item.quantityDistributed) }}</td>
+                    <td>{{ $filters.formatIntAmount(item.quantityRead) }}</td>
+                    <td>{{ $filters.formatIntAmount(item.quantityRedeemed) }}</td>
+                    <td>{{ $filters.formatAmount(item.salesGenerated) }}</td>
                     </tr>
                 </tbody>
                 </template>
@@ -535,10 +535,10 @@
                     >
                     <td>{{ item.customer }}</td>
                     <td>{{ item.location }}</td>
-                    <td>{{ item.purchaseTimes | format-int-amount }}</td>
-                    <td class="text-left">{{ item.totalPurchaseAmount | format-currency-amount }}</td>
-                    <td>{{ item.totalPurchaseAmount / item.purchaseTimes | format-currency-amount }}</td>
-                    <td>{{ item.dateLastTimePurchase | convert-date}}</td>
+                    <td>{{ $filters.formatIntAmount(item.purchaseTimes) }}</td>
+                    <td class="text-left">{{ $filters.formatCurrencyAmount(item.totalPurchaseAmount) }}</td>
+                    <td>{{ $filters.formatCurrencyAmount(item.totalPurchaseAmount / item.purchaseTimes) }}</td>
+                    <td>{{ $filters.convertDate(item.dateLastTimePurchase) }}</td>
                     </tr>
                 </tbody>
                 </template>

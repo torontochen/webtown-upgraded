@@ -20,7 +20,10 @@ Running record of the staged upgrade, phase by phase.
 | 3b — Mongoose 8, resolver split, logging | ✅ Done | `0213d4c` |
 | 4a-i — Event buses removed; first browser verification | ✅ Done | `97f3c3a` |
 | 4a-ii — Vite replaces vue-cli/webpack | ✅ Merged | `dba0cc1` |
-| 4b — Vue 3 + Vuetify 3 | Not started | |
+| 4b-1 — Template filters removed | ✅ Done | `3e2fe6d`+ |
+| 4b-2 — `.native`, `.sync`, dead plugins | Not started | |
+| 4b-3 — Vue-2-only libraries replaced | Not started | |
+| 4b-4 — The flip: Vue 3 + Vuetify 3 | Not started | |
 | 4c — Pinia + Apollo Client 3 | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
@@ -682,6 +685,161 @@ diagnosed.
 buses are done. See the open items below for what Vite will involve — it is
 tracked as 4a-ii.
 
+
+---
+
+## Phase 4b — Vue 3 + Vuetify 3
+
+### Why this is split into four commits
+
+Vue 3 is not incrementally adoptable here. The moment `vue@2` becomes `vue@3`,
+nothing renders until *every* blocker is resolved at once — there is no state
+where half the app is migrated and the other half still works. So "commit
+working increments" cannot mean "migrate components one at a time".
+
+What it can mean, and what this phase does: **land each blocker removal as a
+change that works on Vue 2 today**, so the app stays green and shippable after
+every commit, and shrink the final flip down to the framework swap plus the
+Vuetify template rewrites that genuinely cannot be done early.
+
+| | Scope | Blocker removed | Runs on Vue 2 |
+|---|---|---|---|
+| 4b-1 | Template filters → `$filters.fn()` | Vue 3 deletes filters | ✅ |
+| 4b-2 | `.native` (15), `.sync` (17), dead plugin registrations | Both modifiers removed in Vue 3 | ✅ |
+| 4b-3 | Vue-2-only third-party libraries | No Vue 3 build exists | ✅ |
+| 4b-4 | vue 3 + vue-router 4 + vuex 4 + vue-apollo 4 + Vuetify 3 | — | ❌ the flip |
+
+### The survey
+
+43 components, 36,070 lines, ~3,500 Vuetify tags.
+
+**Vue 3 core breakages present:**
+
+| Pattern | Sites | Notes |
+|---|---|---|
+| Template filters `\|` | 176 | Removed in Vue 3 — **done in 4b-1** |
+| `v-on="on"` activator slots | 75 | Vuetify 2 `{ on, attrs }` → Vuetify 3 `{ props }` |
+| `$refs` | 45 | Mostly fine; `v-form.validate()` returns a Promise in Vuetify 3 |
+| `.sync` | 17 | → `v-model:prop` |
+| `.native` | 15 | Modifier removed outright |
+| `transition-group` | 6 | Now needs an explicit root or none |
+| `beforeDestroy` | 3 | → `beforeUnmount` |
+
+Clean already, and worth recording because it removes the usual worst offenders:
+**no `filters:` component option, no `$listeners`, no `$children`, no
+`$scopedSlots`, no `slot-scope`, no functional components, no `Vue.prototype`
+beyond the one added in 4b-1, no `$set`/`$delete`, no `keyCode` modifiers.**
+Phase 4a-i's event-bus work already removed every `new Vue()` instance.
+
+**Vuetify 2 → 3 component work**, by census. The renames are mechanical; the
+restructures are not:
+
+| Removed outright in Vuetify 3 | Sites |
+|---|---|
+| `v-list-item-content` / `-icon` / `-action` / `-action-text` / `-avatar` | 47 |
+| `v-simple-table` → `v-table` | 12 |
+| `v-tabs-items` / `v-tab-item` → `v-window` / `v-window-item` | 14 |
+| `v-expansion-panel-header` / `-content` → `-title` / `-text` | 16 |
+| `v-subheader` → `v-list-subheader` | 1 |
+
+| Rewritten API (not a rename) | Sites |
+|---|---|
+| `v-data-table` — headers shape, `.sync` props, slot names | 9 |
+| `v-date-picker` — entirely new API | 9 |
+| `v-stepper` — header/content restructured | 20 |
+| `v-data-iterator` | 5 |
+| `v-time-picker` — **not in Vuetify 3 core, only `vuetify/labs`** | 4 |
+| `v-overlay` | 4 |
+| `v-color-picker`, `v-sparkline`, `v-virtual-scroll` | 10 |
+
+Plus the pervasive prop changes across ~800 `v-btn` / `v-text-field` /
+`v-select` sites: `text`/`outlined`/`depressed` → `variant`, `dense` →
+`density`, `item-text` → `item-title`, and `v-img`'s `contain` becoming the
+default (`:cover` is the opt-in).
+
+### The finding that changes the plan: 4b cannot ship without part of 4c
+
+`vue-apollo@3` is Vue 2 only. Vue 3 needs `@vue/apollo-option@4`, which requires
+**Apollo Client 3** — which is Phase 4c's headline item. Likewise `vue-router`
+3 → 4 and `vuex` 3 → 4 are hard requirements of Vue 3, not optional.
+
+So 4b-4 necessarily carries the Apollo Client 3 upgrade, and 4c reduces to
+Vuex 4 → Pinia. The phase boundary in the original plan was wrong; this is
+recorded rather than silently reshuffled. A bonus when it happens:
+`src/apollo/graphqlWsLink.js`, the ~25-line adapter written in Phase 3a
+precisely because Apollo Client 2 has no graphql-ws link, gets deleted and
+replaced with the official `@apollo/client/link/subscriptions`.
+
+### Vue-2-only libraries (4b-3)
+
+| Library | Status | Plan |
+|---|---|---|
+| `portal-vue` | **Dead** — registered in main.js, zero `<portal>` tags | Delete |
+| `vue-beautiful-chat` | No Vue 3 version | `<beautiful-chat>` in App.vue only; replace or drop |
+| `vue-intersection-observer` | No Vue 3 version | One usage (Home.vue); a local wrapper over `IntersectionObserver` is ~20 lines |
+| `vue-masonry` | No Vue 3 version | CSS columns, or `vue-masonry-css` |
+| `vue-the-mask` | No Vue 3 version | → `maska` (3 components) |
+| `vue2-editor` | Vue 2 only by name | Quill is already a direct dependency and set up in `src/quill-setup.js` |
+| `vue-advanced-cropper` | 0.16 → 2.x supports Vue 3 | Version bump |
+| `vue-draggable-resizable` | 2.x → 3.x supports Vue 3 | Version bump |
+| `@chenfengyuan/vue-qrcode` | 1.x → 2.x supports Vue 3 | Version bump; one `<qrcode>` tag |
+| `vue-advanced-chat` | 1.5 → 2.x is a web component | Version bump, different mounting |
+| `vue2-animate` | CSS only | Keep, or drop with Vuetify 3's own transitions |
+
+`vuetify-loader`'s replacement, `vite-plugin-vuetify`, restores the
+tree-shaking that 4a-ii gave up when it moved to the full Vuetify build. That
+should bring the bundle back down from **2.88 MB** toward the 2.18 MB webpack
+figure — the one clear win in this phase.
+
+---
+
+## Phase 4b-1 — Template filters removed ✅
+
+Vue 3 deletes `Vue.filter` and the `|` template syntax outright. The seven
+filters are now plain functions in `src/filters.js`, exposed on every component
+as `$filters` and called as `{{ $filters.formatIntAmount(x) }}`.
+
+That call form is identical under Vue 2 and Vue 3 — `Vue.prototype.$filters`
+becomes `app.config.globalProperties.$filters` at the flip and **not one of the
+176 template sites changes again**. This is the whole reason it lands early.
+
+### The rewrite
+
+176 sites across 21 components, applied by a one-shot codemod rather than by
+hand. What made that safe to do mechanically was checking the shapes first:
+every single usage is a trailing pipe inside a mustache. **No chained filters,
+no filter arguments, no filters in attribute bindings** — so the transform is
+`{{ EXPR | f }}` → `{{ $filters.f(EXPR) }}` with the expression wrapped whole,
+which preserves precedence even in the awkward cases like
+`{{ (a - b + c) *1.13 | format-currency-amount }}`.
+
+The codemod only touches the SFC `<template>` block. `{{ }}` also appears inside
+JS template literals in the flyer components, where Vue never compiles it.
+
+`ellipsis-order-no` was **not** carried over: it had no call site anywhere in
+`src/`, only its definition.
+
+### Why this one is worth locking down with tests
+
+Phase 4a-i found eight filter expressions that a formatter had silently
+rewritten into subtraction — `{{ x | format-int-amount }}` became
+`{{ x | (format - int - amount) }}` — so the filter never ran and the raw value
+rendered for months. Nothing caught it because a broken filter fails silently.
+
+`test/filters.test.js` (8 tests) locks both halves: the formatting output of
+every function, using the two values that regression actually corrupted
+(`2320618` → `2,320,618`, `1671047474940` → `December 14th 2022, 7:51:14 pm`),
+and the migration invariant that no `|` filter syntax and no `Vue.filter` call
+comes back. The call form has a further advantage over the old syntax: a typo in
+`$filters.formatIntAmuont` is a runtime error, not a silently blank render.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **85 tests** (was 77), production build.
+- In the browser against live Atlas: the city treasury renders `2,320,618`,
+  flyer dates render `2023-12-31`, and a vendor storefront renders `$12.98` /
+  `$9.99` with struck-through original prices. No `$filters.` text leaked into
+  the page, no raw epoch numbers, no new console errors.
 
 ---
 

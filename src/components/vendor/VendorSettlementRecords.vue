@@ -6,16 +6,16 @@
           rounded
           class="d-flex flex-row justify-space-around align-center flex-wrap pa-5"
         >
-         <span class="ma-1 d-inline-block text-h6 font-weight-bold">Customer Paid: &nbsp;{{settlement.customerPaid | format-currency-amount}}</span>
-         <span class="ma-1 d-inline-block text-h6 font-weight-bold">Boundary Charge: &nbsp;{{settlement.boundaryCharge| format-currency-amount}}</span>
-         <span class="ma-1 d-inline-block text-h6 font-weight-bold">Funds held by Boundary: &nbsp;{{settlement.funds | format-currency-amount}}</span>
+         <span class="ma-1 d-inline-block text-h6 font-weight-bold">Customer Paid: &nbsp;{{ $filters.formatCurrencyAmount(settlement.customerPaid) }}</span>
+         <span class="ma-1 d-inline-block text-h6 font-weight-bold">Boundary Charge: &nbsp;{{ $filters.formatCurrencyAmount(settlement.boundaryCharge) }}</span>
+         <span class="ma-1 d-inline-block text-h6 font-weight-bold">Funds held by Boundary: &nbsp;{{ $filters.formatCurrencyAmount(settlement.funds) }}</span>
          <span class="ma-1 d-inline-block text-h6 font-weight-bold"><v-icon color="yellow" size="24" >mdi-coin</v-icon>
-             &nbsp;Boundary Gold: &nbsp;{{vendor.goldCoins| format-int-amount}}&nbsp;
+             &nbsp;Boundary Gold: &nbsp;{{ $filters.formatIntAmount(vendor.goldCoins) }}&nbsp;
              <v-btn icon @click="redeemGold">
                  <v-icon color="white" size="24" >mdi-swap-horizontal-circle</v-icon>
              </v-btn>
              </span>
-         <span class="ma-1 d-inline-block text-h6 font-weight-bold"><v-icon color="white" size="24" >mdi-coin</v-icon>&nbsp;Boundary Silver: &nbsp;{{vendor.silverCoins| format-int-amount}}&nbsp;
+         <span class="ma-1 d-inline-block text-h6 font-weight-bold"><v-icon color="white" size="24" >mdi-coin</v-icon>&nbsp;Boundary Silver: &nbsp;{{ $filters.formatIntAmount(vendor.silverCoins) }}&nbsp;
              <v-icon color="white" size="24" @click="purchaseSilver">mdi-cash-multiple</v-icon>
          </span>
         </v-sheet>
@@ -56,12 +56,12 @@
                     :key="item.salesOrderNo"
                     >
                     <td>{{ item.salesOrderNo }}</td>
-                    <td>{{ item.date | convert-date }}</td>
-                    <td>{{ item.amountPaidByCustomer |  format-amount}}</td>
-                    <td>{{ item.amountPaidToBoundary |  format-amount}}</td>
-                    <td>{{Math.round((item.boundaryPayable - item.amountPaidToBoundary) * 1000) |  format-int-amount}}</td>
-                    <td>{{ (item.amountPaidByCustomer - item.boundaryPayable )|  format-amount}}</td>
-                    <td>{{ item.boundaryGold |  format-int-amount}}</td>
+                    <td>{{ $filters.convertDate(item.date) }}</td>
+                    <td>{{ $filters.formatAmount(item.amountPaidByCustomer) }}</td>
+                    <td>{{ $filters.formatAmount(item.amountPaidToBoundary) }}</td>
+                    <td>{{ $filters.formatIntAmount(Math.round((item.boundaryPayable - item.amountPaidToBoundary) * 1000)) }}</td>
+                    <td>{{ $filters.formatAmount(item.amountPaidByCustomer - item.boundaryPayable) }}</td>
+                    <td>{{ $filters.formatIntAmount(item.boundaryGold) }}</td>
                     </tr>
                 </tbody>
                 </template>
@@ -79,7 +79,7 @@
                                 <v-spacer/>
                                     <span class="accent--text">(1 gold = 1 $)</span>
                                    
-                                    <span class="mx-1"><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{(vendor.goldCoins - goldToRedeem) | format-int-amount}}</span>
+                                    <span class="mx-1"><v-icon class="mr-1" color="yellow">mdi-coin</v-icon>{{ $filters.formatIntAmount(vendor.goldCoins - goldToRedeem) }}</span>
                                     <v-slider
                                         :max="vendor.goldCoins"
                                         v-model="goldToRedeem"
@@ -87,7 +87,7 @@
                                         step="50"
                                         width="300"
                                     ></v-slider>
-                                    <span><v-icon class="mr-1" >mdi-cash-multiple</v-icon>{{goldToRedeem | format-currency-amount}}</span>
+                                    <span><v-icon class="mr-1" >mdi-cash-multiple</v-icon>{{ $filters.formatCurrencyAmount(goldToRedeem) }}</span>
                                    
                                     <v-spacer/>
                             </v-row>
@@ -115,13 +115,13 @@
                                 outlined
                                 :items="silverPurchaseList">
                                 <template v-slot:selection="{ item }">
-                                    <span>{{ item | format-int-amount}}</span>
+                                    <span>{{ $filters.formatIntAmount(item) }}</span>
                                 </template>
                             </v-select> 
                         </v-col>
 
                         <v-col cols="4">
-                            <span v-if="purchaseAmount" class="text-h6 font-weight-bold accent--text">Price:&nbsp;{{silverPrice | format-currency-amount}}</span> 
+                            <span v-if="purchaseAmount" class="text-h6 font-weight-bold accent--text">Price:&nbsp;{{ $filters.formatCurrencyAmount(silverPrice) }}</span> 
                         </v-col>
                     </v-row>
                 

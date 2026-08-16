@@ -22,14 +22,14 @@
                         <v-card-title class="text-subtitle-1 text--darken-3 fontColor--text">{{item.description}}</v-card-title>
                          <v-row v-if="item.promoRate > 0" class="my-1 ml-3">
                             <span class="text-subtitle-1  fontColor--text mx-3 font-weight-bold">Price:</span>
-                            <span class="red--text text-subtitle-1 font-weight-bold mx-3" >On Sale {{item.promoRate | format-currency-amount}}</span>
-                            <span class="text-decoration-line-through text-body-1 font-weight-light fontColor--text mx-3">Was {{item.rate | format-currency-amount}}</span>
-                            <span class="mx-1 silver--text text--darken-1" v-if="item.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{item.rewardSilver | format-int-amount}}</span>
+                            <span class="red--text text-subtitle-1 font-weight-bold mx-3" >On Sale {{ $filters.formatCurrencyAmount(item.promoRate) }}</span>
+                            <span class="text-decoration-line-through text-body-1 font-weight-light fontColor--text mx-3">Was {{ $filters.formatCurrencyAmount(item.rate) }}</span>
+                            <span class="mx-1 silver--text text--darken-1" v-if="item.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{ $filters.formatIntAmount(item.rewardSilver) }}</span>
                         </v-row>
                         <v-row v-else class="my-1 ml-3" >
                             <span class="text-subtitle-1  fontColor--text font-weight-bold mx-3">Price:</span>
-                            <span class="text-subtitle-1 font-weight-medium fontColor--text mx-3">{{item.rate | format-currency-amount}}</span>
-                            <span class="mx-1 silver--text text--darken-1" v-if="item.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{item.rewardSilver | format-int-amount}}</span>
+                            <span class="text-subtitle-1 font-weight-medium fontColor--text mx-3">{{ $filters.formatCurrencyAmount(item.rate) }}</span>
+                            <span class="mx-1 silver--text text--darken-1" v-if="item.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{ $filters.formatIntAmount(item.rewardSilver) }}</span>
                         </v-row>
                         <v-row class="my-3 ml-3">
                             <span class="primary--text font-weight-li text-body-2 mx-3">Sold by: {{item.vendorName}}</span>
@@ -57,8 +57,8 @@
             <!--  -->
             <v-card-actions style="background-color: #445F9B;" >
                 <v-spacer></v-spacer>
-                <span class="mx-2 white--text font-weight-bold">Subtotal: {{(item.promoRate>0?item.quantity*item.promoRate:item.quantity*item.rate) | format-currency-amount}}</span>
-                <span class="mx-2 white--text font-weight-bold">Reward Silver: {{item.rewardSilver*item.quantity | format-int-amount}}</span>
+                <span class="mx-2 white--text font-weight-bold">Subtotal: {{ $filters.formatCurrencyAmount(item.promoRate>0?item.quantity*item.promoRate:item.quantity*item.rate) }}</span>
+                <span class="mx-2 white--text font-weight-bold">Reward Silver: {{ $filters.formatIntAmount(item.rewardSilver*item.quantity) }}</span>
             </v-card-actions>
         </v-card>
 

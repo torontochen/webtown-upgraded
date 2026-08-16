@@ -75,7 +75,7 @@
                     
                     </v-card-text>
                     <v-card-actions>
-                        {{ item.time | convert-customer-rating-time }}
+                        {{ $filters.convertCustomerRatingTime(item.time) }}
                         <v-spacer></v-spacer>
                         <!-- <v-btn
                         :color="item.color"

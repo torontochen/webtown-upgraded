@@ -79,16 +79,14 @@
                     
                     <v-row v-if="getSingleItem.promoRate > 0" class="ma-1">
                         <span class="text-subtitle-1  fontColor--text text--darken-3 mx-2">Price:</span>
-                        <span class="red--text text-subtitle-1 font-weight-bold mx-2" >on sale {{
-                            getSingleItem.promoRate | format-currency-amount
-                            }}</span>
-                        <span class="text-decoration-line-through text-body-1 fontColor--text font-weight-light mx-3">was {{getSingleItem.rate | format-currency-amount}}</span>
-                        <span class="mx-1 silver--text text--darken-1 font-weight-bold" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{getSingleItem.rewardSilver | format-int-amount}}</span>
+                        <span class="red--text text-subtitle-1 font-weight-bold mx-2" >on sale {{ $filters.formatCurrencyAmount(getSingleItem.promoRate) }}</span>
+                        <span class="text-decoration-line-through text-body-1 fontColor--text font-weight-light mx-3">was {{ $filters.formatCurrencyAmount(getSingleItem.rate) }}</span>
+                        <span class="mx-1 silver--text text--darken-1 font-weight-bold" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{ $filters.formatIntAmount(getSingleItem.rewardSilver) }}</span>
                     </v-row>
                     <v-row v-else class="ma-1" >
                         <span class="text-subtitle-1 fontColor--text text--darken-2 font-weight-bold mx-2">Price:</span>
-                        <span class="text-subtitle-1 fontColor--text text--darken-2 font-weight-bold mx-2">{{getSingleItem.rate | format-currency-amount}}</span>
-                        <span class="mx-1 silver--text text--darken-1 font-weight-black" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1" >mdi-coin</v-icon>{{getSingleItem.rewardSilver | format-int-amount}}</span>
+                        <span class="text-subtitle-1 fontColor--text text--darken-2 font-weight-bold mx-2">{{ $filters.formatCurrencyAmount(getSingleItem.rate) }}</span>
+                        <span class="mx-1 silver--text text--darken-1 font-weight-black" v-if="getSingleItem.rewardSilver"><v-icon color="silver darken-1" >mdi-coin</v-icon>{{ $filters.formatIntAmount(getSingleItem.rewardSilver) }}</span>
                     </v-row>
                     <v-divider></v-divider>
                     <v-subheader light class="text-subtitle-1 fontColor--text text--darken-2 ">About This Item:</v-subheader>
@@ -146,7 +144,7 @@
                             
                             </v-card-text>
                             <v-card-actions>
-                                {{ item.time | convert-customer-rating-time }}
+                                {{ $filters.convertCustomerRatingTime(item.time) }}
                                 <v-spacer></v-spacer>
                                 <!-- <v-btn
                                 :color="item.color"

@@ -61,7 +61,7 @@
                         <v-row v-for="(level, i) in deal.guildDealLevels" :key="i" class="my-2">{{level.guildDealCondition}}</v-row>
                     </td>
                     <td>                        
-                        <v-row v-for="(level, i) in deal.guildDealLevels" :key="i" class="my-2">{{level.guildDealAmount | format-currency-amount}}</v-row>
+                        <v-row v-for="(level, i) in deal.guildDealLevels" :key="i" class="my-2">{{ $filters.formatCurrencyAmount(level.guildDealAmount) }}</v-row>
                     </td>
                     <td>
                         <v-row v-for="(level, i) in deal.guildDealLevels" :key="i" class="my-2">
@@ -75,8 +75,8 @@
 
                     <!-- <td v-convert-date="{toOrFrom: 'From: ', date: deal.dateFrom}"></td>
                     <td v-convert-date="{toOrFrom: 'To: ', date: deal.dateTo}"></td> -->
-                    <td >From: {{item.dateFrom | convert-date }}</td>
-                    <td >To: {{item.dateTo | convert-date}}</td>
+                    <td >From: {{ $filters.convertDate(item.dateFrom) }}</td>
+                    <td >To: {{ $filters.convertDate(item.dateTo) }}</td>
                     <td>
                         <v-tooltip right color="#757575">
                             <template v-slot:activator="{ on, attrs }">

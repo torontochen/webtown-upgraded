@@ -51,11 +51,7 @@
             <v-col cols="2"
               ><v-card-subtitle
                 class="fontColor--text text--darken-2 text-body-2 font-weight-bold"
-                >{{
-                 
-                      (item.quantity * item.unitPrice) | format-currency-amount
-
-                }}</v-card-subtitle
+                >{{ $filters.formatCurrencyAmount(item.quantity * item.unitPrice) }}</v-card-subtitle
               ></v-col
             >
 
@@ -63,39 +59,24 @@
           <v-divider class="my-1"></v-divider>
             <span class="ma-1 red--text d-block text-center  text-subtitle-2" v-if="orderDetails.dealsTitle&&orderDetails.dealsTitle.length>0">{{orderDetails.dealsTitle[0].title}}</span>
            <span class="ma-1 red--text d-block text-right  text-subtitle-2" v-if="orderDetails.totalDiscount>0"
-            >{{type=='vendor'?'discount':'you save'}}:&nbsp;-{{ 
-             
-                      (orderDetails.totalDiscount)  | format-currency-amount
-              }}</span
+            >{{type=='vendor'?'discount':'you save'}}:&nbsp;-{{ $filters.formatCurrencyAmount(orderDetails.totalDiscount) }}</span
           >
           <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >subtotal:&nbsp;{{
-              
-                      (orderDetails.totalAmount -  orderDetails.totalDiscount) | format-currency-amount
-
-            }}</span
+            >subtotal:&nbsp;{{ $filters.formatCurrencyAmount(orderDetails.totalAmount -  orderDetails.totalDiscount) }}</span
           >
          
         
          
           <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >shipping:&nbsp;{{ 
-             
-                      (orderDetails.shipping) | format-currency-amount
-              }}</span
+            >shipping:&nbsp;{{ $filters.formatCurrencyAmount(orderDetails.shipping) }}</span
           >
          
           <span class="ma-1 d-block text-right fontColor--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >tax:&nbsp;{{ 
-             
-                      (orderDetails.tax ) | format-currency-amount
-              }}</span
+            >tax:&nbsp;{{ $filters.formatCurrencyAmount(orderDetails.tax) }}</span
           >
          
           <span class="ma-1 d-block text-right accent--text text--darken-1 text-subtitle-2 font-weight-bold"
-            >total:&nbsp;{{ 
-                      (orderDetails.totalAmount -  orderDetails.totalDiscount  + orderDetails.shipping ) *1.13| format-currency-amount
-              }}</span
+            >total:&nbsp;{{ $filters.formatCurrencyAmount((orderDetails.totalAmount -  orderDetails.totalDiscount  + orderDetails.shipping ) *1.13) }}</span
           >
          
           <!-- <v-spacer></v-spacer><span>Paid By:&nbsp;${{orderDetails.totalAmount.toFixed(2)}}</span> -->
@@ -108,41 +89,23 @@
             <v-spacer></v-spacer>
               </v-toolbar>
           <span class=" d-block ma-1 text-right fontColor--text" v-if="type == 'vendor'"
-            >Boundary Gold:&nbsp;{{
-                      (vendorSettlement.boundaryGold) | format-int-amount
-            }}</span
+            >Boundary Gold:&nbsp;{{ $filters.formatIntAmount(vendorSettlement.boundaryGold) }}</span
           >
           <span class=" d-block ma-1 text-right fontColor--text" v-else
-            >Boundary Silver:&nbsp;{{
-              
-             
-                      (silverRecord ? silverRecord.amountSpand : 0) | format-int-amount
-              
-            }}</span
+            >Boundary Silver:&nbsp;{{ $filters.formatIntAmount(silverRecord ? silverRecord.amountSpand : 0) }}</span
           >
           <span class="ma-1 d-block text-right fontColor--text" v-if="type == 'vendor'"
-            >Customer&nbsp;Paid&nbsp;{{
-                      (vendorSettlement.amountPaidByCustomer) | format-currency-amount
-            }}&nbsp;by&nbsp;<i class="accent--text">{{ orderDetails.paymentMethod }}</i></span
+            >Customer&nbsp;Paid&nbsp;{{ $filters.formatCurrencyAmount(vendorSettlement.amountPaidByCustomer) }}&nbsp;by&nbsp;<i class="accent--text">{{ orderDetails.paymentMethod }}</i></span
           >
           <span class="ma-1 d-block text-right fontColor--text" v-else
-            >Paid&nbsp;{{
-              
-                      (silverRecord ? orderDetails.totalAmount -  orderDetails.totalDiscount +  orderDetails.tax + orderDetails.shipping  - silverRecord.amountSpand / 1000
-                : orderDetails.totalAmount -  orderDetails.totalDiscount +  orderDetails.tax  + orderDetails.shipping )  | format-currency-amount
-            }}&nbsp;by&nbsp;<i class="accent--text">{{ orderDetails.paymentMethod }}</i></span
+            >Paid&nbsp;{{ $filters.formatCurrencyAmount(silverRecord ? orderDetails.totalAmount -  orderDetails.totalDiscount +  orderDetails.tax + orderDetails.shipping  - silverRecord.amountSpand / 1000
+                : orderDetails.totalAmount -  orderDetails.totalDiscount +  orderDetails.tax  + orderDetails.shipping) }}&nbsp;by&nbsp;<i class="accent--text">{{ orderDetails.paymentMethod }}</i></span
           >
           <span class="my-1 d-block text-right fontColor--text" v-if="type == 'vendor'"
-            >Boundary Payable:&nbsp;{{
-             
-                      (vendorSettlement.boundaryPayable) | format-currency-amount
-            }}</span
+            >Boundary Payable:&nbsp;{{ $filters.formatCurrencyAmount(vendorSettlement.boundaryPayable) }}</span
           >
           <span class="my-1 d-block text-right fontColor--text" v-else
-            >Boundary Silver Earned:&nbsp;{{
-             
-                      (orderDetails.totalRewardSilver) | format-int-amount
-            }}</span
+            >Boundary Silver Earned:&nbsp;{{ $filters.formatIntAmount(orderDetails.totalRewardSilver) }}</span
           >
 
        

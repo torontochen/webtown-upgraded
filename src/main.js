@@ -9,8 +9,8 @@ import App from "./App.vue";
 import router from "./router/router.js";
 import store from "./store/store.js";
 import vuetify from "./plugins/vuetify";
+import filters from "./filters";
 import PortalVue from "portal-vue";
-import moment from "moment";
 import { VueMasonryPlugin } from "vue-masonry";
 import "vue2-animate/dist/vue2-animate.min.css";
 import Chat from "vue-beautiful-chat";
@@ -91,54 +91,14 @@ Vue.directive("event-type-photo", {
   },
 });
 
-//Filters
-Vue.filter("convert-date", (value) => {
-  return moment.utc(new Number(value)).format("YYYY-MM-DD");
-});
-
-Vue.filter("convert-customer-rating-time", (value) => {
-  return moment.utc(new Number(value)).format("MMMM Do YYYY, h:mm:ss a");
-});
-
-Vue.filter("ellipsis-order-no", (value) => {
-  return value.length > 16
-    ? value.substr(0, 12) + "..." + value.substr(-4)
-    : value;
-});
-
-Vue.filter("ellipsis-description", (value) => {
-  return value.length > 20
-    ? value.substr(0, 15) + "..." + value.substr(-4)
-    : value;
-});
-
-Vue.filter("format-currency-amount", (value) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-    // roundingIncrement: 5,
-    trailingZeroDisplay: "auto",
-  }).format(value);
-});
-
-Vue.filter("format-amount", (value) => {
-  // if(value==0) return 0
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-    // roundingIncrement: 0
-  }).format(value);
-});
-Vue.filter("format-int-amount", (value) => {
-  // if(value==0) return 0
-  return new Intl.NumberFormat("en-US", {
-    // maximumFractionDigits: 0,
-    // minimumFractionDigits: 0,
-    // roundingIncrement: 0
-  }).format(value);
-});
+// Filters (Phase 4b-1)
+//
+// Vue 3 removes `Vue.filter` and the `|` template syntax. The seven filters now
+// live in src/filters.js as plain functions, reached from templates as
+// `{{ $filters.formatIntAmount(x) }}`. `Vue.prototype` is the Vue 2 spelling of
+// what becomes `app.config.globalProperties` in Vue 3 — the templates do not
+// change again at the flip.
+Vue.prototype.$filters = filters;
 // console.log("mainjs is running");
 
 // Set up request

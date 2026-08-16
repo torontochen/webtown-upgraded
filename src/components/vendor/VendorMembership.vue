@@ -96,9 +96,9 @@
       </v-simple-table>
       <v-divider class="my-2"></v-divider>
         <v-col  class="text-right text-subtitle-2 primary--text ma-3 pa-3">
-            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">Membership Amount:&nbsp;{{memberShipFees | format-currency-amount}}</span><br>
-            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">HST(13%):&nbsp;{{ (memberShipFees * 0.13) | format-currency-amount }}&nbsp;</span><br>
-            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">Total Amount:&nbsp;{{memberShipFees * 1.13 | format-currency-amount}}</span><br>
+            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">Membership Amount:&nbsp;{{ $filters.formatCurrencyAmount(memberShipFees) }}</span><br>
+            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">HST(13%):&nbsp;{{ $filters.formatCurrencyAmount(memberShipFees * 0.13) }}&nbsp;</span><br>
+            <span class="text-subtitle-2 font-weight-bold my-1 ml-5 d-inline-block text-right">Total Amount:&nbsp;{{ $filters.formatCurrencyAmount(memberShipFees * 1.13) }}</span><br>
         </v-col>
       <v-divider class="my-2"></v-divider>
       <v-card-actions>

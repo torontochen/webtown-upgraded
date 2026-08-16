@@ -16,9 +16,9 @@
                         <v-divider color="shade"></v-divider>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-card-subtitle class="text-caption">From: {{event.dateFrom | convert-date }}</v-card-subtitle>
+                            <v-card-subtitle class="text-caption">From: {{ $filters.convertDate(event.dateFrom) }}</v-card-subtitle>
                             <v-spacer></v-spacer>
-                            <v-card-subtitle class="text-caption">To: {{event.dateTo | convert-date}}</v-card-subtitle>
+                            <v-card-subtitle class="text-caption">To: {{ $filters.convertDate(event.dateTo) }}</v-card-subtitle>
                             <v-spacer></v-spacer>
                           
                           </v-card-actions>
