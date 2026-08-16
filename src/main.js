@@ -1,3 +1,9 @@
+// Order matters: quill-setup assigns window.Quill, which the resize module
+// below reads at evaluation time. ES module imports run in declaration order.
+import "./quill-setup";
+import "quill-image-resize-module/image-resize.min.js";
+import "./scss/vuetify.scss";
+
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router/router.js";
@@ -18,7 +24,7 @@ import { ApolloLink, Observable } from "apollo-link";
 import { GraphQLWsLink } from "./apollo/graphqlWsLink";
 import { getMainDefinition } from "apollo-utilities";
 import VueApollo from "vue-apollo";
-import Alert from "./components/Alert";
+import Alert from "./components/Alert.vue";
 import VueQrcode from "@chenfengyuan/vue-qrcode";
 // import CKEditor from '@ckeditor/ckeditor5-vue'
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
@@ -56,10 +62,10 @@ import gql from "graphql-tag";
 // the origin serving the page, which matches the co-hosted deployment. Override
 // either one in .env.production if the API moves to its own host.
 const GRAPHQL_HTTP_URI =
-  process.env.VUE_APP_GRAPHQL_HTTP || `${window.location.origin}/graphql`;
+  import.meta.env.VITE_GRAPHQL_HTTP || `${window.location.origin}/graphql`;
 
 const GRAPHQL_WS_URI =
-  process.env.VUE_APP_GRAPHQL_WS ||
+  import.meta.env.VITE_GRAPHQL_WS ||
   `${window.location.protocol === "https:" ? "wss" : "ws"}://${
     window.location.host
   }/graphql`;

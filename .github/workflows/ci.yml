@@ -31,7 +31,7 @@ jobs:
         run: npm test
 
       # Uses .env.production. No secrets are needed: the build only reads
-      # VUE_APP_* values, which are public by definition.
+      # VITE_* values, which are public by definition.
       - name: Build
         run: npm run build
 

@@ -1,0 +1,32 @@
+// Vuetify 2 styles for the Vite build.
+//
+// This MUST be the precompiled full stylesheet, not `vuetify/src/styles/main.sass`.
+//
+// main.sass carries only Vuetify's *generic* styles — typography, elevation,
+// transitions, spacing helpers. Each component's own CSS lives beside it in
+// vuetify/src/components/<Name>/<Name>.sass, and vuetify-loader was what
+// imported those per component as it found them in templates. vuetify-loader is
+// webpack-only, so under Vite importing main.sass alone yields ~1700 generic
+// rules and *zero* component rules.
+//
+// The symptom was subtle rather than obviously-unstyled: text and colours
+// looked right, but `.v-navigation-drawer` never received its
+// `position: fixed`, so a closed drawer sat in normal flow occupying 720px and
+// shoved the app bar and the whole page grid ~756px down the page.
+//
+// The precompiled sheet contains every component's styles.
+@import "vuetify/dist/vuetify.min.css";
+
+// The SASS variable overrides that `src/scss/variables.scss` used to feed
+// vuetify-loader ($body-font-family / $heading-font-family) cannot apply to an
+// already-compiled stylesheet, so they are reproduced here as plain CSS. This
+// is what those variables emitted.
+.v-application,
+.v-application .headline,
+.v-application .title,
+.v-application .subtitle-1,
+.v-application .subtitle-2,
+.v-application [class^="text-"],
+.v-application [class*=" text-"] {
+  font-family: "Montserrat", sans-serif;
+}

@@ -30,7 +30,10 @@ const { PubSub } = require("graphql-subscriptions");
 
 require("dotenv").config({ path: "variables.env" });
 
-const { LOGO_BASE64 } = require("./src/assets/constDataServer");
+// Base64 logos live in JSON so the CommonJS server and the ESM client bundle
+// can both read them. It used to be a CJS module, which Rollup could not
+// resolve a named import from — see PROJECT_NOTES.md (Phase 4a-ii).
+const { LOGO_BASE64 } = require("./src/assets/constDataServer.json");
 
 const pubsub = new PubSub();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

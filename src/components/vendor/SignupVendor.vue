@@ -769,10 +769,11 @@ import { mask } from "vue-the-mask";
 import { CHECK_BUSINESSTITLE } from "../../queries/queries_query.js";
 import { VENDOREMAIL_CHECK } from "../../queries/queries_query.js";
 import gmapsInit from "../../utils/gmaps";
-import CustomDialog from "../CustomDialog";
-import LogoCropper from "./LogoCropper";
+import CustomDialog from "../CustomDialog.vue";
+import LogoCropper from "./LogoCropper.vue";
 import { eventBus_vendorParlour } from "../../eventBus";
-import { LOGO_VENDOR } from "../../assets/constDataServer";
+import constData from "../../assets/constDataServer.json";
+const { LOGO_VENDOR } = constData;
 
 import _ from "lodash";
 

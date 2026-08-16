@@ -956,7 +956,7 @@ import GoogleMap from "@/components/GoogleMap.vue";
 // import ChatWindow from 'vue-advanced-chat'
 import "vue-advanced-chat/dist/vue-advanced-chat.css";
 import MapSlot from "./MapSlot.vue";
-import VendorHomePage from "../components/vendor/VendorHomePage";
+import VendorHomePage from "../components/vendor/VendorHomePage.vue";
 import {
   VENDOR_ORDER_ADDED,
   VENDOR_SETTLEMENT_RECORD_ADDED,

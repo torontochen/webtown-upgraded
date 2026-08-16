@@ -564,7 +564,6 @@ import VueDraggableResizable from "vue-draggable-resizable";
 // optionally import default styles
 import "vue-draggable-resizable/dist/VueDraggableResizable.css";
 import _ from "lodash";
-import { now } from "moment";
 import sizeOf from "object-sizeof";
 import LZString from "lzutf8";
 import {
