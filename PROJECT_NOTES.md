@@ -18,10 +18,13 @@ Running record of the staged upgrade, phase by phase.
 | 2.5 — Live verification + deferred bug fixes | ✅ Done | `d4c92e6` |
 | 3a — Apollo Server 4, graphql-ws, error migration | ✅ Done | `334e63e` |
 | 3b — Mongoose 8, resolver split, logging | ✅ Done | `0213d4c` |
-| 4a-i — Event buses removed; first browser verification | ✅ Done | this commit |
-| 4a-ii — Vite migration | Not started | |
-| 4 — Client modernization (Vite, Vue 3) | Not started | |
+| 4a-i — Event buses removed; first browser verification | ✅ Done | `97f3c3a` |
+| 4a-ii — Vite replaces vue-cli/webpack | ✅ Merged | `dba0cc1` |
+| 4b — Vue 3 + Vuetify 3 | Not started | |
+| 4c — Pinia + Apollo Client 3 | Not started | |
 | 5 — Dependency cleanup | Not started | |
+
+⚠️ One known regression is open on `master` — see "KNOWN REGRESSION" below.
 
 Run `npm run verify` after any change — lint, 77 tests, and a production build.
 Tests use Node's built-in runner; no test framework dependency.
