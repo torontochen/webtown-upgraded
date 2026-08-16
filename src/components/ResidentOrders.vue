@@ -2,8 +2,10 @@
   <v-container class="mb-5">
     <v-data-iterator
       :items="residentOrders"
-      :items-per-page.sync="itemsPerPage"
-      :page.sync="page"
+      :items-per-page="itemsPerPage"
+      @update:items-per-page="itemsPerPage = $event"
+      :page="page"
+      @update:page="page = $event"
       :sort-by="sortBy"
       :search="searchStatus"
       :sort-desc="sortDesc"

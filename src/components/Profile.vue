@@ -526,7 +526,7 @@
                           color="primary lighten-1"
                           type="submit"
                           class="d-inline-block mr-2"
-                          @click.native="handleUpdateProfile"
+                          @click="handleUpdateProfile"
                         >
                           <span slot="loader" class="custom-loader">
                             <v-icon>cached</v-icon>

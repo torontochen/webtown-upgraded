@@ -413,6 +413,10 @@
                 >
                     <!-- :style="source?item.htmlOuterStyle:''" -->
 
+                  <!-- Phase 4b-2 removed `.native` everywhere it was safe to do on Vue 2;
+                       this one stays. vue-draggable-resizable 2 neither emits `click` nor
+                       forwards $listeners, so the modifier is load-bearing here. It goes
+                       with the library itself in 4b-3. -->
                   <vue-draggable-resizable
                     class="ma-0 pa-0"
                     v-for="(item, index) in flyerPage.flyerPageElements"
@@ -482,6 +486,10 @@
                     size="72">mdi-qrcode</v-icon> -->
                     <!-- :style="item.htmlOuterStyle" -->
 
+                  <!-- Phase 4b-2 removed `.native` everywhere it was safe to do on Vue 2;
+                       this one stays. vue-draggable-resizable 2 neither emits `click` nor
+                       forwards $listeners, so the modifier is load-bearing here. It goes
+                       with the library itself in 4b-3. -->
                   <vue-draggable-resizable
                     class="ma-0 pa-0"
                     v-for="(item, index) in flyerPage_C.flyerPageElements"

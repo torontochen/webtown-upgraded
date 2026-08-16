@@ -286,7 +286,7 @@
                 <v-btn
                   :disabled="btnDisable"
                   color="primary"
-                  @click.native="saveSketch"
+                  @click="saveSketch"
                   class="d-block mr-2"
                   depressed
                 >
@@ -441,7 +441,7 @@
                     small
                     depressed
                     dark
-                    @click.native="saveTemplateDialog = true"
+                    @click="saveTemplateDialog = true"
                     v-if="!templateIsSaved"
                   >
                     <span slot="loader" class="custom-loader">

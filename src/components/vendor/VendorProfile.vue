@@ -175,7 +175,7 @@
                               contain
                             ></v-img>
                             <v-icon
-                              @click.native="addLogo = true"
+                              @click="addLogo = true"
                               color="primary lighten-1"
                               class="d-block mt-8 pl-2"
                               left
@@ -445,7 +445,7 @@
                                 >
                                   <v-col cols="12">
                                     <v-icon
-                                      @click.native="deleteBuzPhoto(index)"
+                                      @click="deleteBuzPhoto(index)"
                                       color="primary lighten-1"
                                       class="d-block mb-2"
                                     >
@@ -593,7 +593,8 @@
                                       v-model="menu1"
                                       :close-on-content-click="false"
                                       :nudge-right="40"
-                                      :return-value.sync="openTime"
+                                      :return-value="openTime"
+                                      @update:return-value="openTime = $event"
                                       transition="scale-transition"
                                       offset-y
                                       max-width="290px"
@@ -625,7 +626,8 @@
                                         v-model="menu2"
                                         :close-on-content-click="false"
                                         :nudge-right="40"
-                                        :return-value.sync="closeTime"
+                                        :return-value="closeTime"
+                                        @update:return-value="closeTime = $event"
                                         transition="scale-transition"
                                         offset-y
                                         max-width="290px"
@@ -678,7 +680,7 @@
                     <v-btn
                       color="primary"
                       class="d-inline-block mr-2"
-                      @click.native="handleUpdateVendor"
+                      @click="handleUpdateVendor"
                       :disabled="businessHours.length < 7"
                       depressed
                     >

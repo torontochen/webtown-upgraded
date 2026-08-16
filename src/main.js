@@ -10,7 +10,6 @@ import router from "./router/router.js";
 import store from "./store/store.js";
 import vuetify from "./plugins/vuetify";
 import filters from "./filters";
-import PortalVue from "portal-vue";
 import { VueMasonryPlugin } from "vue-masonry";
 import "vue2-animate/dist/vue2-animate.min.css";
 import Chat from "vue-beautiful-chat";
@@ -73,7 +72,6 @@ const GRAPHQL_WS_URI =
 
 // Register Global Component
 Vue.use(VueApollo);
-Vue.use(PortalVue);
 Vue.use(VueMasonryPlugin);
 // Vue.use(CKEditor)
 

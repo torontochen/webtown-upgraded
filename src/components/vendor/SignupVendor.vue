@@ -161,7 +161,7 @@
                                 </v-row>
                                 <v-row>
                                   <v-icon
-                                  @click.native="deleteLogo()"
+                                  @click="deleteLogo()"
                                   color="primary lighten-1"
                                   class="d-block mb-2"
                                   v-if="logo"
@@ -458,7 +458,7 @@
                                     >
                                       <v-col cols="12">
                                         <v-icon
-                                          @click.native="deleteBuzPhoto(index)"
+                                          @click="deleteBuzPhoto(index)"
                                           color="primary lighten-1"
                                           class="d-block mb-2"
                                         >
@@ -615,7 +615,8 @@
                                           v-model="menu1"
                                           :close-on-content-click="false"
                                           :nudge-right="40"
-                                          :return-value.sync="openTime"
+                                          :return-value="openTime"
+                                          @update:return-value="openTime = $event"
                                           transition="scale-transition"
                                           offset-y
                                           max-width="290px"
@@ -647,7 +648,8 @@
                                             v-model="menu2"
                                             :close-on-content-click="false"
                                             :nudge-right="40"
-                                            :return-value.sync="closeTime"
+                                            :return-value="closeTime"
+                                            @update:return-value="closeTime = $event"
                                             transition="scale-transition"
                                             offset-y
                                             max-width="290px"
@@ -701,7 +703,7 @@
                       color="primary lighten-1"
                       type="submit"
                       class="d-inline-block mr-2"
-                      @click.native="handleSignupVendor"
+                      @click="handleSignupVendor"
                       depressed
                     >
                       <!-- :disabled="businessHours.length < 7" -->

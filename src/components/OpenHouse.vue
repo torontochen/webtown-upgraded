@@ -460,7 +460,8 @@
           group-by="businessCategory"
           group-desc
           :single-expand="true"
-          :expanded.sync="expanded"
+          :expanded="expanded"
+          @update:expanded="expanded = $event"
           class="elevation-1"
           show-group-by
           calculate-widths
@@ -516,7 +517,8 @@
           group-by="flyerType"
           group-desc
           show-expand
-          :expanded.sync="expanded"
+          :expanded="expanded"
+          @update:expanded="expanded = $event"
           @click:row="handleActiveFlyerSelected"
         >
           <template v-slot:item.logo="{ item }">
@@ -1285,8 +1287,10 @@
           <v-container fluid >
             <v-data-iterator
               :items="activeAllGuildDeals"
-              :items-per-page.sync="itemsPerPage"
-              :page.sync="page"
+              :items-per-page="itemsPerPage"
+              @update:items-per-page="itemsPerPage = $event"
+              :page="page"
+              @update:page="page = $event"
               :search="search"
               :sort-by="sortBy"
               :sort-desc="sortDesc"
@@ -1554,8 +1558,10 @@
           <v-container fluid v-if="guildDealsStatus.length>0">
             <v-data-iterator
               :items="guildDealsStatus"
-              :items-per-page.sync="itemsPerPage"
-              :page.sync="page"
+              :items-per-page="itemsPerPage"
+              @update:items-per-page="itemsPerPage = $event"
+              :page="page"
+              @update:page="page = $event"
               :search="searchStatus"
               :sort-desc="sortDesc"
               hide-default-footer

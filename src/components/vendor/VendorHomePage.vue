@@ -33,8 +33,10 @@
             <v-expansion-panel-content>
                 <v-data-iterator
                   :items="vendorOrders"
-                  :items-per-page.sync="itemsPerPage"
-                  :page.sync="page"
+                  :items-per-page="itemsPerPage"
+                  @update:items-per-page="itemsPerPage = $event"
+                  :page="page"
+                  @update:page="page = $event"
                   :search="searchStatus"
                   :sort-desc="sortDesc"
                   :sort-by="sortBy"

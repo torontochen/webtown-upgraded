@@ -4,8 +4,10 @@
           <v-container fluid v-if="dealFulfillment.length>0">
             <v-data-iterator
               :items="dealFulfillment"
-              :items-per-page.sync="itemsPerPage"
-              :page.sync="page"
+              :items-per-page="itemsPerPage"
+              @update:items-per-page="itemsPerPage = $event"
+              :page="page"
+              @update:page="page = $event"
               :search="searchStatus"
               :sort-desc="sortDesc"
               hide-default-footer

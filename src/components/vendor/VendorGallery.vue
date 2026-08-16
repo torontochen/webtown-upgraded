@@ -137,7 +137,7 @@
                                 >
                                   <v-col cols="12">
                                     <v-icon
-                                      @click.native="deleteBuzPhoto(index)"
+                                      @click="deleteBuzPhoto(index)"
                                       color="primary lighten-1"
                                       class="d-block mb-2"
                                     >

@@ -21,7 +21,7 @@ Running record of the staged upgrade, phase by phase.
 | 4a-i — Event buses removed; first browser verification | ✅ Done | `97f3c3a` |
 | 4a-ii — Vite replaces vue-cli/webpack | ✅ Merged | `dba0cc1` |
 | 4b-1 — Template filters removed | ✅ Done | `3e2fe6d`+ |
-| 4b-2 — `.native`, `.sync`, dead plugins | Not started | |
+| 4b-2 — `.native`, `.sync`, dead plugins | ✅ Done | `8f15d16`+ |
 | 4b-3 — Vue-2-only libraries replaced | Not started | |
 | 4b-4 — The flip: Vue 3 + Vuetify 3 | Not started | |
 | 4c — Pinia + Apollo Client 3 | Not started | |
@@ -840,6 +840,86 @@ comes back. The call form has a further advantage over the old syntax: a typo in
   flyer dates render `2023-12-31`, and a vendor storefront renders `$12.98` /
   `$9.99` with struck-through original prices. No `$filters.` text leaked into
   the page, no raw epoch numbers, no new console errors.
+
+---
+
+## Phase 4b-2 — `.sync`, `.native`, and a dead plugin ✅
+
+Three more blockers removed, all still running on Vue 2.
+
+### `.sync` — 17 sites
+
+Vue 3 removed the modifier. Each site is now the pair it always compiled to:
+
+```html
+<!-- before -->                    <!-- after -->
+:items-per-page.sync="itemsPerPage"  :items-per-page="itemsPerPage"
+                                     @update:items-per-page="itemsPerPage = $event"
+```
+
+This form is valid in **both** Vue 2 and Vue 3, so these sites do not change
+again at the flip (Vue 3's `v-model:items-per-page` would be tidier, but it is
+another edit and buys nothing).
+
+The one detail worth getting right: **Vuetify 2 emits the kebab-case event
+name** — `update:items-per-page`, not `update:itemsPerPage`. Vue 2's `.sync`
+registered *both* spellings, so it papered over the difference. Writing the
+listener out by hand does not, and getting it wrong fails silently: the prop
+still renders, it just never writes back. A test asserts no
+`@update:` listener in the codebase contains a capital letter.
+
+All 17 were simple identifiers on data properties (`itemsPerPage`, `page`,
+`expanded`, `openTime`, `closeTime`, `vendorSearch`), so the rewrite was
+mechanical.
+
+### `.native` — 11 of 15 removed
+
+`.native` is gone in Vue 3. Removing it early is only safe where the child
+component actually forwards the listener, so each site was checked against the
+Vuetify source rather than assumed:
+
+- **`v-btn`** (6 sites) — the `Routable` mixin binds `{...$listeners, click}` on
+  the root element and `VBtn.click()` re-emits, so `@click` is equivalent. None
+  of the six carries a `to` prop, which is the case where Routable would switch
+  to `nativeOn`.
+- **`v-icon`** (5 sites) — `VIcon` renders with `on: this.listeners$`.
+
+The clinching evidence that this is right: the codebase already has **186 plain
+`@click` on `v-btn` and 32 on `v-icon`**. The 11 `.native`s were the anomaly and
+were redundant all along.
+
+**Four sites stay, each annotated in place with why:**
+
+| Site | Why it cannot move yet |
+|---|---|
+| `src/App.vue` — `router-link` | vue-router 3's router-link does not emit `click`. Comes off in 4b-4, where vue-router 4 lets listeners fall through to the rendered `<a>` |
+| `FlyerCoupon.vue` ×2, `HtmlConverter.vue` ×1 — `vue-draggable-resizable` | The library neither emits `click` nor forwards `$listeners`, so the modifier is load-bearing. Goes with the library in 4b-3 |
+
+### `portal-vue` deleted
+
+Imported and `Vue.use`d in `main.js`, and **not one `<portal>` or
+`<portal-target>` tag exists anywhere in `src/`**. Removed from the entry point
+and from `package.json`; the lockfile diff is exactly the one package. Bundle
+2,884 kB → 2,876 kB.
+
+Vue 3 has `<Teleport>` built in, so nothing replaces it.
+
+### Verification
+
+`test/vue3Readiness.test.js` (5 tests) locks the invariants, including the
+exact list of the four surviving `.native` sites so a fifth cannot appear
+unnoticed. It also scans for the Vue 2 APIs this codebase happens to be free of
+already (`$listeners`, `$children`, `$scopedSlots`, `slot-scope`, `keyCode`
+modifiers, the `filters` option), stripping comments first so the notes in the
+source explaining a `.native` do not trip it.
+
+- `npm run verify` — 0 lint errors, **90 tests** (was 85), production build.
+- In the browser against live Atlas: typing into the home page vendor
+  autocomplete filters to `KINKA IZAKAYA ORIGINAL` / `Pizza King` with match
+  highlighting, which exercises the rewritten `search-input` binding
+  end-to-end — the list only narrows if `@update:search-input` is writing
+  `vendorSearch` back. Every `v-btn` on the vendor signup page reports a
+  `click` handler in `$listeners`.
 
 ---
 

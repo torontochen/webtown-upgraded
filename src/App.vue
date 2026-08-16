@@ -654,6 +654,11 @@
               >
 
               <span class="d-block text-center my-1">
+                <!-- Phase 4b-2 removed `.native` everywhere it was safe to do
+                     on Vue 2; this one stays. vue-router 3's router-link does
+                     not emit `click`, so dropping the modifier would break the
+                     handler today. It comes off in 4b-4 with vue-router 4,
+                     where listeners fall through to the rendered <a>. -->
                 <router-link
                   to="/signupvendor"
                   style="cursor: pointer; text-decoration: none"

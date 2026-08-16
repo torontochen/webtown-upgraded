@@ -150,7 +150,7 @@
                   :loading="loading"
                   :disabled="!isFormValid || !emailOk"
                   color="primary lighten-1"
-                  @click.native="handleSignupResident"
+                  @click="handleSignupResident"
                   large
                   depressed
                 >

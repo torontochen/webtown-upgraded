@@ -796,7 +796,8 @@
             v-model="vendorSelected"
             :loading="vendorSearchLoading"
             :items="vendorListFiltered"
-            :search-input.sync="vendorSearch"
+            :search-input="vendorSearch"
+            @update:search-input="vendorSearch = $event"
             cache-items
             full-width
             flat
