@@ -770,21 +770,44 @@ recorded rather than silently reshuffled. A bonus when it happens:
 precisely because Apollo Client 2 has no graphql-ws link, gets deleted and
 replaced with the official `@apollo/client/link/subscriptions`.
 
-### Vue-2-only libraries (4b-3)
+### Vue-2-only libraries — and why half of them cannot move before the flip
 
-| Library | Status | Plan |
+The obvious plan is "upgrade every library first, then swap the framework".
+Checking the published peer ranges shows that does not work:
+
+```
+vue-advanced-cropper@2.8.9      peerDependencies { vue: ^3.0.0 }
+vue-draggable-resizable@3.0.0   peerDependencies { vue: ^3.2.25 }
+@chenfengyuan/vue-qrcode@2.0.0  peerDependencies { vue: ^3.0.0 }
+```
+
+These are not "supports Vue 3 as well" bumps — the Vue 3 majors **drop Vue 2**.
+Installing them early would break the app on the spot, which is the one thing
+this phase's structure is designed to avoid. So they move into 4b-4 and get
+installed in the same commit as `vue@3`.
+
+**4b-3 — replaceable while still on Vue 2:**
+
+| Library | Sites | Plan |
 |---|---|---|
-| `portal-vue` | **Dead** — registered in main.js, zero `<portal>` tags | Delete |
-| `vue-beautiful-chat` | No Vue 3 version | `<beautiful-chat>` in App.vue only; replace or drop |
-| `vue-intersection-observer` | No Vue 3 version | One usage (Home.vue); a local wrapper over `IntersectionObserver` is ~20 lines |
-| `vue-masonry` | No Vue 3 version | CSS columns, or `vue-masonry-css` |
-| `vue-the-mask` | No Vue 3 version | → `maska` (3 components) |
-| `vue2-editor` | Vue 2 only by name | Quill is already a direct dependency and set up in `src/quill-setup.js` |
-| `vue-advanced-cropper` | 0.16 → 2.x supports Vue 3 | Version bump |
-| `vue-draggable-resizable` | 2.x → 3.x supports Vue 3 | Version bump |
-| `@chenfengyuan/vue-qrcode` | 1.x → 2.x supports Vue 3 | Version bump; one `<qrcode>` tag |
-| `vue-advanced-chat` | 1.5 → 2.x is a web component | Version bump, different mounting |
-| `vue2-animate` | CSS only | Keep, or drop with Vuetify 3's own transitions |
+| `vue-intersection-observer` | 1 (Home.vue) | Local component. The published one is a webpack UMD bundle wrapping a 35-line SFC — `<div><slot/></div>` plus an `IntersectionObserver` — and lists `vue` *and* `vue-router` as runtime dependencies |
+| `vue-the-mask` | 3 components | Local directive, or `maska`'s framework-agnostic core (maska 3 declares no peer range, but its `maska/vue` binding is Vue 3 — needs checking before committing to it) |
+| `vue2-editor` | 1 (VendorFlyers.vue) | Quill is already a direct dependency and already initialised in `src/quill-setup.js` |
+| `vue-masonry` | Home.vue | `vue-masonry@0.16` declares `vue: ^2.0.0 \|\| >=3.0.0`, so it can be bumped early — at the cost of an `@vue/composition-api` dependency on Vue 2. CSS columns may be the better trade |
+| `vue-beautiful-chat` | 1 (`<beautiful-chat>` in App.vue) | No Vue 3 version at any major. Needs a product decision, not just a swap |
+| ~~`portal-vue`~~ | 0 | ✅ Deleted in 4b-2 |
+
+**4b-4 — must be installed alongside `vue@3`:**
+
+| Library | Bump |
+|---|---|
+| `vue-advanced-cropper` | 0.16 → 2.x |
+| `vue-draggable-resizable` | 2.x → 3.x (also releases the 3 remaining `.native` sites) |
+| `@chenfengyuan/vue-qrcode` | 1.x → 2.x |
+| `vue-advanced-chat` | 1.5 → 2.x, which is a web component and mounts differently |
+| `vue-router` / `vuex` / `vue-apollo` | 3 → 4 / 3 → 4 / 3 → `@vue/apollo-option` 4 |
+
+`vue2-animate` is CSS only and does not gate anything.
 
 `vuetify-loader`'s replacement, `vite-plugin-vuetify`, restores the
 tree-shaking that 4a-ii gave up when it moved to the full Vuetify build. That
