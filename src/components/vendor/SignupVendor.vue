@@ -767,7 +767,7 @@
 <script>
 import moment from "moment";
 import { mapGetters } from "vuex";
-import { mask } from "vue-the-mask";
+import mask from "../../directives/mask";
 import { CHECK_BUSINESSTITLE } from "../../queries/queries_query.js";
 import { VENDOREMAIL_CHECK } from "../../queries/queries_query.js";
 import gmapsInit from "../../utils/gmaps";

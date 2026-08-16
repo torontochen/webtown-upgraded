@@ -22,7 +22,8 @@ Running record of the staged upgrade, phase by phase.
 | 4a-ii — Vite replaces vue-cli/webpack | ✅ Merged | `dba0cc1` |
 | 4b-1 — Template filters removed | ✅ Done | `3e2fe6d`+ |
 | 4b-2 — `.native`, `.sync`, dead plugins | ✅ Done | `8f15d16`+ |
-| 4b-3 — Vue-2-only libraries replaced | Not started | |
+| 4b-3a — Observer, mask, masonry | ✅ Done | `07a0438`+ |
+| 4b-3b — vue2-editor, vue-beautiful-chat | Not started | |
 | 4b-4 — The flip: Vue 3 + Vuetify 3 | Not started | |
 | 4c — Pinia + Apollo Client 3 | Not started | |
 | 5 — Dependency cleanup | Not started | |
@@ -790,12 +791,12 @@ installed in the same commit as `vue@3`.
 
 | Library | Sites | Plan |
 |---|---|---|
-| `vue-intersection-observer` | 1 (Home.vue) | Local component. The published one is a webpack UMD bundle wrapping a 35-line SFC — `<div><slot/></div>` plus an `IntersectionObserver` — and lists `vue` *and* `vue-router` as runtime dependencies |
-| `vue-the-mask` | 3 components | Local directive, or `maska`'s framework-agnostic core (maska 3 declares no peer range, but its `maska/vue` binding is Vue 3 — needs checking before committing to it) |
-| `vue2-editor` | 1 (VendorFlyers.vue) | Quill is already a direct dependency and already initialised in `src/quill-setup.js` |
-| `vue-masonry` | Home.vue | `vue-masonry@0.16` declares `vue: ^2.0.0 \|\| >=3.0.0`, so it can be bumped early — at the cost of an `@vue/composition-api` dependency on Vue 2. CSS columns may be the better trade |
-| `vue-beautiful-chat` | 1 (`<beautiful-chat>` in App.vue) | No Vue 3 version at any major. Needs a product decision, not just a swap |
+| ~~`vue-intersection-observer`~~ | 1 (Home.vue) | ✅ 4b-3a — local component |
+| ~~`vue-the-mask`~~ | 2 (+1 dead import) | ✅ 4b-3a — local directive |
+| ~~`vue-masonry` 0.13~~ | Home.vue | ✅ 4b-3a — bumped to 0.16, which spans both majors |
 | ~~`portal-vue`~~ | 0 | ✅ Deleted in 4b-2 |
+| `vue2-editor` | 1 (VendorFlyers.vue) | **4b-3b.** Quill is already a direct dependency and already initialised in `src/quill-setup.js`, so a local wrapper is the shape of the fix. `@vueup/vue-quill` is the off-the-shelf option but is Vue 3 only, which would make it a 4b-4 item instead |
+| `vue-beautiful-chat` | 1 (`<beautiful-chat>` in App.vue) | **4b-3b.** No Vue 3 version at any major, and the usage is real — guild chat with participants, message list and four callbacks. Needs a product decision, not a swap |
 
 **4b-4 — must be installed alongside `vue@3`:**
 
@@ -943,6 +944,89 @@ source explaining a `.native` do not trip it.
   end-to-end — the list only narrows if `@update:search-input` is writing
   `vendorSearch` back. Every `v-btn` on the vendor signup page reports a
   `click` handler in `$listeners`.
+
+---
+
+## Phase 4b-3a — three libraries off the critical path ✅
+
+Two Vue-2-only packages replaced with local code, one bumped to a version that
+spans both majors. Still on Vue 2, still green.
+
+### `vue-intersection-observer` → `src/components/Observer.vue`
+
+The published package has no Vue 3 build, and what it actually ships is a
+webpack UMD bundle of a 35-line SFC: `<div><slot/></div>`, an
+`IntersectionObserver` on the root element, one event. It also declares **`vue`
+and `vue-router` as runtime dependencies**, which is how `core-js` ended up in
+the tree.
+
+The local replacement keeps the contract exactly — props `root` / `rootMargin`
+/ `threshold`, emits `on-change` with `(firstEntry, unobserve)`, attributes
+falling through to the root `<div>` so `Home.vue`'s `onChange` can still read
+the tile index off `entry.target.id`. The single usage did not change.
+
+**It declares both `beforeDestroy` and `beforeUnmount`.** Vue 2 calls the
+first and treats the second as an unrecognised option; Vue 3 does the reverse.
+That is what lets a component written today survive 4b-4 without an edit, which
+is the entire reason for writing it now instead of after the flip. Verified in
+the browser: no Vue 2 warning about the unknown option.
+
+### `vue-the-mask` → `src/directives/mask.js`
+
+Vue 2 only and unmaintained. MIT, and the masking core is small, so the
+string-mask path was **ported rather than swapped for a different library** —
+this drives the phone and fax fields on vendor signup and vendor profile, and a
+subtle change in how a half-typed number formats is the kind of thing nobody
+notices until a user complains.
+
+Before deleting the dependency, the port was checked against the real library
+over **6 masks × 12 inputs — 72 combinations, 0 mismatches**. The interesting
+rows are pinned as fixtures in `test/mask.test.js`.
+
+A **plain function** is directive shorthand in both Vue 2 (`bind` + `update`)
+and Vue 3 (`mounted` + `updated`) — and is how vue-the-mask registered itself —
+so this file also needs no change at the flip.
+
+Dropped: the dynamic-mask path, where the mask is an array of candidates. Both
+call sites pass the single string `"(###)###-####"`, and an array now throws
+rather than silently formatting wrongly. `Signup.vue` imported `mask` with its
+`directives` block commented out — a dead import, removed.
+
+### `vue-masonry` 0.13 → 0.16
+
+Not actually a Vue-2-only library, which the earlier note got wrong. 0.16
+declares `vue: ^2.0.0 || >=3.0.0` and marks `@vue/composition-api` **optional**,
+so the bump costs nothing on Vue 2 — it pulls in `vue-demi` (the Vue 2/3 shim
+that makes the range work) and `mitt`, both tiny. No API change: `v-masonry`,
+`v-masonry-tile` and `$redrawVueMasonry` are unchanged.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **97 tests** (was 90), production build.
+- Bundle 2,876 kB → **2,852 kB**; `vue-the-mask`, `vue-intersection-observer`
+  and `core-js` removed from the lockfile.
+- **Mask, in the browser against the live app:** the directive binds to exactly
+  the two fields carrying `v-phoneMask` (Telephone, Fax) and no others. Driving
+  its real handler a digit at a time produces
+  `(4 → (41 → (416 → (416)5 → … → (416)555-1234`, extra digits are discarded,
+  and — the part that matters — the Vuetify field's `lazyValue` ends up
+  `(416)555-1234`, so the dispatched `input` event is reaching `v-model`.
+- **Observer, in the browser:** 21 instances mounted, every one holding a live
+  `IntersectionObserver`, root element a `<div>`, `id` falling through as
+  `0,1,2,3…`. After scrolling to y=2200 the component emitted 10 `on-change`
+  events and `markerList` flipped from `true×4, false…` to `false×10, true×6` —
+  the correct answer for that viewport.
+- **Masonry, in the browser:** all 21 tiles absolutely positioned into two
+  columns at x=65 and x=290, container height computed to 4246px,
+  `$redrawVueMasonry` registered on the instance.
+
+> A note on that Observer measurement, because it looks alarming at first:
+> scrolling produced **zero** `on-change` events until a screenshot forced the
+> page to paint. A raw `IntersectionObserver` created alongside as a control
+> behaved identically. Intersection callbacks are delivered during the same
+> "update the rendering" step that `requestAnimationFrame` belongs to, so a
+> non-painting page skips both — the same mechanism as the flyer-photo
+> non-regression above. Always take the screenshot first.
 
 ---
 

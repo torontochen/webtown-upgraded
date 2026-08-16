@@ -189,7 +189,6 @@
 <script>
 import { mapGetters } from "vuex";
 import { EMAIL_CHECK } from "../queries/queries_query.js";
-import { mask } from "vue-the-mask";
 import gmapsInit from "../utils/gmaps";
 // import { CONNREFUSED } from "dns";
 // import locatePostalCode from "../utils/locatePostalCode";

@@ -975,7 +975,7 @@ import {
 } from "../eventBus";
 import { mapGetters } from "vuex";
 import router from "../router/router";
-import Observer from "vue-intersection-observer";
+import Observer from "@/components/Observer.vue";
 import _ from "lodash";
 
 export default {
