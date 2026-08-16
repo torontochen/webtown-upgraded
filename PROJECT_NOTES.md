@@ -24,7 +24,7 @@ Running record of the staged upgrade, phase by phase.
 | 4b-2 — `.native`, `.sync`, dead plugins | ✅ Done | `8f15d16`+ |
 | 4b-3a — Observer, mask, masonry | ✅ Done | `07a0438`+ |
 | 4b-3b — vue2-editor, vue-advanced-chat | ✅ Done | `f6b1cdf`+ |
-| 4b-3c — vue-beautiful-chat | Blocked — needs a product decision | |
+| 4b-3c — vue-beautiful-chat | ✅ Done | `8597a15`+ |
 | 4b-4 — The flip: Vue 3 + Vuetify 3 | Not started | |
 | 4c — Pinia + Apollo Client 3 | Not started | |
 | 5 — Dependency cleanup | Not started | |
@@ -798,7 +798,7 @@ installed in the same commit as `vue@3`.
 | ~~`portal-vue`~~ | 0 | ✅ Deleted in 4b-2 |
 | ~~`vue2-editor`~~ | 1 (VendorFlyers.vue) | ✅ 4b-3b — local Quill wrapper |
 | ~~`vue-advanced-chat`~~ | 0 | ✅ 4b-3b — dead, deleted |
-| `vue-beautiful-chat` | 1 (`<beautiful-chat>` in App.vue) | **4b-3c, blocked.** No Vue 3 version at any major, and the usage is real — guild chat with participants, message list, four callbacks and a custom scoped-slot message template. Needs a product decision, not a swap |
+| ~~`vue-beautiful-chat`~~ | 1 (`<beautiful-chat>` in App.vue) | ✅ 4b-3c — rebuilt in Vuetify |
 
 **4b-4 — must be installed alongside `vue@3`:**
 
@@ -1110,6 +1110,83 @@ Removed, along with 6 packages. It also drops off the 4b-4 bump list.
 > and by `test/quillEditor.test.js`, but the surrounding flyer flow — saving a
 > sketch, the `imageResize` handles on a real image — has not been run.
 > **Worth a manual pass with a vendor account before 4b-4.**
+
+---
+
+## Phase 4b-3c — guild chat rebuilt in Vuetify ✅
+
+The last Vue-2-only library, and the one worth the most. `vue-beautiful-chat`
+has no Vue 3 release at any major, ships a **381 kB minified dist with no
+source**, and pulls eight dependencies including `imagemin` — a build tool —
+and `v-tooltip`, which is itself Vue 2 only. Forking it would have meant
+porting someone else's Vue 2 component tree from GitHub.
+
+The project owner chose to rebuild it. `src/components/GuildChat.vue` is ~200
+lines of Vuetify: launcher fab, toolbar with the existing `header` slot,
+scrolling message list, and a textarea that sends on Enter.
+
+### The data contract did not move
+
+App.vue's message and participant plumbing is untouched — the subscription
+handler, `messageList` shape, `participants` mapping and `onMessageWasSent`
+mutation are all exactly as they were:
+
+- `messageList` items are `{ author, type: "text"|"emoji", data: { text|emoji,
+  meta }, nickName }`, with `author === "me"` marking the resident's own
+  messages
+- `participants` are `{ id: residentName, name: nickName, imageUrl }`
+- sending emits the library's `{ type, data: { text } }` shape, which is what
+  `onMessageWasSent` already destructures
+
+What did change in App.vue: `open` / `close` / `onMessageWasSent` were *props
+holding functions* and are now ordinary events, and the `text-message-body` and
+`user-avatar` slots moved inside the component — they were doing what a chat
+component should do itself. The `header` slot stayed. The template shrank from
+58 lines to 12.
+
+### A security fix came out of it
+
+The old `text-message-body` slot did **`v-html="scopedProps.messageText"`** on
+guild chat content. That was safe only because the library escaped and
+sanitised the text first. Reproducing the slot literally would have turned it
+into **stored XSS in guild chat** — any member could have scripted every other
+member's session.
+
+Message text is now interpolated as text. Verified live: a message whose body
+is `<img src=x onerror="window.__XSS=1">` renders as visible text, injects zero
+`<img>` elements, and does not execute. What is lost is auto-linked URLs and
+the library's light markdown; what goes with it is the `v-html` sink.
+`test/guildChat.test.js` fails if `v-html` reappears in either the component or
+App.vue's chat block.
+
+### Dropped deliberately
+
+**Edit and delete controls.** The library rendered them because `showEdition`
+and `showDeletion` were true — but **App.vue binds no `@edit` or `@remove`
+listener**, so both buttons emitted into nothing. They have never worked.
+
+**The emoji picker UI.** Emoji messages still render (`type: "emoji"` is
+handled) and typing an emoji works; only the picker widget is gone.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **112 tests** (was 104), production build.
+- **142 packages removed.** Bundle JS 2,817 → **2,456 kB**, a 361 kB drop.
+- **Vulnerabilities 150 → 50** across all of 4b-3; critical 22 → **14**, high
+  44 → **23**. Most of that is the `imagemin` tree this package was carrying.
+- **Mounted in the live app runtime** and driven end to end: header slot
+  renders, four bubbles with avatars only on other people's messages, emoji
+  message renders, sent messages right-aligned and received left-aligned in the
+  configured colours, typing binds the draft, Enter emits
+  `{type:"text",data:{text:"hello guild"}}` and clears it, blank Enter is
+  ignored, close swaps to the launcher and clicking it reopens, and a new
+  message scrolls the list to the bottom.
+
+> **Not verified:** the chat inside a real signed-in guild session, which needs
+> a resident account belonging to a guild. The component contract is exercised
+> above and the App.vue wiring is locked by tests, but the live subscription
+> round-trip has not been run. **Worth a manual pass before 4b-4**, alongside
+> the flyer designer.
 
 ---
 

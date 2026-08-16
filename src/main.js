@@ -12,8 +12,6 @@ import vuetify from "./plugins/vuetify";
 import filters from "./filters";
 import { VueMasonryPlugin } from "vue-masonry";
 import "vue2-animate/dist/vue2-animate.min.css";
-import Chat from "vue-beautiful-chat";
-Vue.use(Chat);
 
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";

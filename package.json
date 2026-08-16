@@ -65,7 +65,6 @@
     "vue": "^2.6.11",
     "vue-advanced-cropper": "^0.16.1",
     "vue-apollo": "^3.0.3",
-    "vue-beautiful-chat": "^2.5.0",
     "vue-draggable-resizable": "^2.1.0",
     "vue-masonry": "^0.16.0",
     "vue-router": "^3.1.6",

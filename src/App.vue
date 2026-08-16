@@ -483,21 +483,21 @@
           :h="300"
           v-if="resident && resident.guild !== null"
         >
-          <beautiful-chat
+          <!-- 4b-3c: vue-beautiful-chat replaced by src/components/GuildChat.vue.
+               The `open` / `close` / `onMessageWasSent` callback props are now
+               ordinary events; the message and participant shapes, the colors
+               object and the header slot are unchanged. The message-body and
+               user-avatar slots were doing what the component should do itself,
+               so they moved inside it. -->
+          <guild-chat
             class="chat-window"
             :participants="participants"
-            :isOpen="isChatOpen"
-            :open="openChat"
-            :onMessageWasSent="onMessageWasSent"
-            :close="closeChat"
-            :messageList="messageList"
-            :messageStyling="true"
-            :alwaysScrollToBottom="alwaysScrollToBottom"
-            :showEmoji="true"
-            :showEdition="true"
-            :showDeletion="true"
-            :showHeader="true"
+            :is-open="isChatOpen"
+            :message-list="messageList"
             :colors="colors"
+            @open="openChat"
+            @close="closeChat"
+            @send="onMessageWasSent"
           >
             <template v-slot:header>
               <v-avatar
@@ -507,40 +507,7 @@
                 resident.guild.guildFullName
               }}</v-btn>
             </template>
-
-            <template v-slot:text-message-body="scopedProps">
-              <p
-                class="sc-message--text-content"
-                v-html="scopedProps.messageText"
-              ></p>
-            </template>
-
-            <template v-slot:user-avatar="{ message, user }">
-              <div
-                class="d-flex justify-start align-end ml-n2"
-                v-if="user && user.name"
-              >
-                <v-col>
-                  <v-row class="mb-1" no-gutters dense>
-                    <v-avatar size="40" class="ml-2">
-                      <v-img :src="user.imageUrl" />
-                    </v-avatar>
-                  </v-row>
-                  <small
-                    class="ml-1 in-line-block"
-                    style="font-size: 10px; text-align: left"
-                    >{{ message.nickName }}</small
-                  ><br />
-                  <small
-                    style="color: red; font-size: 10px"
-                    v-if="message.data.meta"
-                  >
-                    {{ message.data.meta }}
-                  </small>
-                </v-col>
-              </div>
-            </template>
-          </beautiful-chat>
+          </guild-chat>
         </VueDraggableResizable>
       </v-main>
     </v-row>
@@ -1053,6 +1020,7 @@ import _ from "lodash";
 
 import Signin from "./components/Signin.vue";
 import Signup from "./components/Signup.vue";
+import GuildChat from "./components/GuildChat.vue";
 
 export default {
   name: "App",
@@ -1060,7 +1028,7 @@ export default {
     Signin,
     Signup,
     VueDraggableResizable,
-    // Chat
+    GuildChat,
   },
   data() {
     return {
@@ -1097,7 +1065,6 @@ export default {
       guildNewsDetails: null,
       isChatOpen: false,
       isGuildNewsOpen: false,
-      alwaysScrollToBottom: true,
       messageList: [],
       showTypingIndicator: "",
       guild: null,
