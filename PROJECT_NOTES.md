@@ -24,7 +24,8 @@ Running record of the staged upgrade, phase by phase.
 | 4c — Pinia + Apollo Client 3 | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-⚠️ One known regression is open on `master` — see "KNOWN REGRESSION" below.
+⚠️ One known regression is open on `master` (flyer card photos blank) —
+see "KNOWN REGRESSION" below. Root cause is NOT established.
 
 Run `npm run verify` after any change — lint, 77 tests, and a production build.
 Tests use Node's built-in runner; no test framework dependency.
@@ -684,44 +685,44 @@ tracked as 4a-ii.
 
 ## Open items and judgement calls
 
-### KNOWN REGRESSION — v-img fade-in never completes under Vite
+### KNOWN REGRESSION — flyer card photos do not render under Vite
 
-Card images do not appear. The data is present and correct: 10
-`.v-image__image` elements carry their base64 `background-image` (~42 kB each)
-at full size, but every one stays at `opacity: 0` indefinitely — re-checked
-after a 4s delay, 0 of 10 had faded in. Vuetify's `v-img` starts an image
-transparent and transitions it to `opacity: 1` on load; that step is not firing.
+**Status: real, but NOT correctly diagnosed. Treat prior explanations as unreliable.**
 
-This was twice mistaken for screenshot paint-timing before being measured. It
-is a real regression against the webpack build, where the same images rendered.
+The flyer cards on the home page render their border, SALE badge, vendor name,
+title and date, but the photo area is blank. Under the webpack build the same
+cards showed food photography, so this is a genuine regression introduced by the
+Vite migration.
 
-Everything else renders: toolbar, nav, flyer cards and their text, Google Maps
-with marker clustering, vendor sidebar, footer. No console errors.
+Two measurements taken minutes apart disagreed, which is why no root cause is
+claimed here:
 
-First place to look: whether Vuetify's transition components are registered
-under the full `vuetify` build the way `vuetify/lib` + vuetify-loader
-registered them, and whether `v-img`'s load handler runs at all (instrument
-`.v-image__image` for a class/style change after load).
+| Run | `.v-image__image` elements | with a `background-image` | fully opaque |
+|---|---|---|---|
+| 1 | 56 | 10 | 0 (still 0 after a 4s wait) |
+| 2 | 46 | **0** | 0 |
 
+In run 2, all 22 real `<img>` tags on the page were `complete` with
+`naturalWidth > 0` — the SALE badges, logos and map markers all load fine. So
+image loading as such is not broken; something specific to the flyer photo path
+is.
 
+The varying counts suggest the photos may be gated on scroll/intersection
+(the project depends on `vue-intersection-observer`) or populated
+asynchronously, which would make a single-snapshot measurement misleading —
+exactly the trap the first two attempts fell into.
 
-Things a future session (or reviewer) should know.
+**Do not trust the earlier "v-img fade-in never fires / opacity stuck at 0"
+explanation.** It fit run 1 and is contradicted by run 2.
 
-### Deliberate decisions
-
-1. **Guild management is leader-only** — gated on `Guild.guildLeader`, not the
-   numeric `rank` field. **Confirmed by the project owner on 2026-08-15:** only
-   the leader may manage members. (`guildRank` is `[1,2,3,4]` with joiners at
-   `1` and no label mapping anywhere, so rank ordering was ambiguous regardless.)
-
-2. **`gainLoseSilver` is only half-constrained.** `winner` is pinned to the
-   caller so it can only credit yourself; `loser` cannot be derived from a token
-   and remains a client value. Properly fixing this needs a server-side game
-   result, not an ownership check — it is a design change, out of scope here.
-
-3. **`callGroupPurchase` has no owner field** — it publishes a News item to all
-   clients and carries no vendor reference. Authenticated-vendor-only, but any
-   vendor can publish. Worth a product look.
+Suggested approach for whoever picks this up:
+1. Find how flyer photos are actually bound — `v-img :src`, a plain `<img>`, or
+   a CSS background — in `src/views/Home.vue` and the flyer card component.
+   The two runs disagreeing on element counts means the binding should be
+   identified before measuring anything.
+2. Compare that element's DOM against the webpack build (`git checkout 97f3c3a`)
+   side by side, rather than reasoning from Vite behaviour alone.
+3. Only then form a hypothesis.
 
 ### Phase 4a-ii — what the Vite migration still needs
 
