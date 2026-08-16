@@ -235,14 +235,20 @@
                                         v-bind="props" density="compact"
                                       ></v-text-field>
                                     </template>
+                                    <!-- v-model targets the dateModel computed:
+                                         Vuetify 3's picker emits a Date, the app
+                                         stores YYYY-MM-DD. @change never fired
+                                         under Vuetify 3 — the picker declares only
+                                         update:modelValue — so save() had silently
+                                         stopped running. -->
                                     <v-date-picker
                                       ref="picker"
-                                      v-model="birthday"
+                                      v-model="birthdayModel"
+                                      @update:model-value="save"
                                       :max="
                                         new Date().toISOString().substr(0, 10)
                                       "
                                       min="1940-01-01"
-                                      @change="save"
                                     ></v-date-picker>
                                   </v-menu>
                                 </v-col>
@@ -558,6 +564,7 @@ import CustomDialog from "./CustomDialog.vue";
 import AvatarCropper from "./AvatarCropper.vue";
 import { eventBus_profile } from "../eventBus";
 import { hobbies, religions, favoriteFood } from "../assets/constData";
+import { dateModel } from "../utils/dateModel";
 
 // import { eventBus_signout } from "../eventBus";
 
@@ -930,6 +937,9 @@ export default {
   },
 
   computed: {
+    // Vuetify 3's picker emits a Date; the app stores YYYY-MM-DD. See
+    // src/utils/dateModel.js for why the string model was kept.
+    birthdayModel: dateModel("birthday"),
     ...mapState(useMainStore, ["resident", "loading", "pets"]),
 
     mailingInfo() {

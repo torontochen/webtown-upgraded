@@ -244,10 +244,12 @@
                           :rules="fromDateRules"
                           ></v-text-field>
                       </template>
+                      <!-- v-model targets the dateModel computed: Vuetify 3's
+                           picker emits a Date, the app stores YYYY-MM-DD. @change
+                           is gone in Vuetify 3 — only update:modelValue is emitted. -->
                       <v-date-picker
-                          v-model="dateFrom"
-                          :show-current="currentDate"
-                          @change="fromPicker = false"
+                          v-model="dateFromModel"
+                          @update:model-value="fromPicker = false"
                           :min="currentDate"
                           :max="dateTo"
                       ></v-date-picker>
@@ -273,9 +275,8 @@
                           ></v-text-field>
                       </template>
                       <v-date-picker
-                          v-model="dateTo"
-                          :show-current="currentDate"
-                          @change="toPicker = false"
+                          v-model="dateToModel"
+                          @update:model-value="toPicker = false"
                           :min="dateFrom"
                       ></v-date-picker>
                       </v-menu>
@@ -466,10 +467,12 @@
                           :rules="fromDateRules"
                           ></v-text-field>
                       </template>
+                      <!-- v-model targets the dateModel computed: Vuetify 3's
+                           picker emits a Date, the app stores YYYY-MM-DD. @change
+                           is gone in Vuetify 3 — only update:modelValue is emitted. -->
                       <v-date-picker
-                          v-model="dateFrom"
-                          :show-current="currentDate"
-                          @change="fromPicker = false"
+                          v-model="dateFromModel"
+                          @update:model-value="fromPicker = false"
                           :min="currentDate"
                           :max="dateTo"
                       ></v-date-picker>
@@ -495,9 +498,8 @@
                           ></v-text-field>
                       </template>
                       <v-date-picker
-                          v-model="dateTo"
-                          :show-current="currentDate"
-                          @change="toPicker = false"
+                          v-model="dateToModel"
+                          @update:model-value="toPicker = false"
                           :min="dateFrom"
                       ></v-date-picker>
                       </v-menu>
@@ -562,6 +564,7 @@ import { useMainStore } from "../../store/store";
 import { GET_REWARD_ITEMS, GET_GAME_SHOP_SUBSTITUTE } from "../../queries/queries_query.js";
 import _ from "lodash";
 import moment from "moment"
+import { dateModel } from "../../utils/dateModel"
 
 export default {
   name: "vendorPromotions",
@@ -688,6 +691,10 @@ export default {
     },
   },
   computed: {
+    // Vuetify 3's picker emits a Date; the app stores YYYY-MM-DD. See
+    // src/utils/dateModel.js for why the string model was kept.
+    dateFromModel: dateModel("dateFrom"),
+    dateToModel: dateModel("dateTo"),
     ...mapState(useMainStore, 
       ["vendor", 
       "eventCategory", 

@@ -29,9 +29,10 @@ Running record of the staged upgrade, phase by phase.
 | 4b-5 — Vuetify 3 layout and component APIs | ✅ Done | `c7a4fa3`+ |
 | 4c — Vuex → Pinia | ✅ Done | `c867a20`+ |
 | 5 — Dependency cleanup | ✅ Done | `2afb41f`+ |
+| 5b — v-date-picker model | ✅ Done | `908d12d`+ |
 
 **All phases are complete.** The app runs on Vue 3.5 + Vuetify 3.13 + Vite 7 +
-Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 120 tests,
+Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 127 tests,
 build) and `npm run test:e2e` green (22 guard checks + 4 subscription checks)
 against live Atlas.
 
@@ -1444,15 +1445,16 @@ auto-imports it like anything else.
   authorization layer built in Phases 1a–1c and the graphql-ws transport are
   both intact after Vue 3, Vuetify 3 and Apollo Client 3.
 
-### Still open — and it needs a real date decision
+### `v-date-picker` — resolved, and the model stayed a string
 
-**`v-date-picker` (4 sites) was deliberately not converted.** Vuetify 3's picker
-binds a **`Date` object**; this app stores `dateFrom` / `dateTo` / `birthday` as
-strings and sends those strings to GraphQL. Converting means changing the model
-type and every read and write of those fields, including what goes over the
-wire — a data-shape change, not a template change, and one that would be
-unverifiable here because all four sites sit behind vendor or resident auth.
-Left as-is with this note rather than guessed at.
+Deferred at first because Vuetify 3's picker binds a `Date` while the app stores
+`YYYY-MM-DD` strings. Converting the model looked like a data-shape change
+across every read and write of `dateFrom` / `dateTo` / `birthday`. **Done now —
+see "Phase 5b" below.** Keeping the string turned out to be both the smaller
+change and the more correct one.
+
+Correction while doing it: this note said **4 sites**. There are **9** — the
+survey missed four in `VendorPromotions.vue`.
 
 The rest of the deferred list is unchanged: `v-data-iterator`'s slot API, and a
 manual pass over the flyer designer, guild chat, and the vendor tables and
@@ -1643,6 +1645,76 @@ state write anyway.
   `jsonwebtoken` / `bcrypt` / `nodemailer` stack.
 - Server boots clean; the app renders correctly on Vite 7 in the browser.
 - Installed package count down to **636**.
+
+---
+
+## Phase 5b — v-date-picker, keeping the string model ✅
+
+The last deferred item from 4b-5. Vuetify 3's picker binds a `Date`; the app
+stores `YYYY-MM-DD` strings. The question was which side should move.
+
+**The string won, on correctness rather than convenience.**
+
+### Why
+
+1. **The wire contract is already `String`.** `typeDefs.gql` types `dateFrom` /
+   `dateTo` as `String` in six places, and `resolvers/mutations/flyer.js` calls
+   `new Date(dateFrom)` before writing to Mongo. The client's model type buys
+   the server nothing.
+
+2. **A `Date` model introduces an off-by-one-day bug.** Vuetify's adapter parses
+   `YYYY-MM-DD` with `parseLocalDate` — *local* midnight — while the server's
+   `new Date("2025-02-28")` is *UTC* midnight and the read path renders through
+   `moment.utc`. That pipeline is UTC-consistent today. Let a Date flow through
+   it and a vendor in Sydney (UTC+11) picking the 28th stores 2025-02-27T13:00Z,
+   which renders back as **the 27th**. The string path never had that problem.
+
+3. **Blast radius.** Strings: one helper plus nine bindings. Dates: every read
+   and write of three fields, the `:min`/`:max` bounds, the validators, the
+   watchers and the `savedFlyer` round-trip — all behind auth.
+
+### The change
+
+`src/utils/dateModel.js` is the whole of it, because Vuetify's picker is
+**asymmetric**: its adapter accepts a `YYYY-MM-DD` string going *in*, so only
+the emitted `Date` needs converting on the way *out*. Components bind
+`v-model="dateFromModel"`, a computed built by `dateModel("dateFrom")`.
+
+`toDateString` reads the **local** date components rather than calling
+`toISOString()`. That is the entire point: the adapter built the Date at local
+midnight, so formatting it in UTC would move it back a day east of UTC.
+
+**Nine sites, not four** — the 4b-5 survey missed the four pickers in
+`VendorPromotions.vue`. Corrected above.
+
+### Two dead props found while wiring it
+
+- **`@change` fired on none of the nine.** Vuetify 3's picker declares only
+  `'update:modelValue'` in its emits. So `save` on the birthday field and the
+  `fromPicker = false` / `toPicker = false` menu-closers had all silently
+  stopped working at the 4b-4 flip. Now bound to `@update:model-value`.
+- **`:show-current`** does not exist in Vuetify 3 — no `showCurrent` anywhere in
+  `VDatePicker`. Removed.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **127 tests** (was 120), production build.
+- `npm run test:e2e` — 22/22 + 4/4 against live Atlas.
+- `test/dateModel.test.js` (7 tests) covers padding, nulls, invalid dates and
+  the local-components property, and is **run across five timezones** —
+  `UTC`, `Australia/Sydney`, `America/Toronto`, `Asia/Kolkata` and
+  `Pacific/Kiritimati` (UTC+14). It asserts that where the offsets differ, a
+  naive `toISOString()` gives a *different* answer, so the test is evidence
+  rather than a tautology on a UTC machine.
+- Against **Vuetify's real adapter in the browser**: `adapter.date(s)` returns a
+  Date at local midnight for all of `2025-01-05`, `2025-02-28`, `2025-12-31`,
+  `2024-02-29` and the `1940-01-01` min bound, and every one round-trips back
+  through `toDateString` unchanged.
+
+> Still unexercised: the pickers **in their own screens**, which need a vendor
+> account and a resident account. The seam is verified against the real
+> adapter, and the invariant that every picker binds a `*Model` computed with no
+> `@change` is locked by a test — but the surrounding forms have not been run.
 
 ---
 

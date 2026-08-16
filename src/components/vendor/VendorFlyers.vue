@@ -553,10 +553,13 @@
                                   class="mx-2"
                                 ></v-text-field>
                               </template>
+                              <!-- v-model targets the dateModel computed: Vuetify 3's
+                                   picker emits a Date, the app stores YYYY-MM-DD.
+                                   @change is gone in Vuetify 3 — the picker only
+                                   emits update:modelValue. -->
                               <v-date-picker
-                                v-model="dateFrom"
-                                :show-current="currentDate"
-                                @change="fromPicker = false"
+                                v-model="dateFromModel"
+                                @update:model-value="fromPicker = false"
                                 :min="currentDate"
                                 :max="dateTo"
                               ></v-date-picker>
@@ -581,9 +584,8 @@
                                 ></v-text-field>
                               </template>
                               <v-date-picker
-                                v-model="dateTo"
-                                :show-current="currentDate"
-                                @change="toPicker = false"
+                                v-model="dateToModel"
+                                @update:model-value="toPicker = false"
                                 :min="dateFrom"
                               ></v-date-picker>
                             </v-menu>
@@ -1172,6 +1174,7 @@ import {
   eventBus_saveFlyer,
 } from "../../eventBus";
 import {GET_TARGET_DISTRIBUTE_RESIDENT} from '../../queries/queries_query'
+import { dateModel } from "../../utils/dateModel";
 
 
 
@@ -1671,6 +1674,12 @@ export default {
     }
   },
   computed: {
+    // Vuetify 3's picker emits a Date; the app stores YYYY-MM-DD. See
+    // src/utils/dateModel.js for why the string model was kept.
+    dateFromModel: dateModel("dateFrom"),
+    // Vuetify 3's picker emits a Date; the app stores YYYY-MM-DD. See
+    // src/utils/dateModel.js for why the string model was kept.
+    dateToModel: dateModel("dateTo"),
     ...mapState(useMainStore, [
       "allItemsCatalog",
       "pagePreview",

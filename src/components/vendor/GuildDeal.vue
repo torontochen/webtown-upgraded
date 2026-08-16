@@ -207,10 +207,13 @@
                         :disabled="guildDealLevels.length>0"
                         ></v-text-field>
                     </template>
+                    <!-- v-model targets the dateModel computed: Vuetify 3's
+                         picker emits a Date, the app stores YYYY-MM-DD. The
+                         @change that used to close the menu is gone in
+                         Vuetify 3 — the picker only emits update:modelValue. -->
                     <v-date-picker
-                        v-model="dateFrom"
-                        :show-current="currentDate"
-                        @change="fromPicker = false"
+                        v-model="dateFromModel"
+                        @update:model-value="fromPicker = false"
                         :min="currentDate"
                         :max="dateTo"
                     ></v-date-picker>
@@ -237,9 +240,8 @@
                         ></v-text-field>
                     </template>
                     <v-date-picker
-                        v-model="dateTo"
-                        :show-current="currentDate"
-                        @change="toPicker = false"
+                        v-model="dateToModel"
+                        @update:model-value="toPicker = false"
                         :min="dateFrom"
                     ></v-date-picker>
                     </v-menu>
@@ -449,6 +451,7 @@ import { useMainStore } from "../../store/store";
 import { GET_REWARD_ITEMS } from "../../queries/queries_query"
 import moment from 'moment'
 import _ from "lodash"
+import { dateModel } from "../../utils/dateModel"
 
 export default {
     name: "guildDeal",
@@ -556,6 +559,12 @@ export default {
     },
 
     computed: {
+        // Vuetify 3's picker emits a Date; the app stores YYYY-MM-DD. See
+        // src/utils/dateModel.js for why the string model was kept.
+        dateFromModel: dateModel("dateFrom"),
+        // Vuetify 3's picker emits a Date; the app stores YYYY-MM-DD. See
+        // src/utils/dateModel.js for why the string model was kept.
+        dateToModel: dateModel("dateTo"),
     ...mapState(useMainStore, ["vendor", "rewardItems", "allItemsCatalog", "guildDeals"]),
 
     currentDate() {
