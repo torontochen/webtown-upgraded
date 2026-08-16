@@ -681,6 +681,27 @@ tracked as 4a-ii.
 
 ## Open items and judgement calls
 
+### KNOWN REGRESSION — v-img fade-in never completes under Vite
+
+Card images do not appear. The data is present and correct: 10
+`.v-image__image` elements carry their base64 `background-image` (~42 kB each)
+at full size, but every one stays at `opacity: 0` indefinitely — re-checked
+after a 4s delay, 0 of 10 had faded in. Vuetify's `v-img` starts an image
+transparent and transitions it to `opacity: 1` on load; that step is not firing.
+
+This was twice mistaken for screenshot paint-timing before being measured. It
+is a real regression against the webpack build, where the same images rendered.
+
+Everything else renders: toolbar, nav, flyer cards and their text, Google Maps
+with marker clustering, vendor sidebar, footer. No console errors.
+
+First place to look: whether Vuetify's transition components are registered
+under the full `vuetify` build the way `vuetify/lib` + vuetify-loader
+registered them, and whether `v-img`'s load handler runs at all (instrument
+`.v-image__image` for a class/style change after load).
+
+
+
 Things a future session (or reviewer) should know.
 
 ### Deliberate decisions
