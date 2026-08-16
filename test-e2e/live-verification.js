@@ -170,9 +170,13 @@ const errMsg = (r) => (r.errors && r.errors[0] && r.errors[0].message) || "";
 
     // --- 1c: queries --------------------------------------------------------
     console.log("\nPHASE 1c — queries");
+    // Phase 1c locked getResidentList to vendors and flagged it for deletion —
+    // it dumped residentName + firstName + lastName for every resident and had
+    // no caller anywhere in src/. Phase 5 removed it outright, so the check is
+    // now that the field does not exist rather than that it rejects.
     const rl = await gql(`{ getResidentList { residentName firstName lastName } }`);
-    check("anonymous getResidentList rejected (was a full name dump)",
-      errName(rl) === "AuthenticationError", errMsg(rl));
+    check("getResidentList no longer exists in the schema at all",
+      /Cannot query field "getResidentList"/.test(errMsg(rl)), errMsg(rl));
 
     const ai = await gql(`{ getAIResponse(prompt:[{role:"user",content:"hi"}]) { message } }`);
     check("anonymous getAIResponse rejected (was billable)",

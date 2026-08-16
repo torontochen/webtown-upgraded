@@ -30,6 +30,19 @@ export default defineConfig({
     chunkSizeWarningLimit: 3000,
   },
 
+  // Phase 5: keep console.log out of production bundles.
+  //
+  // Phase 3b gave the server a leveled logger and converted its 27 call sites.
+  // The client still has ~200, and they are useful while developing — so they
+  // are dropped at build time rather than deleted from the source. Marking them
+  // `pure` lets esbuild tree-shake the calls once their result is unused.
+  //
+  // console.error and console.warn are deliberately kept: a production console
+  // should still say something when a GraphQL call fails.
+  esbuild: {
+    pure: ["console.log", "console.debug", "console.dir"],
+  },
+
   optimizeDeps: {
     include: ["vue", "vuetify", "@apollo/client/core", "graphql", "quill"],
   },

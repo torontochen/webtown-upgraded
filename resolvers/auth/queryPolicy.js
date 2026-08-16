@@ -121,7 +121,6 @@ const QUERY_POLICY = {
   // anonymous caller — a full dump of the user base's real names. It has no
   // caller anywhere in src/, so this is dead code; locked to vendors for now
   // and flagged for deletion in Phase 5.
-  getResidentList: VENDOR,
 };
 
 module.exports = { QUERY_POLICY };

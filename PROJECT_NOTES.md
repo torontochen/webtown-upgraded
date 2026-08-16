@@ -28,13 +28,22 @@ Running record of the staged upgrade, phase by phase.
 | 4b-4 — The flip: Vue 3 + Vuetify 3 | ✅ Done | `cfa820a`+ |
 | 4b-5 — Vuetify 3 layout and component APIs | ✅ Done | `c7a4fa3`+ |
 | 4c — Vuex → Pinia | ✅ Done | `c867a20`+ |
-| 5 — Dependency cleanup | Not started | |
+| 5 — Dependency cleanup | ✅ Done | `2afb41f`+ |
 
-**Phases 4b and 4c are complete.** The app runs on Vue 3 + Vuetify 3 + Vuetify's own
-tree-shaking, with `npm run verify` green (0 lint errors, 112 tests, build) and
-`npm run test:e2e` green (22 guard checks + 4 subscription checks) against live
-Atlas. What remains is a manual pass over the authenticated screens — see
-"Phase 4b-5" for the list.
+**All phases are complete.** The app runs on Vue 3.5 + Vuetify 3.13 + Vite 7 +
+Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 120 tests,
+build) and `npm run test:e2e` green (22 guard checks + 4 subscription checks)
+against live Atlas.
+
+| | Start | Now |
+|---|---|---|
+| Vulnerabilities | 204 (30 critical) | **8 (0 critical)** |
+| Dependencies | 62 direct | **40 + 12 dev** |
+| Client bundle | did not build | **2,124 kB** |
+| Tests | 0 | **120 unit + 26 live** |
+
+What remains is a manual pass over the authenticated screens — see "Phase 4b-5"
+— and the deliberate gaps listed under "Open items".
 
 ✅ No known regressions are open. The "flyer card photos blank" report was
 investigated on 2026-08-16 and **closed as not a bug** — see
@@ -1531,6 +1540,109 @@ ones and both of these had to be dealt with:
   promotion events, 41 vendors, 12 guilds, 17 news items, 4 pets. Driving the
   store directly: a former mutation writes state, `getPets()` refetches and
   repopulates, and Pinia's `$patch` / `$state` work. No console errors.
+
+---
+
+## Phase 5 — dependency cleanup ✅
+
+**Vulnerabilities 41 → 8, critical 14 → 0.** Against the Phase 0 baseline of
+**204 (30 critical)**, that is the headline number for the whole upgrade.
+
+### Dead dependencies removed
+
+Found by matching every declared dependency against real `import` / `require` /
+side-effect-import / npm-script / CI references:
+
+| Removed | Why |
+|---|---|
+| `animate.css` | No `animate__*` class anywhere. The `animated-*.gif` filenames are unrelated |
+| `gmail-nodemailer-transport`, `nodemailer-smtp-transport` | `server.js` calls `nodemailer.createTransport({ service: "gmail" })` directly |
+| `graphql-tools` (v7) | Superseded by `@graphql-tools/schema`, which is what `server.js` imports |
+| `jwt-decode` | Only in a commented-out block |
+| `quill-image-drop-module` | Only in a commented-out `customModules` entry |
+| `@fortawesome/fontawesome-free`, `@mdi/font`, `@mdi/js`, `material-design-icons-iconfont` | All commented out in `plugins/vuetify.js`; icons come from the CDN link in `index.html` |
+| `src/components/ClientViewFlyer.vue` | A 0-byte file with no importer |
+
+**One of those removals was wrong and the build caught it.** `autoprefixer` and
+`postcss` looked unreferenced because the PostCSS config lives in a `postcss`
+key inside **package.json**, not a `postcss.config.js`. Autoprefixer was
+running. Both restored — the CSS output hash is byte-identical to before, which
+is the proof.
+
+`express-handlebars` was removed and then restored for a different reason: v4 of
+`nodemailer-express-handlebars` bundled it as a regular dependency, but **v7
+declares it as a peer**, so it has to be direct. Pinned to `8.0.1` — 8.0.2+
+requires Node ≥22.14 and this project targets Node 20.
+
+### `getResidentList` deleted
+
+Phase 1c locked it to vendors and flagged it for deletion: it returned
+`residentName` + `firstName` + `lastName` for **every resident** and had no
+caller anywhere in `src/`. Gone now — resolver, policy entry, schema field and
+the `ResidentListItem` type. **Deleting an endpoint beats guarding one.** The
+unit test and the live e2e check both now assert the field does not exist rather
+than that it rejects.
+
+### Upgrades
+
+| | From | To | Notes |
+|---|---|---|---|
+| `puppeteer` | 10.4 | **24.43** | The big one — 14 majors. Not 25, which requires Node ≥22 |
+| `jsonwebtoken` | 8.5 | **9.0** | The Phase 1a auth core |
+| `bcrypt` | 5.1 | **6.0** | |
+| `nodemailer` | 6.4 | **9.0** | |
+| `nodemailer-express-handlebars` | 4.0 | **7.0** | Brought the peer-dependency change above |
+| `nodemon` | 2.0 | **3.1** | Also moved to devDependencies, where it belongs |
+| `vite` | 5.4 | **7.3** | Cleared the Vite path-traversal and esbuild dev-server advisories |
+
+`engines.node` corrected from `>=18 <21` to `>=20 <21`, which is what
+`express-handlebars@8` actually requires.
+
+**Puppeteer was verified functionally, not just by a green build.** It renders
+the flyer client-view preview, which is behind vendor auth — so a throwaway
+script drove the exact API sequence `resolvers/queries/flyer.js` uses:
+`launch → newPage → setViewport → setContent → screenshot({ encoding: "base64",
+quality, type: "jpeg", clip })`. Across 14 majors that still returns a base64
+string whose first two bytes are the JPEG magic number `ffd8`.
+
+`jsonwebtoken` 9 and `bcrypt` 6 are covered by something better than a unit
+test: the live e2e suite signs users in and exercises all 22 guard checks.
+
+### `console.log` in the client
+
+Phase 3b gave the server a leveled logger; the client still had ~200 calls.
+Rather than a 200-line diff, `vite.config.mjs` marks `console.log` /
+`.debug` / `.dir` as **`pure`**, so esbuild tree-shakes them out of production
+builds. Verified: **197 → 5** in the bundle (the survivors are third-party code
+where the return value is used), while **`console.error` and `.warn` are kept
+at 114** — a production console should still say something when a GraphQL call
+fails.
+
+The 13 live logs in `store/mutations.js` were deleted outright: each just
+echoed the value assigned on the line above, and Pinia devtools shows every
+state write anyway.
+
+> A codemod bug worth recording: the first attempt used `console\.log\([^;]*\)`,
+> and `[^;]` matches newlines — so it swallowed **nine mutation bodies**. The
+> `every $store member resolves to a state key or an action` test written in
+> Phase 4c caught it immediately. Redone line-anchored with `[^\n]*`.
+
+### What is left, and why
+
+| Advisory | Why it stays |
+|---|---|
+| `puppeteer` / `puppeteer-core` / `@puppeteer/browsers` / `extract-zip` (4 high) | Unfixed upstream. npm's suggested "fix" is puppeteer **19.8.0** — a downgrade from the 24 installed. The path is `extract-zip`, used when downloading a browser at install time, not at request time |
+| `quill` + `quill-image-resize-module` (2 moderate) | `fixAvailable: false`. Quill 2 is a breaking change and this app registers custom font/size attributors against Quill 1, plus `quill-image-resize-module` requires it |
+| `@apollo/server` + `uuid` (2 moderate) | Fix is Apollo Server **5**, a major migration on the scale of Phase 3a. Out of scope for a cleanup phase |
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **120 tests**, production build. Bundle
+  2,139 → **2,124 kB**.
+- `npm run test:e2e` — **22/22 + 4/4** against live Atlas, on the upgraded
+  `jsonwebtoken` / `bcrypt` / `nodemailer` stack.
+- Server boots clean; the app renders correctly on Vite 7 in the browser.
+- Installed package count down to **636**.
 
 ---
 

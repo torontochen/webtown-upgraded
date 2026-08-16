@@ -878,11 +878,6 @@ type Resident {
   targetFlyers: [SingleTargetFlyer]
 }
 
-type ResidentListItem{
-  residentName: String
-  firstName: String
-  lastName: String
-}
 
 type ResidentSilverRecord {
   date: String
@@ -1381,7 +1376,6 @@ type Query {
   getPromotionEvents: [PromotionEvent]
   getRewardItems: [RewardItem]
   getRestaurantCategory: RestCategory!
-  getResidentList: [ResidentListItem]
   getResidentOrders(resident: String): [ResidentOrder]
   getMetroSpec: MetroSpec
   getShoppingCart(resident: String): [ShoppingCartItem]

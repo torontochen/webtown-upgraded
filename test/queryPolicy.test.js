@@ -110,9 +110,19 @@ test("session probes stay public so anonymous page loads work", () => {
 // The disclosures this phase closed
 // ---------------------------------------------------------------------------
 
-test("getResidentList is no longer anonymously readable", async () => {
-  // Returned residentName + firstName + lastName for every resident.
-  await rejectsAnonymously("getResidentList");
+test("getResidentList is gone entirely", () => {
+  // Phase 1c locked it to vendors and flagged it for deletion: it returned
+  // residentName + firstName + lastName for every resident, and had no caller
+  // anywhere in src/. Phase 5 deleted the resolver, the policy entry, the
+  // schema field and the ResidentListItem type. Deleting an endpoint beats
+  // guarding one.
+  assert.ok(!("getResidentList" in QUERY_POLICY), "policy entry still present");
+  const schema = fs.readFileSync(
+    path.join(__dirname, "..", "typeDefs.gql"),
+    "utf8"
+  );
+  assert.ok(!/getResidentList/.test(schema), "schema field still present");
+  assert.ok(!/ResidentListItem/.test(schema), "ResidentListItem type still present");
 });
 
 test("getAIResponse is no longer anonymously callable", async () => {
@@ -186,7 +196,7 @@ test("vendor design assets are scoped to the owning vendor", async () => {
 
 test("queries returning personal or billable data are never public", () => {
   const mustNotBePublic = [
-    "getResidentList", "getResidentOrders", "getShoppingCart", "getGeoLocation",
+    "getResidentOrders", "getShoppingCart", "getGeoLocation",
     "getAIResponse", "getVendorOrders", "getVendorSalesInfo",
     "getVendorSettlementRecords", "getVendorCheckoutInfos",
     "getTargetDistributeResident", "getGuildChatMessages",

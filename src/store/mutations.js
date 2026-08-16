@@ -13,7 +13,6 @@
 const mutations = {
   setActiveFlyerList(payload) {
     this.activeFlyerList = payload;
-    console.log(this.activeFlyerList )
   },
 
   setAuthError(payload) {
@@ -27,11 +26,9 @@ const mutations = {
 
   setAllGuildDeals(payload) {
     this.allGuildDeals = payload
-    console.log(this.allGuildDeals)
   },
 
   setCityHall(payload) {
-    console.log(this.cityHall)
     this.cityHall = payload
   },
 
@@ -114,12 +111,10 @@ const mutations = {
 
   setGuildDeals(payload) {
     this.guildDeals = payload
-    console.log(this.guildDeals)
   },
 
   setGuildDealsStatus(payload) {
     this.guildDealsStatus = payload
-    console.log(this.guildDealsStatus )
   },
 
 
@@ -153,7 +148,6 @@ const mutations = {
 
   setLoading(payload) {
     this.loading = payload;
-    console.log('loading',this.loading)
   },
 
   setMarkerList(payload) {
@@ -177,7 +171,6 @@ const mutations = {
 
   setNews(payload) {
     this.news = payload
-    console.log(this.news)
   },
 
   setPets(payload) {
@@ -223,7 +216,6 @@ const mutations = {
 
   setResidentOrders(payload) {
     this.residentOrders = payload
-    console.log(this.residentOrders)
   },
 
   setRewardItems(payload) {
@@ -302,7 +294,6 @@ const mutations = {
 
   setVendor(payload) {
     this.vendor = payload;
-     console.log(this.vendor);
   },
 
   setVendorHomeLoading(payload) {
@@ -311,7 +302,6 @@ const mutations = {
   },
 
   setVendorFlyers(payload) {
-    console.log(this.vendorFlyers )
     this.vendorFlyers = payload
   },
 
@@ -322,7 +312,6 @@ const mutations = {
 
   setVendorOrders(payload) {
     this.vendorOrders = payload
-    console.log(this.vendorOrders)
   },
 
   setVendorSalesInfo(payload) {
@@ -331,12 +320,10 @@ const mutations = {
 
   setVendorSettlementRecords(payload) {
     this.vendorSettlementRecords = payload
-    console.log(this.vendorSettlementRecords)
   },
 
   setVendorPromotionEvents(payload) {
     this.vendorPromotionEvents = payload
-    console.log(this.vendorPromotionEvents)
   },
 
   setVendorInterface(payload) {

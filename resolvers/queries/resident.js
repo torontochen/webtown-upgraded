@@ -156,10 +156,6 @@ module.exports = {
   return shoppingCartItems
   },
 
-  getResidentList: async(_, args, {Resident}) => {
-    const list = await Resident.find({}).select(['residentName', 'firstName', 'lastName'])
-    return list
-  },
 
   getTargetDistributeResident: async(_, 
     { age, 
