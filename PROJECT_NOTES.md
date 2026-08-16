@@ -23,7 +23,8 @@ Running record of the staged upgrade, phase by phase.
 | 4b-1 — Template filters removed | ✅ Done | `3e2fe6d`+ |
 | 4b-2 — `.native`, `.sync`, dead plugins | ✅ Done | `8f15d16`+ |
 | 4b-3a — Observer, mask, masonry | ✅ Done | `07a0438`+ |
-| 4b-3b — vue2-editor, vue-beautiful-chat | Not started | |
+| 4b-3b — vue2-editor, vue-advanced-chat | ✅ Done | `f6b1cdf`+ |
+| 4b-3c — vue-beautiful-chat | Blocked — needs a product decision | |
 | 4b-4 — The flip: Vue 3 + Vuetify 3 | Not started | |
 | 4c — Pinia + Apollo Client 3 | Not started | |
 | 5 — Dependency cleanup | Not started | |
@@ -795,8 +796,9 @@ installed in the same commit as `vue@3`.
 | ~~`vue-the-mask`~~ | 2 (+1 dead import) | ✅ 4b-3a — local directive |
 | ~~`vue-masonry` 0.13~~ | Home.vue | ✅ 4b-3a — bumped to 0.16, which spans both majors |
 | ~~`portal-vue`~~ | 0 | ✅ Deleted in 4b-2 |
-| `vue2-editor` | 1 (VendorFlyers.vue) | **4b-3b.** Quill is already a direct dependency and already initialised in `src/quill-setup.js`, so a local wrapper is the shape of the fix. `@vueup/vue-quill` is the off-the-shelf option but is Vue 3 only, which would make it a 4b-4 item instead |
-| `vue-beautiful-chat` | 1 (`<beautiful-chat>` in App.vue) | **4b-3b.** No Vue 3 version at any major, and the usage is real — guild chat with participants, message list and four callbacks. Needs a product decision, not a swap |
+| ~~`vue2-editor`~~ | 1 (VendorFlyers.vue) | ✅ 4b-3b — local Quill wrapper |
+| ~~`vue-advanced-chat`~~ | 0 | ✅ 4b-3b — dead, deleted |
+| `vue-beautiful-chat` | 1 (`<beautiful-chat>` in App.vue) | **4b-3c, blocked.** No Vue 3 version at any major, and the usage is real — guild chat with participants, message list, four callbacks and a custom scoped-slot message template. Needs a product decision, not a swap |
 
 **4b-4 — must be installed alongside `vue@3`:**
 
@@ -805,7 +807,7 @@ installed in the same commit as `vue@3`.
 | `vue-advanced-cropper` | 0.16 → 2.x |
 | `vue-draggable-resizable` | 2.x → 3.x (also releases the 3 remaining `.native` sites) |
 | `@chenfengyuan/vue-qrcode` | 1.x → 2.x |
-| `vue-advanced-chat` | 1.5 → 2.x, which is a web component and mounts differently |
+| ~~`vue-advanced-chat`~~ | Not needed — it was dead, and is deleted (4b-3b) |
 | `vue-router` / `vuex` / `vue-apollo` | 3 → 4 / 3 → 4 / 3 → `@vue/apollo-option` 4 |
 
 `vue2-animate` is CSS only and does not gate anything.
@@ -1027,6 +1029,87 @@ that makes the range work) and `mitt`, both tiny. No API change: `v-masonry`,
 > "update the rendering" step that `requestAnimationFrame` belongs to, so a
 > non-painting page skips both — the same mechanism as the flyer-photo
 > non-regression above. Always take the screenshot first.
+
+---
+
+## Phase 4b-3b — the rich-text editor, and a chat nobody was using ✅
+
+### `vue2-editor` → `src/components/QuillEditor.vue`
+
+`<vue-editor>` drives the flyer designer's rich-text pane. vue2-editor is a
+Vue 2 SFC with no Vue 3 release, and the off-the-shelf successor
+(`@vueup/vue-quill`) has `peerDependencies { vue: ^3.2.41 }` — so taking it
+would push this into 4b-4. A local wrapper keeps it here, and Quill is already
+a direct dependency initialised in `src/quill-setup.js`.
+
+Four things were checked before writing a line, because a faithful replacement
+matters more than a tidy one here:
+
+1. **vue2-editor does not bundle Quill** — it does `import Quill from "quill"`.
+   So it was always driving the same singleton that VendorFlyers.vue registers
+   its custom font and size attributors against. The swap cannot silently split
+   that into two copies.
+2. **Its injected CSS was Quill 1.3.6's core + snow and nothing else** — it
+   defines no rules of its own for `.quillWrapper`. Importing
+   `quill/dist/quill.snow.css` (from the installed 1.3.7) covers it.
+3. **The picker labels for this project's custom fonts and sizes are already in
+   `index.html`**, so the toolbar's appearance never depended on the package.
+4. **The call site binds no event listeners at all** — only six props. So
+   `ready` / `focus` / `blur` / `text-change` / `selection-change` /
+   `editor-change` did not need reproducing, nor did
+   `useCustomImageHandler`, `useMarkdownShortcuts`, the `toolbar` slot or the
+   `id` prop.
+
+What *is* reproduced exactly: the `mergeDeep` used to fold `editorOptions` into
+the config (including deleting the default toolbar when the options supply
+one), the focus guard on the `value` watcher that stops the caret jumping
+mid-word, and — the easy one to lose — **normalising Quill's empty document
+`<p><br></p>` to `""`**, so an emptied editor does not save a stray paragraph
+into the flyer element.
+
+Deviation, deliberate: vue2-editor substituted its own default toolbar when
+none was passed. The single call site always passes one, so this falls back to
+Quill's default rather than carrying a copy of theirs.
+
+### `vue-advanced-chat` deleted — it was already dead
+
+Found while looking for what could replace beautiful-chat. In **both** App.vue
+and Home.vue the component import and its registration were commented out; only
+`import "vue-advanced-chat/dist/vue-advanced-chat.css"` was still live, pulling
+in **46 kB of CSS for a component that is never rendered**. All 218 of its
+selectors are `vac-` prefixed, so nothing else could have depended on them.
+
+Removed, along with 6 packages. It also drops off the 4b-4 bump list.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **104 tests** (was 97), production build.
+- Bundle: JS 2,852 → **2,817 kB**, CSS 719 → **695 kB**. The CSS moves the other
+  way first (Quill's sheet is now a real stylesheet rather than JS-injected
+  strings) and then comes down further when vue-advanced-chat goes.
+- Home page renders unchanged after the App.vue / Home.vue edits, with **no Vue
+  warnings and no unresolved components** on a clean load.
+- **The editor was mounted in the live app runtime** — dynamically imported and
+  instantiated against a detached root — and checked end to end:
+
+| Check | Result |
+|---|---|
+| Toolbar renders with the project's own whitelists | font `arial, garamond, tahoma, verdana`; size `null, 0.75em, 1.5em, 2.5em`; image button present |
+| Snow theme styles applied | `.ql-toolbar` border-bottom 1px, labels read "Arial"/"Normal" |
+| `customModules` | registered **and instantiated** — so `imageResize` will attach |
+| `editorOptions` deep-merged | proven by the probe module being constructed |
+| Seeded `value` | rendered, and not echoed back over the model |
+| Typing / formatting | `<p>hello world</p>`, `<p><strong>hello</strong> world</p>` |
+| Emptying | Quill holds `<p><br></p>`, component emits `""` |
+| Parent-driven change while unfocused | applied |
+| `disabled` | `quill.isEnabled()` false, `ql-disabled` class on, reversible |
+| Destroy | listener detached, `quill` nulled |
+
+> **Not verified:** the editor inside VendorFlyers.vue's flyer designer, which
+> is behind vendor authentication. The component contract is exercised above
+> and by `test/quillEditor.test.js`, but the surrounding flyer flow — saving a
+> sketch, the `imageResize` handles on a real image — has not been run.
+> **Worth a manual pass with a vendor account before 4b-4.**
 
 ---
 

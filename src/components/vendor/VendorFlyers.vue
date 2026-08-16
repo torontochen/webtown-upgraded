@@ -1182,7 +1182,8 @@ import { mapGetters } from "vuex";
 import ImageResize from "quill-image-resize-module";
 import moment from "moment";
 //Set up font and font-size for Quill
-import { VueEditor, Quill } from "vue2-editor";
+import Quill from "../../quill-setup";
+import QuillEditor from "../QuillEditor.vue";
 import gmapsInit from "../../utils/gmaps";
 // import addMarkers from "../utils/addMarkers";
 import markerClusterer from "@google/markerclusterer";
@@ -1220,7 +1221,7 @@ Quill.register(Size, true);
 
 export default {
   components: {
-    "vue-editor": VueEditor,
+    "vue-editor": QuillEditor,
     "html-converter": HtmlConverter,
     "flyer-coupon": FlyerCoupon,
     CustomDialog,

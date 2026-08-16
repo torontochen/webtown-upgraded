@@ -1027,8 +1027,6 @@
 <script>
 import moment from "moment";
 import { mapGetters } from "vuex";
-// import ChatWindow from 'vue-advanced-chat'
-// import 'vue-advanced-chat/dist/vue-advanced-chat.css'
 import VueDraggableResizable from "vue-draggable-resizable";
 import "vue-draggable-resizable/dist/VueDraggableResizable.css";
 
@@ -1061,7 +1059,6 @@ export default {
   components: {
     Signin,
     Signup,
-    // ChatWindow,
     VueDraggableResizable,
     // Chat
   },
