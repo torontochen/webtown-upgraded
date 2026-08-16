@@ -22,8 +22,8 @@
                 cols="4"
                 >
                     <v-hover>
-                        <template v-slot:default="{ hover }">
-                                <v-img
+                        <template v-slot:default="{ isHovering: hover, props }">
+                                <v-img v-bind="props"
                                 :src="photo"
                                 :lazy-src="photo"
                                 aspect-ratio="1"
@@ -33,8 +33,8 @@
                                 :lazy-src="`/${vendor}/${photo}`" -->
                                 <v-fade-transition>
                                     <v-overlay
-                                    v-if="hover"
-                                    absolute
+                                    :model-value="hover"
+                                    contained
                                     color="#036358"
                                     class="d-flex justify-center align-center"
                                     >

@@ -604,7 +604,6 @@
                                       <v-time-picker
                                         v-if="menu1"
                                         v-model="openTime"
-                                        full-width
                                         @click:minute="$refs.open.save(openTime)"
                                       ></v-time-picker>
                                     </v-menu>
@@ -635,7 +634,6 @@
                                         <v-time-picker
                                           v-if="menu2"
                                           v-model="closeTime"
-                                          full-width
                                           @click:minute="$refs.close.save(closeTime)"
                                         ></v-time-picker>
                                       </v-menu>

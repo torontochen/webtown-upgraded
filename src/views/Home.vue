@@ -453,8 +453,7 @@
         <v-data-table
           :headers="flyerHeaders"
           :items="savedFlyerList"
-          :sort-by="['flyerId']"
-          :sort-desc="[false, true]"
+          :sort-by="[{ key: 'flyerId', order: 'asc' }]"
           :items-per-page="6"
           class="elevation-1"
           @click:row="handleFlyerSelected"
@@ -489,8 +488,7 @@
         <v-data-table
           :headers="headers"
           :items="sketchList"
-          :sort-by="['flyerId']"
-          :sort-desc="[false, true]"
+          :sort-by="[{ key: 'flyerId', order: 'asc' }]"
           :items-per-page="6"
           class="elevation-1"
           @click:row="handleSketchSelected"
@@ -506,8 +504,7 @@
         <v-data-table
           :headers="templateHeaders"
           :items="templateList"
-          :sort-by="['templateId']"
-          :sort-desc="[false, true]"
+          :sort-by="[{ key: 'templateId', order: 'asc' }]"
           :items-per-page="6"
           class="elevation-1"
           @click:row="handleTemplateSelected"
@@ -579,7 +576,7 @@
       <v-col cols="8" id="left" class="ml-lg-16 ml-xl-8">
         <v-container class="ml-5">
           <div
-            v-masonry
+            v-masonry="'masonry'"
             id="masonry"
             transition-duration="3s"
             item-selector=".item"
@@ -597,8 +594,8 @@
               :key="index"
             >
               <v-hover>
-                <template v-slot:default="{ hover }">
-                  <Observer
+                <template v-slot:default="{ isHovering: hover, props }">
+                  <Observer v-bind="props"
                     @on-change="onChange"
                     :id="index"
                     :threshold="threshold"
@@ -630,7 +627,7 @@
                           class="d-flex flex-column justify-start align-center"
                         >
                           <v-card flat class="rounded mb-1" width="70">
-                            <v-img :src="event.vendorLogo"> </v-img>
+                            <v-img :src="event.vendorLogo" @load="redrawMasonry"> </v-img>
                           </v-card>
                           <span
                             class="text-subtitle-2 text-center text-primary d-inline"
@@ -646,19 +643,20 @@
 
                       <!-- </v-card-text> -->
                       <v-divider color="accent"></v-divider>
-                      <v-row>
-                        <!-- <v-card-subtitle class="text-caption">{{ $filters.convertDate(event.dateFrom) }}</v-card-subtitle> -->
-                        <!-- <v-card-subtitle class="text-caption"> </v-card-subtitle> -->
-                        <v-spacer /><v-card-subtitle
-                          class="text-caption text-center"
-                          >up to
-                          {{ $filters.convertDate(event.dateTo) }}</v-card-subtitle
-                        ><v-spacer />
-                      </v-row>
+                      <!-- Was a v-row with a v-spacer either side of the
+                           subtitle. Vuetify 3's v-row carries margin: -12px,
+                           and as the last child of a v-card (overflow: hidden)
+                           that pulled the date 8px past the card's bottom edge,
+                           where it was clipped. v-card-subtitle is a block, so
+                           text-center centres it without the negative gutter. -->
+                      <v-card-subtitle class="text-caption text-center"
+                        >up to
+                        {{ $filters.convertDate(event.dateTo) }}</v-card-subtitle
+                      >
                       <v-fade-transition>
                         <v-overlay
-                          v-if="hover"
-                          absolute
+                          :model-value="hover"
+                          contained
                           color="#036358"
                           class="d-flex justify-center align-center"
                         >
@@ -684,7 +682,7 @@
           <!-- vue-masonry Vendor Search Result-->
 
           <div
-            v-masonry
+            v-masonry="'masonry'"
             id="masonry"
             transition-duration="3s"
             item-selector=".item"
@@ -700,8 +698,8 @@
               :key="index"
             >
               <v-hover>
-                <template v-slot:default="{ hover }">
-                  <Observer
+                <template v-slot:default="{ isHovering: hover, props }">
+                  <Observer v-bind="props"
                     @on-change="onChange"
                     :id="index"
                     :threshold="threshold"
@@ -720,7 +718,7 @@
                             class="d-flex flex-column justify-start align-center"
                           >
                             <v-card flat class="rounded mb-1" width="70">
-                              <v-img :src="event.vendorLogo"> </v-img>
+                              <v-img :src="event.vendorLogo" @load="redrawMasonry"> </v-img>
                             </v-card>
                             <span
                               class="text-subtitle-2 text-center text-primary d-inline"
@@ -757,8 +755,8 @@
                       <v-row> </v-row>
                       <v-fade-transition>
                         <v-overlay
-                          v-if="hover"
-                          absolute
+                          :model-value="hover"
+                          contained
                           color="#036358"
                           class="d-flex justify-center align-center"
                         >
@@ -1018,15 +1016,15 @@ export default {
     markerList: [],
     markerListLength: 0,
     headers: [
-      { text: "ID", align: "start", sortable: false, value: "flyerId" },
-      { text: "Type", value: "type" },
-      { text: "Title", value: "flyerTitle" },
+      { title: "ID", align: "start", sortable: false, key: "flyerId" },
+      { title: "Type", key: "type" },
+      { title: "Title", key: "flyerTitle" },
     ],
     flyerHeaders: [
-      { text: "ID", align: "start", sortable: false, value: "flyerId" },
-      { text: "Type", value: "type" },
-      { text: "Title", value: "flyerTitle" },
-      { text: "Actions", value: "actions", sortable: false },
+      { title: "ID", align: "start", sortable: false, key: "flyerId" },
+      { title: "Type", key: "type" },
+      { title: "Title", key: "flyerTitle" },
+      { title: "Actions", key: "actions", sortable: false },
     ],
     scrollYW: 0,
     showSketchList: false,
@@ -1036,13 +1034,13 @@ export default {
     sortDesc: false,
     templateHeaders: [
       {
-        text: "Template ID",
+        title: "Template ID",
         align: "start",
         sortable: false,
-        value: "templateId",
+        key: "templateId",
       },
-      { text: "Type", value: "templateType" },
-      { text: "Tag Name", value: "templateTagName" },
+      { title: "Type", key: "templateType" },
+      { title: "Tag Name", key: "templateTagName" },
     ],
     toggleMap: false,
     threshold: [0.5],
@@ -1488,6 +1486,26 @@ export default {
   },
 
   methods: {
+    /**
+     * Re-run the masonry layout once an image has actually loaded.
+     *
+     * Vuetify 3's v-img creates its <img> element only after the source
+     * resolves, so the imagesLoaded watcher vue-masonry attaches when a tile
+     * mounts finds nothing to wait for and fires straight away. Masonry then
+     * measures the card before the vendor logo has any height and stacks the
+     * next tile ~96px too high, which is the overlap.
+     *
+     * Batched on the next frame so a page of cards costs one relayout.
+     */
+    redrawMasonry() {
+      if (this._masonryRedrawQueued) return;
+      this._masonryRedrawQueued = true;
+      requestAnimationFrame(() => {
+        this._masonryRedrawQueued = false;
+        this.$redrawVueMasonry("masonry");
+      });
+    },
+
     address(item) {
       return (
         item.vendorStreetNo +
@@ -1546,7 +1564,10 @@ export default {
 
     handleFlyerSelected() {},
 
-    handleSketchSelected(e) {
+    handleSketchSelected(_event, { item }) {
+      // Vuetify 3's @click:row emits (event, { item }); Vuetify 2 emitted the
+      // item alone. Aliased rather than renaming through the body.
+      const e = item;
       // console.log(e);
       // console.log(e.flyerId);
       this.showSketchList = false;
@@ -1557,7 +1578,10 @@ export default {
       });
       this.$store.commit("setInDesign", true);
     },
-    handleTemplateSelected(e) {
+    handleTemplateSelected(_event, { item }) {
+      // Vuetify 3's @click:row emits (event, { item }); Vuetify 2 emitted the
+      // item alone. Aliased rather than renaming through the body.
+      const e = item;
       // console.log(e);
       // console.log(e.templateId);
       this.showTemplateList = false;

@@ -28,28 +28,28 @@
               <!-- <v-container> -->
               <v-stepper v-model="stepper">
                 <v-stepper-header>
-                  <v-stepper-step step="1" editable :rules="[() => isEmail]"
-                    >Email & Password</v-stepper-step
+                  <v-stepper-item :value="1" editable :rules="[() => isEmail]"
+                    >Email & Password</v-stepper-item
                   >
 
                   <v-divider></v-divider>
 
-                  <v-stepper-step step="2" :editable="email!=null && password === passwordConfirmation" :rules="[() => isCategory]"
-                    >Business Profile</v-stepper-step
+                  <v-stepper-item :value="2" :editable="email!=null && password === passwordConfirmation" :rules="[() => isCategory]"
+                    >Business Profile</v-stepper-item
                   >
 
                   <v-divider></v-divider>
 
-                  <v-stepper-step
-                    step="3"
+                  <v-stepper-item
+                    :value="3"
                     :editable="email!=null && password === passwordConfirmation"
                     :rules="[() => isLandingPage]"
-                    >Landing Page</v-stepper-step
+                    >Landing Page</v-stepper-item
                   >
                 </v-stepper-header>
 
-                <v-stepper-items>
-                  <v-stepper-content step="1">
+                <v-stepper-window>
+                  <v-stepper-window-item :value="1">
                     <v-container>
                       <v-form lazy-validation v-model="isEmail" ref="email">
                         <v-container>
@@ -110,9 +110,9 @@
                         <v-btn variant="text"  color="primary" @click="handleCancel">Cancel</v-btn>
                       </v-form>
                     </v-container>
-                  </v-stepper-content>
+                  </v-stepper-window-item>
 
-                  <v-stepper-content step="2">
+                  <v-stepper-window-item :value="2">
                     <v-container>
                       <v-card flat>
                         <v-form
@@ -370,9 +370,9 @@
                     </v-btn>
 
                     <v-btn variant="text"  color="primay" @click="handleCancel">Cancel</v-btn>
-                  </v-stepper-content>
+                  </v-stepper-window-item>
 
-                  <v-stepper-content step="3">
+                  <v-stepper-window-item :value="3">
                     <v-card flat>
                       <v-form
                         v-model="isLandingPage"
@@ -626,7 +626,6 @@
                                           <v-time-picker
                                             v-if="menu1"
                                             v-model="openTime"
-                                            full-width
                                             @click:minute="$refs.open.save(openTime)"
                                           ></v-time-picker>
                                         </v-menu>
@@ -657,7 +656,6 @@
                                             <v-time-picker
                                               v-if="menu2"
                                               v-model="closeTime"
-                                              full-width
                                               @click:minute="$refs.close.save(closeTime)"
                                             ></v-time-picker>
                                           </v-menu>
@@ -727,8 +725,8 @@
                         </v-container>
                       </v-sheet>
                     </v-bottom-sheet>
-                  </v-stepper-content>
-                </v-stepper-items>
+                  </v-stepper-window-item>
+                </v-stepper-window>
               </v-stepper>
             </v-container>
           </v-card>

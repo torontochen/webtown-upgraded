@@ -20,37 +20,37 @@
       <v-card flat :width="viewPortDimension.width * 0.8 " class="ma-auto">
         <v-stepper v-model="processStepper">
           <v-stepper-header>
-            <v-stepper-step step="1" :rules="[() => isFormat]"
-              >Select Format</v-stepper-step
+            <v-stepper-item :value="1" :rules="[() => isFormat]"
+              >Select Format</v-stepper-item
             >
 
             <v-divider></v-divider>
 
-            <v-stepper-step step="2" :rules="[() => isDesign]"
-              >Design</v-stepper-step
+            <v-stepper-item :value="2" :rules="[() => isDesign]"
+              >Design</v-stepper-item
             >
 
             <v-divider></v-divider>
 
-            <v-stepper-step step="3" :rules="[() => isPreview]"
-              >Preview and Save Design</v-stepper-step
+            <v-stepper-item :value="3" :rules="[() => isPreview]"
+              >Preview and Save Design</v-stepper-item
             >
 
             <v-divider></v-divider>
-            <v-stepper-step step="4" :rules="[() => isSetup]"
-              >Complete Setup</v-stepper-step
+            <v-stepper-item :value="4" :rules="[() => isSetup]"
+              >Complete Setup</v-stepper-item
             >
 
             <v-divider></v-divider>
 
-            <v-stepper-step step="5" :rules="[() => isDistribute]"
-              >Check out and Distribute</v-stepper-step
+            <v-stepper-item :value="5" :rules="[() => isDistribute]"
+              >Check out and Distribute</v-stepper-item
             >
           </v-stepper-header>
 
-          <v-stepper-items>
+          <v-stepper-window>
             <!--  Step 1 choose type -->
-            <v-stepper-content step="1">
+            <v-stepper-window-item :value="1">
               <v-container>
                 <v-card flat>
                   <v-form lazy-validation v-model="isFormat" ref="email">
@@ -226,10 +226,10 @@
                   </v-form>
                 </v-card>
               </v-container>
-            </v-stepper-content>
+            </v-stepper-window-item>
 
             <!-- Step 2 Design -->
-            <v-stepper-content step="2">
+            <v-stepper-window-item :value="2">
               <v-card flat>
                 <v-form lazy-validation v-model="isDesign" ref="category">
                   <v-container class="pa-0 ma-0">
@@ -298,10 +298,10 @@
                   >Cancel</v-btn
                 >
               </v-row>
-            </v-stepper-content>
+            </v-stepper-window-item>
 
             <!-- Step 3  Preview -->
-            <v-stepper-content step="3">
+            <v-stepper-window-item :value="3">
               <v-container fluid>
                 <v-row
                   justify="center"
@@ -471,10 +471,10 @@
                   >
                 </v-row>
               </v-container>
-            </v-stepper-content>
+            </v-stepper-window-item>
 
             <!-- Step 4  Complete Setup -->
-            <v-stepper-content step="4">
+            <v-stepper-window-item :value="4">
               <v-row>
                 <v-card
                   outlined
@@ -789,10 +789,10 @@
                   </v-form>
                 </v-card>
               </v-row>
-            </v-stepper-content>
+            </v-stepper-window-item>
 
              <!--  Step 5  Check Out && Distribute -->
-            <v-stepper-content step="5">
+            <v-stepper-window-item :value="5">
                <v-card class="pa-3">
                  <v-card-subtitle class="text-accent font-weight-bold" v-if="savedFlyer">{{savedFlyer.flyerId}}&nbsp;|&nbsp;{{ currentFlyerTitle }}</v-card-subtitle>
                  <v-divider class="my-1"></v-divider>
@@ -1076,8 +1076,8 @@
                   <v-spacer></v-spacer>
                 </v-card-actions>
                </v-card>
-            </v-stepper-content>
-          </v-stepper-items>
+            </v-stepper-window-item>
+          </v-stepper-window>
         </v-stepper>
       </v-card>
     </v-container>

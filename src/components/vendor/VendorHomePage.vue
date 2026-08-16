@@ -38,8 +38,7 @@
                   :page="page"
                   @update:page="page = $event"
                   :search="searchStatus"
-                  :sort-desc="sortDesc"
-                  :sort-by="sortBy"
+                  :sort-by="sortByV3"
                   hide-default-footer
                 >
                   <template v-slot:header>
@@ -844,6 +843,17 @@ export default {
   },
 
   computed: {
+    /**
+     * Vuetify 3 takes a single `sort-by` array of { key, order }; the separate
+     * boolean `sort-desc` prop is gone. The component still keeps sortBy and
+     * sortDesc as its own state (the UI toggles them), so they are combined
+     * here rather than reshaping the data and every place that writes to it.
+     */
+    sortByV3() {
+      return this.sortBy
+        ? [{ key: this.sortBy, order: this.sortDesc ? "desc" : "asc" }]
+        : [];
+    },
     ...mapGetters(["vendor", 
                     "allItemsCatalog", 
                     "customerRatings",

@@ -9,7 +9,6 @@
               :page="page"
               @update:page="page = $event"
               :search="searchStatus"
-              :sort-desc="sortDesc"
               hide-default-footer
             >
               <template v-slot:header>

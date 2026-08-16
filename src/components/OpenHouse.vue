@@ -475,7 +475,7 @@
               <v-data-table
                 :headers="flyerHeaders"
                 :items="item.vendorActiveFlyer"
-                :sort-by="['flyerId']"
+                :sort-by="[{ key: 'flyerId', order: 'asc' }]"
                 :items-per-page="6"
                 class="elevation-1 mx-n1"
                 @click:row="handleActiveFlyerSelected"
@@ -536,7 +536,7 @@
               <v-data-table
                 :headers="flyerHeaders"
                 :items="resident.stahedFlyers"
-                :sort-by="['flyerId']"
+                :sort-by="[{ key: 'flyerId', order: 'asc' }]"
                 :items-per-page="6"
                 class="elevation-1 mx-n1"
                 @click:row="handleActiveFlyerSelected"
@@ -1268,8 +1268,7 @@
               :page="page"
               @update:page="page = $event"
               :search="search"
-              :sort-by="sortBy"
-              :sort-desc="sortDesc"
+              :sort-by="sortByV3"
               hide-default-footer
             >
               <!-- toolbar -->
@@ -1525,7 +1524,6 @@
               :page="page"
               @update:page="page = $event"
               :search="searchStatus"
-              :sort-desc="sortDesc"
               hide-default-footer
             >
               <template v-slot:header>
@@ -2506,26 +2504,26 @@ export default {
     //   mdiHandCoin
     // },
       headers: [
-        { text: "Logo", value: "actions", align: "left", sortable: false },
-        { text: "Vendor", value: "businessTitle", align: "left" },
-        { text: "Business Category", value: "businessCategory", align: "left" },
+        { title: "Logo", key: "actions", align: "left", sortable: false },
+        { title: "Vendor", key: "businessTitle", align: "left" },
+        { title: "Business Category", key: "businessCategory", align: "left" },
       ],
       stashedFlyerHeaders: [
-        { text: "Logo", value: "logo", align: "left", sortable: false },
-        { text: "Vendor", value: "vendor", align: "left" },
-        { text: "Title", value: "flyerTitle", align: "start", sortable: true },
-        { text: "Type", value: "flyerType" },
-        { text: "Promotion", value: "promoInfo" },
-        { text: "From", value: "dateFrom" },
-        { text: "To", value: "dateTo" },
+        { title: "Logo", key: "logo", align: "left", sortable: false },
+        { title: "Vendor", key: "vendor", align: "left" },
+        { title: "Title", key: "flyerTitle", align: "start", sortable: true },
+        { title: "Type", key: "flyerType" },
+        { title: "Promotion", key: "promoInfo" },
+        { title: "From", key: "dateFrom" },
+        { title: "To", key: "dateTo" },
       ],
       // filter: {},
       flyerHeaders: [
-        { text: "Title", value: "flyerTitle", align: "start", sortable: true },
-        { text: "Type", value: "flyerType" },
-        { text: "Promotion", value: "promoInfo" },
-        { text: "From", value: "dateFrom" },
-        { text: "To", value: "dateTo" },
+        { title: "Title", key: "flyerTitle", align: "start", sortable: true },
+        { title: "Type", key: "flyerType" },
+        { title: "Promotion", key: "promoInfo" },
+        { title: "From", key: "dateFrom" },
+        { title: "To", key: "dateTo" },
       ],
       indexOfdealSelected: [],
       isAllyGuildOpen: false,
@@ -2844,6 +2842,17 @@ mounted() {
   },
 
   computed: {
+    /**
+     * Vuetify 3 takes a single `sort-by` array of { key, order }; the separate
+     * boolean `sort-desc` prop is gone. The component still keeps sortBy and
+     * sortDesc as its own state (the UI toggles them), so they are combined
+     * here rather than reshaping the data and every place that writes to it.
+     */
+    sortByV3() {
+      return this.sortBy
+        ? [{ key: this.sortBy, order: this.sortDesc ? "desc" : "asc" }]
+        : [];
+    },
     ...mapGetters([
       "resident",
       "pets",
@@ -3560,7 +3569,10 @@ mounted() {
       this.singlePageOpen = true;
     },
 
-    handleActiveFlyerSelected(e) {
+    handleActiveFlyerSelected(_event, { item }) {
+      // Vuetify 3's @click:row emits (event, { item }); Vuetify 2 emitted the
+      // item alone. Aliased rather than renaming through the body.
+      const e = item;
       // console.log(e);
       const index = _.findIndex(this.resident.stashedFlyers, (flyer) => {
         return e.flyerId == flyer.flyerId;

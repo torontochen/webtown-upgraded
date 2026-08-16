@@ -92,15 +92,15 @@ export default {
     dialogDelete: false,
     headers: [
       {
-        text: "Item Code",
+        title: "Item Code",
         align: "start",
         sortable: true,
-        value: "itemCode",
+        key: "itemCode",
       },
-      { text: "Description", value: "description" },
-      { text: "Unit", value: "unit" },
-      { text: "Quantity", value: "quantity" },
-      { text: "Actions", value: "actions", sortable: false },
+      { title: "Description", key: "description" },
+      { title: "Unit", key: "unit" },
+      { title: "Quantity", key: "quantity" },
+      { title: "Actions", key: "actions", sortable: false },
     ],
     editedIndex: -1,
     editedItem: {

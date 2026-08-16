@@ -26,7 +26,7 @@ Running record of the staged upgrade, phase by phase.
 | 4b-3b — vue2-editor, vue-advanced-chat | ✅ Done | `f6b1cdf`+ |
 | 4b-3c — vue-beautiful-chat | ✅ Done | `8597a15`+ |
 | 4b-4 — The flip: Vue 3 + Vuetify 3 | ✅ Done | `cfa820a`+ |
-| 4b-5 — Vuetify 3 layout polish | Not started | |
+| 4b-5 — Vuetify 3 layout and component APIs | ✅ Done | `c7a4fa3`+ |
 | 4c — Pinia (Apollo Client 3 landed in 4b-4) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
@@ -1334,6 +1334,109 @@ internals, so:
 > and both have now also been through the Vue 3 flip. Along with the
 > data-table, stepper and picker screens above, these want **a manual pass with
 > a vendor account and a guild resident** before Phase 4b is called finished.
+
+---
+
+## Phase 4b-5 — layout, and the component APIs 4b-4 deferred ✅
+
+4b-4 got the app running; this made it right. Everything below was found by
+measuring the live DOM rather than by reading the migration guide, which
+matters because three of these were **silently** broken — no warning, no error,
+just wrong.
+
+### The masonry overlap had a cause worth writing down
+
+Flyer cards overlapped their neighbours. The chain:
+
+1. Vuetify 3's `v-img` creates its `<img>` element only once the source
+   resolves. vue-masonry attaches an `imagesLoaded` watcher when a tile mounts,
+   finds **no images to wait for**, and fires immediately.
+2. Masonry measures the card before the vendor logo has any height, and stacks
+   the next tile ~96px too high.
+3. The app's two `this.$redrawVueMasonry("masonry")` calls should have fixed
+   that — except **they never did anything, under Vue 2 either**. The directive
+   is `v-masonry` with *no value*, so it registers under vue-masonry's default
+   id `"VueMasonry"`; `"masonry"` is the element's **HTML id attribute**, a
+   different string. Every redraw call in this app has always gone to a bucket
+   nothing listens on.
+
+Fixed by giving the directive the id the calls already pass
+(`v-masonry="'masonry'"`) and redrawing on the logo's `@load`, batched into one
+relayout per frame. Measured after: **21 tiles, 2 columns, 0 overlaps.**
+
+### Card dates were being clipped
+
+Every card's `up to <date>` line was cut off. The last child of the card was a
+`v-row` holding the subtitle between two `v-spacer`s — and Vuetify 3's `v-row`
+carries `margin: -12px`, which inside a `v-card` (`overflow: hidden`) pushed
+the content 8px past the bottom edge. The row was only there to centre the
+text, so it is now a plain `v-card-subtitle.text-center`. Measured after:
+**0 cards with clipped content, all 21 dates visible.**
+
+### Two silent breakages
+
+- **`v-hover`.** Vuetify 3 renamed the slot prop `hover` → `isHovering` *and*
+  requires `v-bind="props"` on the element being tracked. Without both, the
+  slot's `hover` is `undefined` — no error, the overlay simply never appears.
+  Aliased as `{ isHovering: hover, props }` so the slot bodies did not change.
+- **`v-overlay`.** Driven by `model-value` in Vuetify 3, not by `v-if`; mounted
+  with `v-if` alone it renders inert with `modelValue` false. `absolute` is now
+  `contained`. 4 sites.
+
+Together these had killed the flyer cards' hover overlay — the dimmed panel
+with the magnifier that opens a vendor. Verified working again.
+
+### `v-data-table`
+
+| Change | Count |
+|---|---|
+| headers `{ text, value }` → `{ title, key }` | 8 arrays, 39 of each |
+| `:sort-by="['x']"` + `:sort-desc` → `[{ key, order }]` | 5 |
+| bound `sortBy` string + `sortDesc` boolean → a `sortByV3` computed | 3 |
+| `@click:row` handlers `(item)` → `(event, { item })` | 3 |
+
+The `@click:row` signature is the other silent one: the old handlers would have
+received the DOM event where they expected the row.
+
+### `v-stepper`
+
+`v-stepper-step` → `v-stepper-item` (with `:value` for `step`),
+`v-stepper-content` → `v-stepper-window-item`, `v-stepper-items` →
+`v-stepper-window`. 8 of each across SignupVendor.vue and VendorFlyers.vue.
+These were rendering as unknown elements after 4b-4, so this could only help —
+and the vendor signup stepper is on a **public** route, so it is verified:
+three labelled steps with icons and dividers, and step 1's form rendering.
+
+### A correction
+
+The 4b-4 notes said `v-time-picker` "is not in Vuetify 3 core, it is in
+`vuetify/labs`". **That was wrong for 3.13** — it graduated to core, and the
+labs import fails to resolve. No registration is needed; `vite-plugin-vuetify`
+auto-imports it like anything else.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, 112 tests, production build. Bundle
+  unchanged at 2,158 kB.
+- Home page, measured live: 0 tile overlaps, 0 clipped cards, 21/21 dates
+  visible, hover overlay active with its scrim and content, vendor panel and
+  map markers populating on hover.
+- `/signupvendor`: the Vuetify 3 stepper renders correctly.
+- **No Vue or Vuetify warnings** on either page.
+
+### Still open — and it needs a real date decision
+
+**`v-date-picker` (4 sites) was deliberately not converted.** Vuetify 3's picker
+binds a **`Date` object**; this app stores `dateFrom` / `dateTo` / `birthday` as
+strings and sends those strings to GraphQL. Converting means changing the model
+type and every read and write of those fields, including what goes over the
+wire — a data-shape change, not a template change, and one that would be
+unverifiable here because all four sites sit behind vendor or resident auth.
+Left as-is with this note rather than guessed at.
+
+The rest of the deferred list is unchanged: `v-data-iterator`'s slot API, and a
+manual pass over the flyer designer, guild chat, and the vendor tables and
+pickers with real credentials.
 
 ---
 
