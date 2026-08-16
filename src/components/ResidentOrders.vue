@@ -8,7 +8,6 @@
       @update:page="page = $event"
       :sort-by="sortByV3"
       :search="searchStatus"
-      hide-default-footer
       v-if="residentOrders.length>0"
     >
       <template v-slot:header>
@@ -40,7 +39,7 @@
       <template v-slot:default="props">
         <v-row>
           <v-col
-            v-for="(item, i) in props.items"
+            v-for="({ raw: item }, i) in props.items"
             :key="i"
             cols="12"
             sm="6"

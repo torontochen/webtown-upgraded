@@ -30,9 +30,10 @@ Running record of the staged upgrade, phase by phase.
 | 4c — Vuex → Pinia | ✅ Done | `c867a20`+ |
 | 5 — Dependency cleanup | ✅ Done | `2afb41f`+ |
 | 5b — v-date-picker model | ✅ Done | `908d12d`+ |
+| 5c — v-data-iterator slots | ✅ Done | `a38bcd2`+ |
 
 **All phases are complete.** The app runs on Vue 3.5 + Vuetify 3.13 + Vite 7 +
-Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 127 tests,
+Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 130 tests,
 build) and `npm run test:e2e` green (22 guard checks + 4 subscription checks)
 against live Atlas.
 
@@ -1456,9 +1457,9 @@ change and the more correct one.
 Correction while doing it: this note said **4 sites**. There are **9** — the
 survey missed four in `VendorPromotions.vue`.
 
-The rest of the deferred list is unchanged: `v-data-iterator`'s slot API, and a
-manual pass over the flyer designer, guild chat, and the vendor tables and
-pickers with real credentials.
+`v-data-iterator`'s slot API is done too — see "Phase 5c". What is left on the
+deferred list is only the manual pass over the flyer designer, guild chat, and
+the vendor tables and pickers with real credentials.
 
 ---
 
@@ -1715,6 +1716,59 @@ midnight, so formatting it in UTC would move it back a day east of UTC.
 > account and a resident account. The seam is verified against the real
 > adapter, and the invariant that every picker binds a `*Model` computed with no
 > `@change` is locked by a test — but the surrounding forms have not been run.
+
+---
+
+## Phase 5c — v-data-iterator slots ✅
+
+The last untouched Vuetify 3 API, and the most quietly dangerous one.
+
+**Vuetify 3 does not hand the default slot the items.** Each entry is a wrapper
+— `{ type, value, selectable, raw }` — with the original object under `raw`.
+Vuetify 2 passed the items themselves.
+
+So the Vuetify 2 spelling this app used at all five iterators,
+
+```html
+<template v-slot:default="props">
+  <div v-for="(item, i) in props.items">{{ item.orderNo }}</div>
+```
+
+**throws nothing under Vuetify 3 — it renders empty.** `item.orderNo` on a
+wrapper is simply `undefined`. No warning, no error, no lint finding: resident
+orders, guild deals, deal fulfilment and vendor orders would all have rendered
+as blank cards.
+
+### The fix is one line per iterator
+
+```html
+v-for="({ raw: item }, i) in props.items"
+```
+
+Destructuring in the `v-for` means every `item.x` reference in the slot body —
+dozens of them across the five components — is untouched.
+
+Also removed: **`hide-default-footer`** from all five. Vuetify 3's iterator
+renders no footer unless a `footer` slot is supplied (none of these supply one),
+so the prop had nothing to hide, and being unknown it would fall through onto
+the root element as a stray DOM attribute.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **130 tests** (was 127), production build.
+- `npm run test:e2e` — 22/22 + 4/4 against live Atlas.
+- **Mounted the real `VDataIterator` in the browser** rather than reasoning from
+  its source: with two rows in, the slot received two wrappers keyed
+  `type, value, selectable, raw`; `items[0].orderNo` was `undefined` while
+  `items[0].raw.orderNo` was `"A-1"`; and the destructuring pattern the
+  templates now use rendered `A-1,A-2`.
+- `test/dataIterator.test.js` locks all three facts — every `props.items` v-for
+  destructures `raw`, all five iterators are still wired to the slot (so the
+  first check cannot pass vacuously), and `hide-default-footer` stays gone.
+
+> As with the pickers, the iterators still have not been seen **in their own
+> screens** — resident orders and guild deals need a resident account, deal
+> fulfilment and vendor orders a vendor one.
 
 ---
 

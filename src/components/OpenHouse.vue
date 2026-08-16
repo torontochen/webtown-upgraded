@@ -1269,7 +1269,6 @@
               @update:page="page = $event"
               :search="search"
               :sort-by="sortByV3"
-              hide-default-footer
             >
               <!-- toolbar -->
               <template v-slot:header>
@@ -1320,7 +1319,7 @@
               <template v-slot:default="props" >
                 <v-row v-if="activeAllGuildDeals.length>0">
                   <v-col
-                    v-for="(item, i) in props.items"
+                    v-for="({ raw: item }, i) in props.items"
                     :key="item.vendor"
                     cols="12"
                     sm="6"
@@ -1524,7 +1523,6 @@
               :page="page"
               @update:page="page = $event"
               :search="searchStatus"
-              hide-default-footer
             >
               <template v-slot:header>
                 <v-toolbar theme="dark" density="compact" flat color="primary" class="mb-1">
@@ -1568,7 +1566,7 @@
               <template v-slot:default="props">
                 <v-row>
                   <v-col
-                    v-for="(item, i) in props.items"
+                    v-for="({ raw: item }, i) in props.items"
                     :key="i"
                     cols="12"
                     sm="6"
