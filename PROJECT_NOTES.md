@@ -30,6 +30,12 @@ Running record of the staged upgrade, phase by phase.
 | 4c — Pinia (Apollo Client 3 landed in 4b-4) | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
+**Phase 4b is complete.** The app runs on Vue 3 + Vuetify 3 + Vuetify's own
+tree-shaking, with `npm run verify` green (0 lint errors, 112 tests, build) and
+`npm run test:e2e` green (22 guard checks + 4 subscription checks) against live
+Atlas. What remains is a manual pass over the authenticated screens — see
+"Phase 4b-5" for the list.
+
 ✅ No known regressions are open. The "flyer card photos blank" report was
 investigated on 2026-08-16 and **closed as not a bug** — see
 "CLOSED — flyer card photos" below. It reproduces identically on the webpack
@@ -1423,6 +1429,11 @@ auto-imports it like anything else.
   map markers populating on hover.
 - `/signupvendor`: the Vuetify 3 stepper renders correctly.
 - **No Vue or Vuetify warnings** on either page.
+- `npm run test:e2e` against live Atlas — **22/22 guard checks + 4/4
+  subscription checks**, unchanged since Phase 3b. Phase 4b touched only the
+  client, but this is the first run since the flip, and it confirms the
+  authorization layer built in Phases 1a–1c and the graphql-ws transport are
+  both intact after Vue 3, Vuetify 3 and Apollo Client 3.
 
 ### Still open — and it needs a real date decision
 
