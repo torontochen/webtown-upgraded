@@ -255,7 +255,8 @@
 
 <script>
 import _ from "lodash";
-import { mapGetters } from 'vuex'
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 
 export default {
     name: "GuildDealsFulfillment",
@@ -268,7 +269,7 @@ export default {
         }
     },
     computed:{
-        ...mapGetters(["vendor", "guildDeals", "guilds"]),
+        ...mapState(useMainStore, ["vendor", "guildDeals", "guilds"]),
 
         dealFulfillment(){
             let fulfillmentResult = []

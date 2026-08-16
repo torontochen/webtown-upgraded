@@ -215,7 +215,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex"
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import Showcase from "./Showcase.vue"
 import Events from "./Events.vue"
 import Customer from "./Customer.vue"
@@ -248,7 +249,7 @@ export default {
     mounted() {
         
         console.log(this.vendor);
-        if(this.vendor) this.$store.dispatch("getVendorInterface", {vendor: this.vendor})
+        if(this.vendor) this.$store.getVendorInterface({vendor: this.vendor})
         
         eventBus_actionPanel.$on("openActionPanel", value => {
             // console.log(value.item)
@@ -268,7 +269,7 @@ export default {
     // },
 
     computed: {
-        ...mapGetters(["vendorInterface", "loading", "customerRatings", "resident", "viewPortDimension", "shoppingCart", "saveShoppingCartLoading"]),
+        ...mapState(useMainStore, ["vendorInterface", "loading", "customerRatings", "resident", "viewPortDimension", "shoppingCart", "saveShoppingCartLoading"]),
 
         maxQty() {
             let qty = []
@@ -285,7 +286,7 @@ export default {
         vendor(val) {
             console.log(val)
             // this.vendor = to.params.vendor
-            this.$store.dispatch("getVendorInterface", {vendor: this.vendor})
+            this.$store.getVendorInterface({vendor: this.vendor})
         },
         tab(val) {
             // console.log(val)
@@ -314,7 +315,7 @@ export default {
             }
             console.log(this.singleItem)
             
-            this.$store.dispatch("saveShoppingCart", {
+            this.$store.saveShoppingCart({
                 resident: this.resident.residentName,
                 itemCode: this.singleItem.itemCode,
                 vendor: this.vendorInterface._id,
@@ -332,7 +333,7 @@ export default {
     beforeRouteEnter(to, from , next) {
         
         next(vm => {
-            vm.$store.commit("setLoading", true)
+            vm.$store.setLoading(true)
         })
     }
 }

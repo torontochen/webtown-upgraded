@@ -267,7 +267,8 @@
 <script>
 import _ from "lodash";
 import moment from 'moment';
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import OrderItemDetails from "./OrderItemDetails.vue";
 import {GET_VENDOR_CHECKOUT_INFOS} from "../queries/queries_query"
 import {DISPUTE, CANCEL} from "../queries/queries_mutation"
@@ -314,7 +315,7 @@ export default {
       //         orders[index].isConfirmed = isConfirmed
       //         orders[index].disputeInfo = content
       //         console.log(orders)
-      //         this.$store.commit('setResidentOrders', orders)
+      //         this.$store.setResidentOrders(orders)
       //       }
       //     }
       //     }
@@ -334,7 +335,7 @@ export default {
         ? [{ key: this.sortBy, order: this.sortDesc ? "desc" : "asc" }]
         : [];
     },
-    ...mapGetters(["residentOrders", "viewPortDimension", "resident"]),
+    ...mapState(useMainStore, ["residentOrders", "viewPortDimension", "resident"]),
 
     numberOfPages() {
       return Math.ceil(this.residentOrders.length / this.itemsPerPage);
@@ -389,7 +390,7 @@ export default {
       const index = this.residentOrders.findIndex(item => item.orderNo == this.orderToCancel.orderNo)
       const orders = [...this.residentOrders]
       orders[index].isCanceled = true
-      this.$store.commit('setResidentOrders', orders)
+      this.$store.setResidentOrders(orders)
       this.isCancelOpen = false
       this.$apollo
         .mutate({
@@ -451,7 +452,7 @@ export default {
       const index = this.residentOrders.findIndex(item => item.orderNo == order.orderNo)
       const orders = [...this.residentOrders]
       orders[index].isUnderDispute = false
-      this.$store.commit('setResidentOrders', orders)
+      this.$store.setResidentOrders(orders)
       this.$apollo
         .mutate({
           mutation: DISPUTE,
@@ -478,7 +479,7 @@ export default {
        const index = this.residentOrders.findIndex(item => item.orderNo == this.disputeOrder.orderNo)
       const orders = [...this.residentOrders]
       orders[index].isUnderDispute = true
-      this.$store.commit('setResidentOrders', orders)
+      this.$store.setResidentOrders(orders)
       this.$apollo
         .mutate({
           mutation: DISPUTE,

@@ -970,7 +970,8 @@ import {
   eventBus_sortPromotionEvents,
   eventBus_closeSignUp,
 } from "../eventBus";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import router from "../router/router";
 import Observer from "@/components/Observer.vue";
 import _ from "lodash";
@@ -1083,7 +1084,7 @@ export default {
             this.vendor.businessTitle == customerRatingAdded.vendor
           ) {
             this.customerRatings.push(customerRatingAdded);
-            this.$store.commit("setCustomerRatings", this.customerRatings);
+            this.$store.setCustomerRatings(this.customerRatings);
           }
         },
       },
@@ -1113,7 +1114,7 @@ export default {
               orders[index].isConfirmed = isConfirmed;
               orders[index].disputeInfo = content;
 
-              this.$store.commit("setVendorOrders", orders);
+              this.$store.setVendorOrders(orders);
             }
           }
         },
@@ -1128,7 +1129,7 @@ export default {
             this.vendor.businessTitle == vendorOrderAdded.vendor
           ) {
             this.vendorOrders.push(vendorOrderAdded);
-            this.$store.commit("setVendorOrders", this.vendorOrders);
+            this.$store.setVendorOrders(this.vendorOrders);
           }
         },
       },
@@ -1142,9 +1143,7 @@ export default {
             this.vendor.businessTitle == vendorSettlementRecordAdded.vendor
           ) {
             this.vendorSettlementRecords.push(vendorSettlementRecordAdded);
-            this.$store.commit(
-              "setVendorSettlementRecords",
-              this.vendorSettlementRecords
+            this.$store.setVendorSettlementRecords(this.vendorSettlementRecords
             );
           }
         },
@@ -1162,7 +1161,7 @@ export default {
           ) {
             let newVendor = this.vendor;
             newVendor.messages.push(messageReceived);
-            this.$store.commit("setVendor", newVendor);
+            this.$store.setVendor(newVendor);
           }
         },
       },
@@ -1249,19 +1248,19 @@ export default {
     }
 
     // if( this.resident && this.resident.guild!=null) {
-    //     this.$store.dispatch("getGuildDealsStatus", {
+    //     this.$store.getGuildDealsStatus({
     //     guildFullName: this.resident.guild.guildFullName,
     //   });
     // }
 
     if (this.vendor) {
-      this.$store.dispatch("getSketchList", {
+      this.$store.getSketchList({
         businessTitle: this.vendor.businessTitle,
       });
-      this.$store.dispatch("getTemplateList", {
+      this.$store.getTemplateList({
         businessTitle: this.vendor.businessTitle,
       });
-      this.$store.dispatch("getFlyerList", {
+      this.$store.getFlyerList({
         businessTitle: this.vendor.businessTitle,
       });
     }
@@ -1272,7 +1271,7 @@ export default {
 
     // this.masonryHeight = document.getElementById("masonry").offsetHeight
     // console.log(navHeight);
-    // this.$store.commit("setNavbarHeight", navHeight);
+    // this.$store.setNavbarHeight(navHeight);
 
     const footer = this.footerHeight;
     const navHeight = this.navbarHeight;
@@ -1338,21 +1337,20 @@ export default {
       if (val) {
         this.isFinishProfileOpen = !val.profileFilled;
         // if( this.resident && this.resident.guild!=null) {
-        //   this.$store.dispatch("getGuildDealsStatus",
-        //   {guildFullName: this.resident.guild.guildFullName});
+        //   this.$store.getGuildDealsStatus(//   {guildFullName: this.resident.guild.guildFullName});
         // }
       }
     },
 
     vendor(value) {
       if (value) {
-        this.$store.dispatch("getSketchList", {
+        this.$store.getSketchList({
           businessTitle: this.vendor.businessTitle,
         });
-        this.$store.dispatch("getTemplateList", {
+        this.$store.getTemplateList({
           businessTitle: this.vendor.businessTitle,
         });
-        this.$store.dispatch("getFlyerList", {
+        this.$store.getFlyerList({
           businessTitle: this.vendor.businessTitle,
         });
         // this.$router.push("/");
@@ -1452,7 +1450,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
+    ...mapState(useMainStore, [
       "vendorList",
       "navbarHeight",
       "footerHeight",
@@ -1528,16 +1526,16 @@ export default {
     goToDistributeFlyer(item) {
       // console.log(item);
       this.showFlyerList = false;
-      this.$store.dispatch("setUpFlyer", {
+      this.$store.setUpFlyer({
         flyerId: item.flyerId,
         businessTitle: this.vendor.businessTitle,
         time: Date.now().toString(),
       });
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
     },
 
     designFlyerHandler() {
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
       this.$router.push("vendorflyers");
     },
 
@@ -1554,7 +1552,7 @@ export default {
     },
 
     guildDealsHandler() {
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
       router.push("guildDeal");
     },
 
@@ -1571,12 +1569,12 @@ export default {
       // console.log(e);
       // console.log(e.flyerId);
       this.showSketchList = false;
-      this.$store.dispatch("getSelectedSketch", {
+      this.$store.getSelectedSketch({
         flyerId: e.flyerId,
         businessTitle: this.vendor.businessTitle,
         time: Date.now().toString(),
       });
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
     },
     handleTemplateSelected(_event, { item }) {
       // Vuetify 3's @click:row emits (event, { item }); Vuetify 2 emitted the
@@ -1585,18 +1583,18 @@ export default {
       // console.log(e);
       // console.log(e.templateId);
       this.showTemplateList = false;
-      this.$store.dispatch("getSelectedTemplate", {
+      this.$store.getSelectedTemplate({
         templateId: e.templateId,
         businessTitle: this.vendor.businessTitle,
         time: Date.now().toString(),
       });
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
     },
 
     handleSignoutVendor() {
       // this.$router.push("/");
       eventBus_vendorParlour.$emit("vendorParlour", false);
-      this.$store.dispatch("signoutVendor");
+      this.$store.signoutVendor();
     },
 
     onChange(entry, obv) {
@@ -1676,12 +1674,12 @@ export default {
     setUpFlyer(item) {
       // console.log(item);
       this.showFlyerList = false;
-      this.$store.dispatch("setUpFlyer", {
+      this.$store.setUpFlyer({
         flyerId: item.flyerId,
         businessTitle: this.vendor.businessTitle,
         time: Date.now().toString(),
       });
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
     },
 
     manageGuildDealsHandler() {
@@ -1697,7 +1695,7 @@ export default {
       // console.log(index);
       switch (index) {
         case 0:
-          this.$store.commit("setInDesign", true);
+          this.$store.setInDesign(true);
           this.$router.push("vendorProfile");
 
           break;
@@ -1711,7 +1709,7 @@ export default {
     },
 
     vendorProductServiceHandler() {
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
       this.$router.push("vendorProductService");
     },
 
@@ -1728,12 +1726,12 @@ export default {
     },
 
     vendorGalleryHandler() {
-      // this.$store.commit("setInDesign", true);
+      // this.$store.setInDesign(true);
       this.$router.push("vendorGallery");
     },
 
     promotionsHandler() {
-      this.$store.commit("setInDesign", true);
+      this.$store.setInDesign(true);
       this.$router.push("vendorPromotions");
     },
 
@@ -1814,28 +1812,24 @@ export default {
     },
   },
   beforeRouteEnter(to, from, next) {
-    // this.$store.commit('setIsSearchBtnDisabled', true)
+    // this.$store.setIsSearchBtnDisabled(true)
     next((vm) => {
       // put your logic here
-      vm.markerList = vm.$store.getters.markerList;
-      vm.promotionEventsProcessed = vm.$store.getters.promotionEventsProcessed;
+      vm.markerList = vm.$store.markerList;
+      vm.promotionEventsProcessed = vm.$store.promotionEventsProcessed;
       vm.freshMap = true;
-      vm.isPromotionEventShowed = vm.$store.getters.isPromotionEventShowed;
-      vm.$store.commit("setIsSearchBtnDisabled", false);
+      vm.isPromotionEventShowed = vm.$store.isPromotionEventShowed;
+      vm.$store.setIsSearchBtnDisabled(false);
       // console.log(vm.markerList)
     });
   },
   beforeRouteLeave(to, from, next) {
-    this.$store.commit("setMarkerList", this.markerList);
-    this.$store.commit(
-      "setPromotionEventsProcessed",
-      this.promotionEventsProcessed
+    this.$store.setMarkerList(this.markerList);
+    this.$store.setPromotionEventsProcessed(this.promotionEventsProcessed
     );
-    this.$store.commit(
-      "setIsPromotionEventShowed",
-      this.isPromotionEventShowed
+    this.$store.setIsPromotionEventShowed(this.isPromotionEventShowed
     );
-    this.$store.commit("setIsSearchBtnDisabled", true);
+    this.$store.setIsSearchBtnDisabled(true);
     eventBus_closeSignUp.$emit("closeSU", { close: false });
     // this.markerList = []
     // this.promotionEvents = []

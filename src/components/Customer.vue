@@ -91,7 +91,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex"
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 
 export default {
     name: "Customer",
@@ -104,7 +105,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["customerRatings"]),
+        ...mapState(useMainStore, ["customerRatings"]),
     },
     watch: {
         customerRatings(val) {
@@ -142,7 +143,7 @@ export default {
             }
         },
         save() {
-            this.$store.dispatch("saveCustomerRating", {
+            this.$store.saveCustomerRating({
                 vendor: this.vendor,
                 residentId: this.resident._id,
                 rating: this.rating,

@@ -751,7 +751,8 @@
 
 <script>
 import moment from "moment";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import mask from "../../directives/mask";
 import { CHECK_BUSINESSTITLE } from "../../queries/queries_query.js";
 import { VENDOREMAIL_CHECK } from "../../queries/queries_query.js";
@@ -890,9 +891,9 @@ export default {
 
   beforeMount() {
     // console.log("signup vendor");
-    this.$store.dispatch("getProductCategory");
-    this.$store.dispatch("getServiceCategory");
-    this.$store.dispatch("getRestaurantCategory");
+    this.$store.getProductCategory();
+    this.$store.getServiceCategory();
+    this.$store.getRestaurantCategory();
     eventBus_vendorParlour.$emit("vendorParlour", true);
   },
   async mounted() {
@@ -934,7 +935,7 @@ export default {
       const northEast = new google.maps.LatLng(44.519412, -78.032275);
       const bounds = new google.maps.LatLngBounds(southWest, northEast);
       // console.log(bounds);
-      // const resident = this.$store.getters.resident;
+      // const resident = this.$store.resident;
       // console.log(resident);
 
       autocomplete = new google.maps.places.Autocomplete(
@@ -1053,7 +1054,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
+    ...mapState(useMainStore, [
       "loading",
       "productsCategories",
       "servicesCategories",
@@ -1292,7 +1293,7 @@ export default {
       this.isCategory = true;
       this.errorMessage = "";
       if (this.businessTitle) {
-        this.$store.commit("clearError");
+        this.$store.clearError();
         this.$apollo
           .query({
             query: CHECK_BUSINESSTITLE,
@@ -1330,7 +1331,7 @@ export default {
           const businessHoursToSave = this.businessHours.map(hour => {
             return { weekDay: hour[0], time: hour[1]}
         })
-        this.$store.dispatch("signupVendor", {
+        this.$store.signupVendor({
           tagline: this.tagline,
           businessTitle: _.capitalize(this.businessTitle),
           email: this.email,
@@ -1438,7 +1439,7 @@ export default {
       // console.log("sparked");
       this.errorMessage = "";
       if (this.email) {
-        // this.$store.commit("clearError");
+        // this.$store.clearError();
         this.isEmail = true;
         this.$apollo
           .query({

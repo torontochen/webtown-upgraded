@@ -950,7 +950,8 @@
 
 <script>
 import moment from "moment";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "./store/store";
 import VueDraggableResizable from "vue-draggable-resizable";
 import "vue-draggable-resizable/style.css";
 
@@ -1108,7 +1109,7 @@ export default {
       // console.log(eventData);
       this.vendorParlour = eventData;
     });
-    this.$store.commit("setViewPortDimension", {
+    this.$store.setViewPortDimension({
       width: window.innerWidth,
       height: window.innerWidth,
     });
@@ -1128,7 +1129,7 @@ export default {
           console.log(treasure);
           if (this.cityHall.metro == metro) {
             this.cityHall.treasure += treasure;
-            this.$store.commit("setCityHall", this.cityHall);
+            this.$store.setCityHall(this.cityHall);
           }
         },
       },
@@ -1163,9 +1164,9 @@ export default {
                 crossBoundary,
                 targetDistribute,
               });
-              this.$store.commit("setActiveFlyerList", this.activeFlyerList);
+              this.$store.setActiveFlyerList(this.activeFlyerList);
             } else {
-              this.$store.dispatch("getActiveFlyer");
+              this.$store.getActiveFlyer();
             }
           }
         },
@@ -1183,7 +1184,7 @@ export default {
             ) {
               let newResident = this.resident;
               newResident.messages.push(messageReceived);
-              this.$store.commit("setResident", newResident);
+              this.$store.setResident(newResident);
             }
             if (
               messageReceived.receiverType == "resident" &&
@@ -1192,7 +1193,7 @@ export default {
             ) {
               let newResident = this.resident;
               newResident.guildMessages.push(messageReceived);
-              this.$store.commit("setResident", newResident);
+              this.$store.setResident(newResident);
             }
           }
         },
@@ -1204,7 +1205,7 @@ export default {
           console.log(newsAdded);
           const news = [...this.news];
           news.push(newsAdded);
-          this.$store.commit("setNews", news);
+          this.$store.setNews(news);
         },
       },
       orderStatusChanged: {
@@ -1233,7 +1234,7 @@ export default {
               orders[index].isConfirmed = isConfirmed;
               orders[index].disputeInfo = content;
               // console.log(orders)
-              this.$store.commit("setResidentOrders", orders);
+              this.$store.setResidentOrders(orders);
             }
           }
         },
@@ -1249,7 +1250,7 @@ export default {
           ) {
             const orders = [...this.residentOrders];
             orders.push(residentOrderAdded);
-            this.$store.commit("setResidentOrders", orders);
+            this.$store.setResidentOrders(orders);
           }
         },
       },
@@ -1259,7 +1260,7 @@ export default {
           const { residentSilverUpdated } = data;
           if (residentSilverUpdated.resident == this.resident.residentName) {
             this.resident.silverCoins = residentSilverUpdated.silver;
-            this.$store.commit("setResident", this.resident);
+            this.$store.setResident(this.resident);
           }
         },
       },
@@ -1313,14 +1314,12 @@ export default {
     }, 4000);
     // }
 
-    this.$store.commit("setNavbarHeight", navHeight);
-    this.$store.commit("setViewPortDimension", {
+    this.$store.setNavbarHeight(navHeight);
+    this.$store.setViewPortDimension({
       width: window.innerWidth,
       height: window.innerWidth,
     });
-    this.$store.commit(
-      "setFooterHeight",
-      document.getElementById("footer").offsetHeight
+    this.$store.setFooterHeight(document.getElementById("footer").offsetHeight
     );
     this.navbarHeight = navHeight;
 
@@ -1366,7 +1365,7 @@ export default {
     now(newVal) {
       const nowTime = moment(newVal).format("H:mm:ss");
       if (nowTime === "0:00:00") {
-        this.$store.dispatch("getActiveFlyer");
+        this.$store.getActiveFlyer();
       }
     },
 
@@ -1376,10 +1375,10 @@ export default {
         this.vendorActive = false;
         if (oldValue == null) {
           this.authSnackbar = true;
-          this.$store.dispatch("getShoppingCart", {
+          this.$store.getShoppingCart({
             resident: newValue.residentName,
           });
-          this.$store.dispatch("getResidentOrders", {
+          this.$store.getResidentOrders({
             resident: newValue.residentName,
           });
         }
@@ -1395,13 +1394,13 @@ export default {
             };
           });
           //  if( this.resident && this.resident.guild!=null) {
-          this.$store.dispatch("getGuildDealsStatus", {
+          this.$store.getGuildDealsStatus({
             guildFullName: newValue.guild.guildFullName,
           });
           // }
           this.participants = [...members];
           this.titleImageUrl = newValue.guild.guildLogo;
-          this.$store.dispatch("getGuildChatMessages", {
+          this.$store.getGuildChatMessages({
             guildFullName: newValue.guild.guildFullName,
           });
           // NOTE: an `else if (newValue.guild && oldValue.guild && names differ)`
@@ -1430,7 +1429,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
+    ...mapState(useMainStore, [
       "demandSearch",
       "vendor",
       "loading",
@@ -1570,7 +1569,7 @@ export default {
 
     handleSigninResident() {
       if (this.$refs.form.validate()) {
-        this.$store.dispatch("signinResident", {
+        this.$store.signinResident({
           residentName: this.residentName,
           password: this.password,
         });
@@ -1618,12 +1617,12 @@ export default {
       // console.log(this.profile);
       this.profile = false;
       this.$router.push("/");
-      this.$store.dispatch("signoutResident");
+      this.$store.signoutResident();
     },
     handleSignoutVendor() {
       // this.$router.push("/");
       eventBus_vendorParlour.$emit("vendorParlour", false);
-      this.$store.dispatch("signoutVendor");
+      this.$store.signoutVendor();
     },
     handleProfile() {
       this.$router.push("/profile");

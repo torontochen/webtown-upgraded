@@ -1143,7 +1143,8 @@
 <script>
 
 import _ from "lodash";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import ImageResize from "quill-image-resize-module";
 import moment from "moment";
 //Set up font and font-size for Quill
@@ -1353,10 +1354,10 @@ export default {
   },
 
   beforeUnmount() {
-    this.$store.commit("clearSelectedSketch");
-    this.$store.commit("clearSelectedTemplate");
-    this.$store.commit("clearSelectedSketch_C");
-    this.$store.commit("clearSelectedTemplate_C");
+    this.$store.clearSelectedSketch();
+    this.$store.clearSelectedTemplate();
+    this.$store.clearSelectedSketch_C();
+    this.$store.clearSelectedTemplate_C();
     console.log("vendorflyer destroy");
     // eventBus_editElement.$off();
     // eventBus_addPage.$off();
@@ -1490,7 +1491,7 @@ export default {
       this.noElement = this.noElement_C = !eventValue;
     });
 
-    this.$store.dispatch("getAllItemsCatalog", {
+    this.$store.getAllItemsCatalog({
       businessTitle: this.vendor.businessTitle,
       time: Date.now().toString(),
     });
@@ -1670,7 +1671,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapState(useMainStore, [
       "allItemsCatalog",
       "pagePreview",
       "pagePreview_C",
@@ -2028,7 +2029,7 @@ export default {
         console.log( this.dateTo);
         console.log('couponValue',couponValue)
 
-        this.$store.dispatch("updateSavedFlyer", {
+        this.$store.updateSavedFlyer({
           input: {
             flyerId: this.savedFlyer.flyerId,
             dateFrom: this.dateFrom,
@@ -2057,7 +2058,7 @@ export default {
             ))
 
       if(this.distributeType == 'regular'){
-         this.$store.dispatch("distributeFlyer", {
+         this.$store.distributeFlyer({
           input: {
             businessTitle: this.vendor.businessTitle,
             logo: this.vendor.logo,
@@ -2076,7 +2077,7 @@ export default {
           },
         });
       } else {
-        this.$store.dispatch("targetDistribute", {
+        this.$store.targetDistribute({
         input: {
           residentList: [...this.residentTargeted.residentList],
           businessTitle: this.vendor.businessTitle,
@@ -2099,7 +2100,7 @@ export default {
 
      
       
-      this.$store.commit("setInDesign", false);
+      this.$store.setInDesign(false);
       // this.$router.push("/");
     },
 
@@ -2168,7 +2169,7 @@ export default {
 
     toDesign() {
       this.stepper = 2;
-      this.$store.commit("setTemplateIsSaved", false);
+      this.$store.setTemplateIsSaved(false);
     },
     toPreview() {
       eventBus_preview.$emit("doPreview");
@@ -2181,12 +2182,12 @@ export default {
       this.showDialog = false;
       this.pageSavePreview = [];
       if (this.cancelTrue) {
-        this.$store.commit("setInDesign", false);
-        this.$store.commit("clearSelectedSketch");
-        this.$store.commit("clearSelectedTemplate");
-        this.$store.commit("clearSelectedSketch_C");
-        this.$store.commit("clearSelectedTemplate_C");
-        this.$store.commit("setTemplateIsSaved", false);
+        this.$store.setInDesign(false);
+        this.$store.clearSelectedSketch();
+        this.$store.clearSelectedTemplate();
+        this.$store.clearSelectedSketch_C();
+        this.$store.clearSelectedTemplate_C();
+        this.$store.setTemplateIsSaved(false);
 
         this.killHtmlConverter = true;
         this.$router.push(this.to);
@@ -2194,7 +2195,7 @@ export default {
         return;
       }
       this.killHtmlConverter = true;
-      this.$store.commit("setInDesign", false);
+      this.$store.setInDesign(false);
       this.$router.push(this.to);
       this.to = null;
     },

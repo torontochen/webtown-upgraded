@@ -27,10 +27,10 @@ Running record of the staged upgrade, phase by phase.
 | 4b-3c — vue-beautiful-chat | ✅ Done | `8597a15`+ |
 | 4b-4 — The flip: Vue 3 + Vuetify 3 | ✅ Done | `cfa820a`+ |
 | 4b-5 — Vuetify 3 layout and component APIs | ✅ Done | `c7a4fa3`+ |
-| 4c — Pinia (Apollo Client 3 landed in 4b-4) | Not started | |
+| 4c — Vuex → Pinia | ✅ Done | `c867a20`+ |
 | 5 — Dependency cleanup | Not started | |
 
-**Phase 4b is complete.** The app runs on Vue 3 + Vuetify 3 + Vuetify's own
+**Phases 4b and 4c are complete.** The app runs on Vue 3 + Vuetify 3 + Vuetify's own
 tree-shaking, with `npm run verify` green (0 lint errors, 112 tests, build) and
 `npm run test:e2e` green (22 guard checks + 4 subscription checks) against live
 Atlas. What remains is a manual pass over the authenticated screens — see
@@ -1448,6 +1448,89 @@ Left as-is with this note rather than guessed at.
 The rest of the deferred list is unchanged: `v-data-iterator`'s slot API, and a
 manual pass over the flyer designer, guild chat, and the vendor tables and
 pickers with real credentials.
+
+---
+
+## Phase 4c — Vuex 4 → Pinia ✅
+
+Apollo Client 3 came forward into 4b-4, so this phase is just the store. The
+state shape and every action name are unchanged, which is what let ~320 call
+sites across 35 components be rewritten mechanically.
+
+### What Pinia's model forced
+
+| | |
+|---|---|
+| **No mutations** | The 83 mutations are actions now, sharing a namespace with the 76 Apollo ones. `setX: (state, payload) => {...}` became `setX(payload) { this.x = ... }`. They keep their own file: synchronous state writes are still a different thing from the Apollo layer |
+| **No pass-through getters** | All 74 were `x: state => state.x`, named exactly like the state key. Pinia exposes state on the store, so they were not just redundant — a getter **cannot share a name with a state property**. `getters.js` is deleted; `mapState(useMainStore, [...])` reads state |
+| **`state` is a factory** | The imported object is spread into one |
+| **Context → `this`** | `({ commit, state }, payload)` became `(payload)`, `commit("setX", v)` became `this.setX(v)`, `state.x` became `this.x` |
+
+Call sites: 97 `dispatch` → method calls, 144 `commit` → method calls, 8
+`$store.getters.x` → `$store.x`, 31 `mapGetters` → `mapState(useMainStore, …)`.
+The store is exposed as `app.config.globalProperties.$store`, so no component
+grew an import — and unlike Vuex, `$store` here *is* the Pinia store:
+`this.$store.getPets()`, `this.$store.setLoading(true)`.
+
+Three `commit()` calls passed a **dynamic** name (a ternary choosing between
+`setSelectedSketch` and `setSelectedSketch_C`). Those became `this[expr](value)`.
+
+### Two import cycles, both fatal, both invisible until runtime
+
+Vuex tolerated a cycle that Pinia does not, and the symptom was the same both
+times: **`Cannot access 'useMainStore' before initialization`**, a blank page.
+
+1. **`store → actions → main.js → store`.** `actions.js` imported
+   `defaultClient` from main.js. Nothing touched the store module during its own
+   evaluation under Vuex; under Pinia a component imports `useMainStore`
+   directly, so a component evaluating first starts `store.js → actions.js →
+   main.js`, and main.js calls `useMainStore()` at module scope — still in its
+   temporal dead zone.
+
+   Fixed by extracting the Apollo setup to **`src/apollo/client.js`**, which
+   imports nothing from the store. The error links still need the store to sign
+   a user out, so it is handed in with `attachStore()` once it exists — those
+   handlers only run at request time. main.js drops from ~300 lines to 129.
+
+2. **`store → actions → router → every component → store`.** `actions.js`
+   imported the router for its 33 `router.push` / `.go` / `.replace` calls, and
+   `router.js` imports every view. Fixed by handing the router to the store, so
+   actions call `this.router.push()`.
+
+   Worth knowing: the documented `pinia.use(({ store }) => …)` plugin form
+   **does not work here**. A plugin registered before `app.use(pinia)` is only
+   queued, and this store is created at module scope — before the app exists —
+   so the plugin never reaches it. The router is assigned directly instead.
+
+### Two pre-existing bugs the migration surfaced
+
+Vuex's `commit()` on an unknown mutation logged *"unknown mutation type"* and
+carried on. Pinia's equivalent is a `TypeError`, so soft failures became hard
+ones and both of these had to be dealt with:
+
+- **`setGuildDealStatus`** (singular "Deal") in OpenHouse.vue. The store's
+  mutation is `setGuildDealsStatus`. **No such mutation has ever existed**, so
+  the line has always been a no-op. Disabled with a comment rather than
+  silently corrected — fixing the name would switch on a state write that has
+  never run, on a screen behind auth that cannot be exercised here.
+- **`fingerPrintIsSave`**, a getter reading `state.fingerPrintIsSave` when the
+  state key is `fingerPrintIsSaved`. Always `undefined`, and nothing referenced
+  it. Removed with the rest of the getters.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **120 tests** (was 112), production build.
+  Bundle 2,158 → **2,142 kB**; Pinia is smaller than Vuex.
+- `npm run test:e2e` — **22/22 guard checks + 4/4 subscription checks**.
+- `test/store.test.js` (8 tests) locks the migration, including the check that
+  replaces Vuex's runtime warning: **every `$store.<member>` in the codebase
+  resolves to a real state key or action**, and every `mapState` name is a real
+  state key. It also asserts neither import cycle can come back.
+- In the browser against live Atlas: store id `main`, 74 state keys, 162
+  actions, router injected. All boot queries populate — treasury 2,320,618, 21
+  promotion events, 41 vendors, 12 guilds, 17 news items, 4 pets. Driving the
+  store directly: a former mutation writes state, `getPets()` refetches and
+  repopulates, and Pinia's `$patch` / `$state` work. No console errors.
 
 ---
 

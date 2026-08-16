@@ -305,7 +305,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import _, { now } from "lodash";
 import { CHECK_ITEMCODE } from "../../queries/queries_query"
 
@@ -442,7 +443,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["vendor", "itemCatalogSaved", 'viewPortDimension', "itemCatalogLoading","vendorPromotionEvents"]),
+    ...mapState(useMainStore, ["vendor", "itemCatalogSaved", 'viewPortDimension', "itemCatalogLoading","vendorPromotionEvents"]),
     
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
@@ -485,7 +486,7 @@ export default {
 
     deleteItemConfirm() {
       this.itemCatalogList.splice(this.editedIndex, 1);
-      this.$store.dispatch("saveItemCatalog", {
+      this.$store.saveItemCatalog({
         input: {
           businessTitle: this.vendor.businessTitle,
           itemDetailed: this.itemCatalogList,
@@ -496,7 +497,7 @@ export default {
 
     changeSubcateHandler() {
       // console.log("run changeSub");
-      this.$store.dispatch("getItemCatalog", {
+      this.$store.getItemCatalog({
         businessTitle: this.vendor.businessTitle,
         subcategory: this.subCategorySeleted,
         // time: Date.now().toString(),
@@ -552,11 +553,11 @@ export default {
     handleCancel() {
       this.itemCatalogList = [];
       // this.exitDialog = false;
-      this.$store.dispatch("getAllItemsCatalog", {
+      this.$store.getAllItemsCatalog({
         businessTitle: this.vendor.businessTitle,
         time: Date.now().toString(),
       });
-      this.$store.commit("setInDesign", false);
+      this.$store.setInDesign(false);
       this.$router.push("/");
     },
     onFilePicked(File) {
@@ -645,7 +646,7 @@ export default {
         this.itemCatalogList =[]
         this.itemCatalogList = [...itemCatalogList]
           // console.log(this.itemCatalogList)
-          this.$store.dispatch("saveItemCatalog", {
+          this.$store.saveItemCatalog({
             input: {
               businessTitle: this.vendor.businessTitle,
               itemDetailed: itemCatalogList
@@ -675,7 +676,7 @@ export default {
             }
           })
           console.log(itemCatalogList)
-          this.$store.dispatch("saveItemCatalog", {
+          this.$store.saveItemCatalog({
             input: {
               businessTitle: this.vendor.businessTitle,
               itemDetailed: itemCatalogList

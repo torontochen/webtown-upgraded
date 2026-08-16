@@ -141,7 +141,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 
 export default {
   name: "Membership",
@@ -158,7 +159,7 @@ export default {
    
   },
   computed: {
-    ...mapGetters(["vendor"]),
+    ...mapState(useMainStore, ["vendor"]),
 
     memberShipFees(){
       switch (this.memberShip){

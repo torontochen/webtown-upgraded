@@ -147,7 +147,8 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import moment from 'moment'
 
 
@@ -161,7 +162,7 @@ export default {
        }
    },
    computed:{
-       ...mapGetters(["vendorSalesInfo"]),
+       ...mapState(useMainStore, ["vendorSalesInfo"]),
 
        dateOfMonth(){
            return this.vendorSalesInfo.monthToDateSales.map((item, i)=>{

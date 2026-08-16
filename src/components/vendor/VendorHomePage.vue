@@ -704,7 +704,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import { VENDOR_ORDER_ADDED, 
           VENDOR_SETTLEMENT_RECORD_ADDED, 
           MESSAGE_RECEIVED, 
@@ -763,7 +764,7 @@ export default {
   //         const { customerRatingAdded } = data
   //          if(this.vendor && this.vendor.businessTitle == customerRatingAdded.vendor) {
   //            this.customerRatings.push(customerRatingAdded)
-  //            this.$store.commit("setCustomerRatings", this.customerRatings)
+  //            this.$store.setCustomerRatings(this.customerRatings)
   //        }
   //       }
   //     },
@@ -781,7 +782,7 @@ export default {
   //             orders[index].isConfirmed = isConfirmed
   //             orders[index].disputeInfo = content
               
-  //             this.$store.commit('setVendorOrders', orders)
+  //             this.$store.setVendorOrders(orders)
   //           }
   //         }
   //       }
@@ -793,7 +794,7 @@ export default {
   //         console.log(vendorOrderAdded);
   //         if(this.vendor && this.vendor.businessTitle == vendorOrderAdded.vendor) {
   //            this.vendorOrders.push(vendorOrderAdded)
-  //            this.$store.commit("setVendorOrders", this.vendorOrders)
+  //            this.$store.setVendorOrders(this.vendorOrders)
   //        }
   //       }
   //     },
@@ -804,7 +805,7 @@ export default {
   //         console.log(vendorSettlementRecordAdded);
   //         if(this.vendor && this.vendor.businessTitle == vendorSettlementRecordAdded.vendor) {
   //            this.vendorSettlementRecords.push(vendorSettlementRecordAdded)
-  //            this.$store.commit("setVendorSettlementRecords", this.vendorSettlementRecords)
+  //            this.$store.setVendorSettlementRecords(this.vendorSettlementRecords)
   //        }
   //       }
   //     },
@@ -817,7 +818,7 @@ export default {
   //         if( messageReceived.receiverType == 'vendor' && messageReceived.receiver == this.vendor.businessTitle) {
   //            let newVendor = this.vendor
   //            newVendor.messages.push(messageReceived)
-  //            this.$store.commit("setVendor", newVendor)
+  //            this.$store.setVendor(newVendor)
   //        }
         
   //       }
@@ -825,21 +826,21 @@ export default {
   //   }
   // },
   created() {
-    this.$store.dispatch("getVendorGuildDeals", {vendor: this.vendor.businessTitle})
+    this.$store.getVendorGuildDeals({vendor: this.vendor.businessTitle})
     
-    this.$store.dispatch("getAllItemsCatalog", {
+    this.$store.getAllItemsCatalog({
       businessTitle: this.vendor.businessTitle,
       time: Date.now().toString(),
     });
-    this.$store.dispatch("getVendorPromotionEvents", { vendor: this.vendor.businessTitle })
-    this.$store.dispatch("getVendorOrders", {vendor: this.vendor.businessTitle})
-    this.$store.dispatch("getVendorSettlementRecords", {vendor: this.vendor.businessTitle})
-    this.$store.dispatch("getVendorSalesInfo", {vendor: this.vendor.businessTitle})
-    this.$store.dispatch("getVendorFlyers", {vendor: this.vendor.businessTitle})
-    this.$store.dispatch("getCustomerRatings", {vendor: this.vendor.businessTitle})
-    this.$store.dispatch("getAllGuilds");
-    this.$store.dispatch("getGamePropList")
-    this.$store.dispatch("getGameSubstituteList")
+    this.$store.getVendorPromotionEvents({ vendor: this.vendor.businessTitle })
+    this.$store.getVendorOrders({vendor: this.vendor.businessTitle})
+    this.$store.getVendorSettlementRecords({vendor: this.vendor.businessTitle})
+    this.$store.getVendorSalesInfo({vendor: this.vendor.businessTitle})
+    this.$store.getVendorFlyers({vendor: this.vendor.businessTitle})
+    this.$store.getCustomerRatings({vendor: this.vendor.businessTitle})
+    this.$store.getAllGuilds();
+    this.$store.getGamePropList()
+    this.$store.getGameSubstituteList()
   },
 
   computed: {
@@ -854,7 +855,7 @@ export default {
         ? [{ key: this.sortBy, order: this.sortDesc ? "desc" : "asc" }]
         : [];
     },
-    ...mapGetters(["vendor", 
+    ...mapState(useMainStore, ["vendor", 
                     "allItemsCatalog", 
                     "customerRatings",
                     "viewPortDimension",
@@ -937,7 +938,7 @@ export default {
     //           // console.log(array)
     //           array[i].isFulfilled = this.isOrderFilled[index]
     //         })
-    //         this.$store.commit('setVendorOrders', data.getVendorOrders)
+    //         this.$store.setVendorOrders(data.getVendorOrders)
     //       }
     //     })
     //     .then(({data})=> {
@@ -958,7 +959,7 @@ export default {
       const index = this.vendorOrders.findIndex(item => item.orderNo == order.orderNo)
       const orders = [...this.vendorOrders]
       orders[index].isConfirmed = false
-      this.$store.commit('setVendorOrders', orders)
+      this.$store.setVendorOrders(orders)
       this.$apollo
         .mutate({
           mutation: CONFIRM,
@@ -976,7 +977,7 @@ export default {
        const orders = [...this.vendorOrders]
        orders[index].isFulfilled = true
        orders[index].fulfillNote = this.fulfillNote
-       this.$store.commit('setVendorOrders', orders)
+       this.$store.setVendorOrders(orders)
        this.$apollo
         .mutate({
           mutation: FULFILL,
@@ -1024,7 +1025,7 @@ export default {
 
       // switch(this.singleMessageToShow.type){
       //   case 'vendor':
-          this.$store.dispatch('sendMessage', {
+          this.$store.sendMessage({
                 sender: this.vendor.businessTitle,
                 receiver: this.singleMessageToShow.message.sender,
                 receiverType: 'resident',
@@ -1036,7 +1037,7 @@ export default {
             })
       //       break;
       //     case 'guild':
-      //       this.$store.dispatch('sendMessage', {
+      //       this.$store.sendMessage({
       //           sender: this.resident.residentName,
       //           receiver: this.singleMessageToShow.sender,
       //           receiverType: 'resident',
@@ -1055,7 +1056,7 @@ export default {
     },
 
     sendCustomerMessage(){
-       this.$store.dispatch('sendMessage', {
+       this.$store.sendMessage({
                 sender: this.customerToMessage.vendor,
                 receiver: this.customerToMessage.resident,
                 receiverType: 'resident',
@@ -1121,7 +1122,7 @@ export default {
                   //       cache.writeQuery({ query: GET_CURRENT_RESIDENT, data})
                   //     }
                   // }
-                  this.$store.commit('setVendor', data.getCurrentVendor)
+                  this.$store.setVendor(data.getCurrentVendor)
           },
           // refetchQueries:[{ query: GET_CURRENT_VENDOR}],
           // awaitRefetchQueries: true

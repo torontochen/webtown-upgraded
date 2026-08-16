@@ -183,7 +183,8 @@
   </v-container>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import { EMAIL_CHECK } from "../queries/queries_query.js";
 import gmapsInit from "../utils/gmaps";
 // import { CONNREFUSED } from "dns";
@@ -429,7 +430,7 @@ export default {
   // },
 
   computed: {
-    ...mapGetters(["loading", "error", "resident", "viewPortDimension"]),
+    ...mapState(useMainStore, ["loading", "error", "resident", "viewPortDimension"]),
     isFormValid() {
       if (this.email && this.password && this.postalCode) {
         return true;
@@ -458,7 +459,7 @@ export default {
       // console.log(this.email, this.password, this.postalCode);
       // if (this.$refs.form.validate()) {
       // console.log(this.email);
-      this.$store.dispatch("signupResident", {
+      this.$store.signupResident({
         postalCode: this.postalCode,
         email: this.email,
         password: this.password,
@@ -474,7 +475,7 @@ export default {
       // console.log("sparked");
       this.errorMessage = "";
       if (this.email) {
-        this.$store.commit("clearError");
+        this.$store.clearError();
         this.$apollo
           .query({
             query: EMAIL_CHECK,

@@ -55,7 +55,8 @@
 
 <script>
 
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import gmapsInit from "../utils/gmaps";
 
 export default {
@@ -230,11 +231,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["resident"])
+        ...mapState(useMainStore, ["resident"])
     },
     methods: {
         sendMessage() {
-            this.$store.dispatch('sendMessage', {
+            this.$store.sendMessage({
                 sender: this.resident.residentName,
                 receiver: this.businessTitle,
                 receiverType: 'vendor',

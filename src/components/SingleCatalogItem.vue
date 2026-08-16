@@ -161,7 +161,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex"
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import { eventBus_actionPanel } from "../eventBus";
 import _ from "lodash"
 
@@ -184,11 +185,11 @@ export default {
         eventBus_actionPanel.$emit("openActionPanel", {item : this.getSingleItem})
         // console.log(this.vendor)
         // console.log(this.itemCode)
-        this.$store.dispatch("getSingleItemRating", {vendor: this.vendor, itemCode: this.itemCode})
+        this.$store.getSingleItemRating({vendor: this.vendor, itemCode: this.itemCode})
     },
 
    computed: {
-       ...mapGetters(["vendorInterface", "resident", "singleItemRating", "viewPortDimension"]),
+       ...mapState(useMainStore, ["vendorInterface", "resident", "singleItemRating", "viewPortDimension"]),
 
         getSingleItem() {
             if(this.vendorInterface) {
@@ -235,7 +236,7 @@ export default {
         },
 
        saveRating() {
-           this.$store.dispatch("saveSingleItemRating", {
+           this.$store.saveSingleItemRating({
                itemCode: this.itemCode,
                vendor: this.vendor,
                rating: this.rating,

@@ -171,7 +171,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import _ from 'lodash'
 
 export default {
@@ -190,7 +191,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["vendorSettlementRecords", "vendor", "viewPortDimension"]),
+        ...mapState(useMainStore, ["vendorSettlementRecords", "vendor", "viewPortDimension"]),
 
         silverPrice(){
            
@@ -228,7 +229,7 @@ export default {
             //   roundingIncrement: 5  
             }).format(this.goldToRedeem).toString() + ' will be deposited to your bank account in 10 business days'
             this.snackbar = true
-            this.$store.commit('setVendor', this.vendor) 
+            this.$store.setVendor(this.vendor) 
         },
 
         confirmPurchase(){
@@ -237,7 +238,7 @@ export default {
             this.snackbarInfo = 'You purchased ' + new Intl.NumberFormat('en-US', {  maximumFractionDigits: 0, minimumFractionDigits: 0,
                                 roundingIncrement: 5  }).format(this.purchaseAmount).toString() + ' boundary silver'
             this.snackbar = true
-            this.$store.commit('setVendor', this.vendor) 
+            this.$store.setVendor(this.vendor) 
         },
 
         redeemGold(){

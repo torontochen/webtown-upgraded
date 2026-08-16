@@ -548,7 +548,8 @@
 
 <script>
 import moment from "moment";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import _ from "lodash"
 
 import { CHECK_RESIDENTNAME } from "../queries/queries_query.js";
@@ -698,7 +699,7 @@ export default {
       const northEast = new google.maps.LatLng(44.519412, -78.032275);
       const bounds = new google.maps.LatLngBounds(southWest, northEast);
       // console.log(bounds);
-      // const resident = this.$store.getters.resident;
+      // const resident = this.$store.resident;
       // console.log(resident);
 
       // const resident = JSON.parse(localStorage.getItem("resident"));
@@ -929,7 +930,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["resident", "loading", "pets"]),
+    ...mapState(useMainStore, ["resident", "loading", "pets"]),
 
     mailingInfo() {
       if (this.mailPostalCode || this.mailStrAddress || this.mailCity) {
@@ -1022,7 +1023,7 @@ export default {
       // console.log("sparked");
       this.errorMessage = this.errorMessageNickName = "";
       if (this.residentName && this.nickName) {
-        this.$store.commit("clearError");
+        this.$store.clearError();
         this.$apollo
           .query({
             query: CHECK_RESIDENTNAME,
@@ -1051,7 +1052,7 @@ export default {
       // setTimeout(() => {
       //   this.tranStart = false;
       // }, 2000);
-      const resident = this.$store.getters.resident;
+      const resident = this.$store.resident;
       // console.log(this.password);
       // console.log(new Date(this.birthday));
       const payload = {
@@ -1079,7 +1080,7 @@ export default {
       // if (this.$refs.form.validate()) {
       // console.log(payload)
       this.updateProfile = true;
-      this.$store.dispatch("updateProfile", payload);
+      this.$store.updateProfile(payload);
       // this.$router.push("/");
       // }
     },
@@ -1116,7 +1117,7 @@ export default {
       // if (this.signOut) {
       //   this.$router.push(this.to);
       //   // this.to = null;
-      //   this.$store.dispatch("signoutResident");
+      //   this.$store.signoutResident();
       //   return;
       // }
 
@@ -1142,9 +1143,9 @@ export default {
       // console.log(this.to);
       // console.log(this.signOut);
       // if (this.signOut) {
-      //   this.$store.dispatch("signoutResident");
+      //   this.$store.signoutResident();
       // }
-      // this.$store.dispatch("signoutResident");
+      // this.$store.signoutResident();
       this.to = null;
       eventBus_profile.$emit("profile", false);
 

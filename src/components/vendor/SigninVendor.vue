@@ -151,7 +151,8 @@
   </v-dialog>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 export default {
   name: "signinvendor",
   // props: ["signin"],
@@ -174,7 +175,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["loading", "error", "vendor", "fingerPrint"]),
+    ...mapState(useMainStore, ["loading", "error", "vendor", "fingerPrint"]),
   },
   watch: {
     vendor(value) {
@@ -185,7 +186,7 @@ export default {
   },
   mounted() {
     const navHeight = document.getElementById("navbar").offsetHeight;
-    this.$store.commit("setNavbarHeight", navHeight);
+    this.$store.setNavbarHeight(navHeight);
     this.viewportHeight = window.innerHeight;
     this.viewportWidth = window.innerWidth;
     this.$refs.form.reset();
@@ -194,13 +195,13 @@ export default {
   methods: {
     handleCancel() {
 
-      this.$store.dispatch("signoutVendor");
+      this.$store.signoutVendor();
 
       // this.signin=false
     },
     handleSigninVendor() {
       if (this.$refs.form.validate()) {
-        this.$store.dispatch("signinVendor", {
+        this.$store.signinVendor({
           email: this.email,
           password: this.password,
           fingerPrint: this.sameDevice ? this.fingerPrint : "",

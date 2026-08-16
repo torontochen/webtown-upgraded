@@ -180,7 +180,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import { UPDATE_GALLERY_FILES } from "../../queries/queries_mutation"
 // import {GET_CURRENT_VENDOR} from "../../queries/queries_query"
 
@@ -212,7 +213,7 @@ export default {
    
   },
   computed: {
-    ...mapGetters(["vendor"]),
+    ...mapState(useMainStore, ["vendor"]),
     
    
   },
@@ -334,7 +335,7 @@ export default {
           const vendor = this.vendor
           vendor.photoList.splice(0, vendor,photoList.length)
           vendor.photoList = [...photoList]
-          this.$store.commit("setVendor", vendor)
+          this.$store.setVendor(vendor)
         })
         .catch(err=>console.log(err))
         this.businessPhotosToShow =  []

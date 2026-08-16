@@ -117,7 +117,8 @@
 
 <script>
 import { Cropper } from "vue-advanced-cropper";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 
 export default {
   components: {

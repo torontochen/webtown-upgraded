@@ -104,7 +104,8 @@
 <script>
 
 import _ from "lodash";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import moment from 'moment'
 
 
@@ -120,7 +121,7 @@ import moment from 'moment'
         
      },
     computed: {
-        ...mapGetters(["vendor", "guildDeals"]),
+        ...mapState(useMainStore, ["vendor", "guildDeals"]),
         isDealActive() {
 
         }
@@ -143,7 +144,7 @@ import moment from 'moment'
         },
         toggleDealActive(isDealActive, index){
             this.guildDeals[index].active = !isDealActive
-            this.$store.dispatch("toggleGuildDealActive",{ dealId: this.guildDeals[index]._id, isActive: !isDealActive})
+            this.$store.toggleGuildDealActive({ dealId: this.guildDeals[index]._id, isActive: !isDealActive})
         }
     }
 } 

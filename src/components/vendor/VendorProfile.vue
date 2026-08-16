@@ -712,7 +712,8 @@
 
 <script>
 // import moment from "moment";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import mask from "../../directives/mask";
 import { CHECK_BUSINESSTITLE } from "../../queries/queries_query.js";
 import { VENDOREMAIL_CHECK } from "../../queries/queries_query.js";
@@ -845,7 +846,7 @@ export default {
   },
 
   // created() {
-  //   // this.$store.dispatch("getProductCategory");
+  //   // this.$store.getProductCategory();
   //   // console.log(this.productsCategories);
   //   window.addEventListener("beforeunload", function (event) {
   //     // console.log(event);
@@ -1031,7 +1032,7 @@ export default {
       const northEast = new google.maps.LatLng(44.519412, -78.032275);
       const bounds = new google.maps.LatLngBounds(southWest, northEast);
       // console.log(bounds);
-      // const resident = this.$store.getters.resident;
+      // const resident = this.$store.resident;
       // console.log(resident);
       geocoder.geocode(
         {
@@ -1210,7 +1211,7 @@ export default {
   // },
 
   computed: {
-    ...mapGetters([
+    ...mapState(useMainStore, [
       "allItemsCatalog",
       "vendorProfileLoading",
       "productsCategories",
@@ -1498,7 +1499,7 @@ export default {
       this.isCategory = true;
       this.errorMessage = "";
       if (this.businessTitle) {
-        this.$store.commit("clearError");
+        this.$store.clearError();
         this.$apollo
           .query({
             query: CHECK_BUSINESSTITLE,
@@ -1545,7 +1546,7 @@ export default {
         })
         // console.log(businessHoursToSave)
 
-        this.$store.dispatch("updateVendorProfile", {
+        this.$store.updateVendorProfile({
           tagline: this.tagline ? this.tagline : this.vendor.tagline,
           businessTitle: this.businessTitle
             ? this.businessTitle
@@ -1596,7 +1597,7 @@ export default {
           lng: this.lng
         });
         this.toSave = true;
-        this.$store.commit("setInDesign", false);
+        this.$store.setInDesign(false);
       } else {
         this.formAlert = true;
       }
@@ -1699,7 +1700,7 @@ let hours = []
       // console.log("sparked");
       this.errorMessage = "";
       if (this.email) {
-        // this.$store.commit("clearError");
+        // this.$store.clearError();
         this.isEmail = true;
         this.$apollo
           .query({
@@ -1726,7 +1727,7 @@ let hours = []
     yesLeave() {
       // console.log(this.to);
       this.showDialog = false;
-      this.$store.commit("setInDesign", false);
+      this.$store.setInDesign(false);
       // eventBus_vendorParlour.$emit("vendorParlour", false);
       this.$router.push(this.to);
       this.to = null;

@@ -144,7 +144,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 
 export default {
   name: "OrderItemDetails",
@@ -155,7 +156,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["viewPortDimension"]),
+    ...mapState(useMainStore, ["viewPortDimension"]),
 
     orderItemDialog() {
       return this.value;

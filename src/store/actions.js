@@ -1,7 +1,16 @@
-import {
-  defaultClient as apolloClient
-} from "../main.js";
-import router from "../router/router";
+/**
+ * The Apollo layer, now Pinia actions (Phase 4c).
+ *
+ * Vuex handed actions a context object; Pinia gives them the store as this.
+ * So ({ commit, state }, payload) became (payload), commit("setX", v) became
+ * this.setX(v) — setX being one of the former mutations, now an action too —
+ * and state.x became this.x.
+ *
+ * Nothing about the Apollo calls themselves changed.
+ */
+// Phase 4c: the Apollo client moved to its own module, so this no longer
+// imports main.js — the cycle main -> store -> actions -> main is gone.
+import { defaultClient as apolloClient } from "../apollo/client";
 import _ from "lodash";
 
 import {
@@ -87,9 +96,7 @@ import {
 
 const actions = {
 
-  checkSavedFingerPrint: ({
-    commit
-  }, payload) => {
+  checkSavedFingerPrint(payload) {
     apolloClient
       .query({
         query: CHECK_SAVED_FINGERPRINT,
@@ -98,19 +105,19 @@ const actions = {
       .then(({
         data
       }) => {
-        commit("setFingerPrintIsSaved", data.checkSavedFingerPrint.fingerPrintIsSaved);
+        this.setFingerPrintIsSaved(data.checkSavedFingerPrint.fingerPrintIsSaved);
         // if ((localStorage.getItem('token') || localStorage.getItem('vendortoken')) && !data.checkSavedFingerPrint.fingerPrintIsSaved) {
-        //   commit("clearResident");
-        //   commit("clearVendor");
+        //   this.clearResident();
+        //   this.clearVendor();
         //   localStorage.clear();
         //   apolloClient.resetStore();
-        //   router.push("/");
+        //   this.router.push("/");
         // }
       });
   },
 
-commitGuildDeals: ({commit}, payload) => {
-  commit("setCommitGuildDealLoading", true)
+commitGuildDeals(payload) {
+  this.setCommitGuildDealLoading(true)
   apolloClient
     .mutate({
       mutation: COMMIT_GUILD_DEALS,
@@ -121,23 +128,23 @@ commitGuildDeals: ({commit}, payload) => {
       //  const  data = cache.readQuery({query: GET_GUILD_DEALS_STATUS, variables: {guildFullName: payload.guildFullName}})
         //  data.getGuildDealsStatus.length = 0
         //  data.getGuildDealsStatus = [...commitGuildDeals]
-         commit("setGuildDealsStatus", commitGuildDeals)
+         this.setGuildDealsStatus(commitGuildDeals)
       }
     })
     .then(({data}) => {
       const { commitGuildDeals } = data
-      commit("setGuildDealsStatus", commitGuildDeals)
-      commit("setCommitGuildDealLoading", false)
+      this.setGuildDealsStatus(commitGuildDeals)
+      this.setCommitGuildDealLoading(false)
 
     })
     .catch(err => {
       console.error(err)
-      commit("setCommitGuildDealLoading", false)
+      this.setCommitGuildDealLoading(false)
     })
 
  },
 
- createPromotionEvent: ({state, commit}, payload) => {
+ createPromotionEvent(payload) {
   console.log(payload)
     apolloClient
       .mutate({
@@ -145,7 +152,7 @@ commitGuildDeals: ({commit}, payload) => {
         variables: payload,
         update:(cache,{})=>{
           console.log(payload)
-          const list = [...state.news]
+          const list = [...this.news]
             console.log(list)
             const newsTitle = `(${payload.input.vendorName}) ${payload.input.eventType}: `
             const headLine = `${payload.input.eventTitle}   From: ${payload.input.dateFrom} To: ${payload.input.dateTo}`
@@ -156,22 +163,19 @@ commitGuildDeals: ({commit}, payload) => {
           })
           // data.getNews.push(callGroupPurchase)
           // cache.writeQuery({query: GET_NEWS, data})
-          commit("setNews",list)
+          this.setNews(list)
         }
       })
       .then(({data}) => {
         const { createPromotionEvent } = data
         // console.log(createPromotionEvent)
-        commit("setPromotionEvents", createPromotionEvent)
+        this.setPromotionEvents(createPromotionEvent)
       })
       .catch(err => console.error(err))
  },
 
-  distributeFlyer: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  distributeFlyer(payload) {
+    this.setLoading(true);
     apolloClient
       .mutate({
         mutation: DISTRIBUTE_FLYER,
@@ -183,25 +187,22 @@ commitGuildDeals: ({commit}, payload) => {
         const {
           flyerId
         } = data.distributeFlyer;
-        const indexOfList = _.findIndex(state.savedFlyerList, (item) => {
+        const indexOfList = _.findIndex(this.savedFlyerList, (item) => {
           return item.flyerId == flyerId;
         });
-        state.savedFlyerList[indexOfList].distributed = true;
+        this.savedFlyerList[indexOfList].distributed = true;
         // console.log(data);
-        commit("setLoading", false);
-        router.push("/");
+        this.setLoading(false);
+        this.router.push("/");
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  targetDistribute: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  targetDistribute(payload) {
+    this.setLoading(true);
     apolloClient
       .mutate({
         mutation: TARGET_DISTRIBUTE,
@@ -213,21 +214,21 @@ commitGuildDeals: ({commit}, payload) => {
         const {
           flyerId
         } = data.targetDistribute;
-        const indexOfList = _.findIndex(state.savedFlyerList, (item) => {
+        const indexOfList = _.findIndex(this.savedFlyerList, (item) => {
           return item.flyerId == flyerId;
         });
-        state.savedFlyerList[indexOfList].distributed = true;
+        this.savedFlyerList[indexOfList].distributed = true;
         // console.log(data);
-        commit("setLoading", false);
-        router.push("/");
+        this.setLoading(false);
+        this.router.push("/");
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  feedPet: ({commit}, payload) => {
+  feedPet(payload) {
     // console.log(payload)
     apolloClient
       .mutate({
@@ -278,20 +279,18 @@ commitGuildDeals: ({commit}, payload) => {
               },
             },
           });
-          commit('setResident', feedPet)
+          this.setResident(feedPet)
         }
       })
       .then(({data}) => {
         const { feedPet } = data
         // console.log(feedPet)
-        // commit("setResident", feedPet)
+        // this.setResident(feedPet)
       })
       .catch(err => console.error(err))
   },
 
-  getActiveFlyer: ({
-    commit
-  }) => {
+  getActiveFlyer() {
     // console.log("getactiveflyer")
     apolloClient
       .query({
@@ -301,7 +300,7 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data.getActiveFlyer);
-        commit("setActiveFlyerList", data.getActiveFlyer);
+        this.setActiveFlyerList(data.getActiveFlyer);
         // localStorage.setItem('resident', JSON.stringify(data.getCurrentResident));
       })
       .catch((err) => {
@@ -309,10 +308,8 @@ commitGuildDeals: ({commit}, payload) => {
       });
   },
 
-  getAllItemsCatalog: ({
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  getAllItemsCatalog(payload) {
+    this.setLoading(true);
     apolloClient
       .query({
         query: GET_ALL_ITEM_CATALOG,
@@ -322,51 +319,49 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data)
-        commit("setAllItemCatalog", data.getAllItemsCatalog);
-        commit("setLoading", false);
+        this.setAllItemCatalog(data.getAllItemsCatalog);
+        this.setLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        commit("setLoading", false);
+        this.setLoading(false);
       });
   },
 
-  getAllGuilds: ({commit}) => {
+  getAllGuilds() {
     apolloClient
       .query({query: GET_ALL_GUILDS})
       .then(({data}) => {
         const { getAllGuilds } = data
-        commit("setGuilds", getAllGuilds)
+        this.setGuilds(getAllGuilds)
       })
       .catch(err => console.error(err))
   },
 
-  getAllGuildDeals: ({commit}) => {
+  getAllGuildDeals() {
     apolloClient
       .query({query: GET_ALL_GUILD_DEALS})
       .then(({data}) => {
         const {getAllGuildDeals} = data
-        commit("setAllGuildDeals", getAllGuildDeals)
+        this.setAllGuildDeals(getAllGuildDeals)
       })
       .catch(err => console.error(err))
   },
 
-  getCityHall: ({commit}) => {
+  getCityHall() {
     apolloClient
       .query({query: GET_CITYHALL})
       .then(({data})=>{
         const {getCityHall} = data
         console.log(getCityHall)
-        commit('setCityHall', getCityHall)
+        this.setCityHall(getCityHall)
       })
       .catch(err => console.error(err))
   },
 
-  getCurrentResident: ({
-    commit
-  }) => {
+  getCurrentResident() {
     // console.log("this is done")
-    commit("setLoading", true);
+    this.setLoading(true);
     apolloClient
       .query({
         query: GET_CURRENT_RESIDENT,
@@ -375,21 +370,19 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         console.log(data);
-        commit("setLoading", false);
-        commit("setResident", data.getCurrentResident);
+        this.setLoading(false);
+        this.setResident(data.getCurrentResident);
         // localStorage.setItem('resident', JSON.stringify(data.getCurrentResident));
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  getCurrentVendor: ({
-    commit
-  }) => {
+  getCurrentVendor() {
     // console.log("this is done")
-    commit("setLoading", true);
+    this.setLoading(true);
     apolloClient
       .query({
         query: GET_CURRENT_VENDOR,
@@ -398,17 +391,17 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data);
-        commit("setLoading", false);
-        commit("setVendor", data.getCurrentVendor);
+        this.setLoading(false);
+        this.setVendor(data.getCurrentVendor);
         // localStorage.setItem('resident', JSON.stringify(data.getCurrentResident));
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  getCustomerRatings: ({commit}, payload) => {
+  getCustomerRatings(payload) {
     apolloClient
       .query({
         query: GET_CUSTOMER_RATINGS,
@@ -417,14 +410,12 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({data}) => {
         const { getCustomerRatings } = data
         // console.log(getCustomerRatings)
-        commit("setCustomerRatings", getCustomerRatings)
+        this.setCustomerRatings(getCustomerRatings)
       })
       .catch( err => console.error(err))
   },
 
-  getGamePropList: ({
-    commit
-  }) => {
+  getGamePropList() {
     apolloClient
       .query({
         query: GET_GAME_PROP_LIST,
@@ -433,7 +424,7 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data);
-        commit("setGamePropList", data.getGamePropList);
+        this.setGamePropList(data.getGamePropList);
       })
       .catch((err) => {
         console.error(err);
@@ -441,9 +432,7 @@ commitGuildDeals: ({commit}, payload) => {
   },
 
 
-  getGameSubstituteList: ({
-    commit
-  }) => {
+  getGameSubstituteList() {
     apolloClient
       .query({
         query: GET_GAME_SUBSTITUTE_LIST,
@@ -452,24 +441,24 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         console.log(data);
-        commit("setGameSubstituteList", data.getGameSubstituteList);
+        this.setGameSubstituteList(data.getGameSubstituteList);
       })
       .catch((err) => {
         console.error(err);
       });
   },
 
-  getGuildLogos: ({commit}) => {
+  getGuildLogos() {
     apolloClient
       .query({query: GET_GUILD_LOGOS})
       .then(({data}) => {
         const { getGuildLogos } = data
-        commit("setGuildLogos", getGuildLogos)
+        this.setGuildLogos(getGuildLogos)
       })
       .catch(err => console.error(err))
   },
 
-  getGuildChatMessages: ({ commit }, payload) => {
+  getGuildChatMessages(payload) {
     apolloClient
       .query({
         query: GET_GUILD_CHAT_MESSAGES,
@@ -479,12 +468,12 @@ commitGuildDeals: ({commit}, payload) => {
         // console.log(data)
         const { getGuildChatMessages } = data
         // console.log(getGuildChatMessages)
-        commit('setGuildChatMessages', getGuildChatMessages)
+        this.setGuildChatMessages(getGuildChatMessages)
       })
       .catch(err => console.error(err))
   },
 
-  getGuildDealsStatus: ({commit}, payload) => {
+  getGuildDealsStatus(payload) {
     console.log(payload)
     apolloClient
       .query({
@@ -494,16 +483,14 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({data}) => {
         const { getGuildDealsStatus } = data
         console.log(getGuildDealsStatus)
-        commit("setGuildDealsStatus", getGuildDealsStatus)
+        this.setGuildDealsStatus(getGuildDealsStatus)
       })
       .catch(err => console.error(err))
   },
 
-  getItemCatalog: ({
-    commit, state
-  }, payload) => {
+  getItemCatalog(payload) {
     // console.log('getItemCatalog')
-    commit("setItemCatalogLoading", true);
+    this.setItemCatalogLoading(true);
     apolloClient
       .query({
         query: GET_ITEM_CATALOG,
@@ -519,8 +506,8 @@ commitGuildDeals: ({commit}, payload) => {
           //   itemDetailed
           // } = data.getItemCatalog;
           // let  itemCodesOnSale = []
-          // console.log(state.vendorPromotionEvents)
-          // state.vendorPromotionEvents.map(event => {
+          // console.log(this.vendorPromotionEvents)
+          // this.vendorPromotionEvents.map(event => {
           //   console.log(event.promotionItems)
           //   itemCodesOnSale = [...itemCodesOnSale, ...event.promotionItems]
           // })
@@ -546,46 +533,44 @@ commitGuildDeals: ({commit}, payload) => {
           //   }
 
           // });
-          commit("setItemCatalogSaved", {
+          this.setItemCatalogSaved({
             subcategory: data.getItemCatalog[0].subcategory,
             itemDetailed: [...data.getItemCatalog]
           });
-          commit("setItemCatalogLoading", false);
+          this.setItemCatalogLoading(false);
         } else {
-          commit("setItemCatalogLoading", false);
+          this.setItemCatalogLoading(false);
         }
       })
       .catch((err) => {
         console.error(err);
-        commit("setItemCatalogLoading", false);
+        this.setItemCatalogLoading(false);
       });
   },
 
-  getMetroSpec: ({commit}) => {
+  getMetroSpec() {
     apolloClient
       .query({ query: GET_METRO_SPEC})
       .then(({data}) => {
         
         const { getMetroSpec } =  data 
         console.log(getMetroSpec )
-        commit('setMetroSpec', getMetroSpec)
+        this.setMetroSpec(getMetroSpec)
       })
       .catch(err => console.error(err))
   },
 
-  getNews: ({commit}) => {
+  getNews() {
     apolloClient
       .query({ query: GET_NEWS})
       .then(({data}) => {
         const { getNews } = data
-        commit('setNews', getNews)
+        this.setNews(getNews)
       })
       .catch(err => console.error(err))
   },
 
-  getPets: ({
-    commit
-  }) => {
+  getPets() {
     apolloClient
       .query({
         query: GET_PETS,
@@ -594,42 +579,40 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data);
-        commit("setPets", data.getPets);
+        this.setPets(data.getPets);
       })
       .catch((err) => {
         console.error(err);
       });
   },
 
-  getPromotionEvents: ({commit}) => {
+  getPromotionEvents() {
     apolloClient
       .query({
         query: GET_PROMOTION_EVENTS,
       })
       .then(({data}) => {
         const { getPromotionEvents } = data
-        commit("setPromotionEvents", getPromotionEvents)
+        this.setPromotionEvents(getPromotionEvents)
       })
       .catch(err => console.error(err))
   },
 
-  getEventCategory: ({
-    commit
-  }) => {
+  getEventCategory() {
     apolloClient
     .query({
       query: GET_EVENT_CATEGORY,
     })
     .then(({data}) => {
       // console.log(data.getPromotionEvents);
-      commit("setEventCategory", data.getEventCategory);
+      this.setEventCategory(data.getEventCategory);
     })
     .catch((err) => {
       console.log(err)
     })
   },
 
-  getResidentOrders: ({commit}, payload) => {
+  getResidentOrders(payload) {
     apolloClient
       .query({
         query: GET_RESIDENT_ORDERS,
@@ -637,29 +620,27 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const { getResidentOrders } = data
-        commit("setResidentOrders", getResidentOrders)
+        this.setResidentOrders(getResidentOrders)
         console.log('getResidentOrder', getResidentOrders)
       })
       .catch(err => console.error(err))
   },
 
-  getRewardItems: ({commit}) => {
+  getRewardItems() {
     apolloClient
     .query({
       query: GET_REWARD_ITEMS
     })
     .then(({data}) => {
-      commit("setRewardItems", data.getRewardItems)
+      this.setRewardItems(data.getRewardItems)
     })
     .catch((err) => {
       console.log(err)
     })
   },
 
-  getSelectedSketch: ({
-    commit
-  }, payload) => {
-    commit("setVendorHomeLoading", true);
+  getSelectedSketch(payload) {
+    this.setVendorHomeLoading(true);
     apolloClient
       .query({
         query: GET_SELECTED_SKETCH,
@@ -672,22 +653,19 @@ commitGuildDeals: ({commit}, payload) => {
         const {
           type
         } = data.getSelectedSketch;
-        commit(
-          type == "FLYERCOUPON" ? "setSelectedSketch_C" : "setSelectedSketch",
-          data.getSelectedSketch
-        );
-        commit("setVendorHomeLoading", false);
-        router.push("/vendorflyers/2");
+        this[
+          type == "FLYERCOUPON" ? "setSelectedSketch_C" : "setSelectedSketch"
+        ](data.getSelectedSketch);
+        this.setVendorHomeLoading(false);
+        this.router.push("/vendorflyers/2");
       })
       .catch((err) => {
         console.log(err);
       });
   },
 
-  getSelectedTemplate: ({
-    commit
-  }, payload) => {
-    commit("setVendorHomeLoading", true);
+  getSelectedTemplate(payload) {
+    this.setVendorHomeLoading(true);
     apolloClient
       .query({
         query: GET_SELECTED_TEMPLATE,
@@ -700,24 +678,21 @@ commitGuildDeals: ({commit}, payload) => {
         const {
           type
         } = data.getSelectedTemplate;
-        commit(
+        this[
           type == "FLYERCOUPON" ?
           "setSelectedTemplate_C" :
-          "setSelectedTemplate",
-          data.getSelectedTemplate
-        );
-        commit("setVendorHomeLoading", false);
-        router.push("/vendorflyers/2");
+          "setSelectedTemplate"
+        ](data.getSelectedTemplate);
+        this.setVendorHomeLoading(false);
+        this.router.push("/vendorflyers/2");
       })
       .catch((err) => {
         console.log(err);
       });
   },
 
-  getSelectedFlyerClientView: ({
-    commit
-  }, payload) => {
-    commit("setClientPreviewLoading", true);
+  getSelectedFlyerClientView(payload) {
+    this.setClientPreviewLoading(true);
     apolloClient
       .query({
         query: GET_SELECTED_FLYER_CLIENT_VIEW,
@@ -727,16 +702,16 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data.getSelectedFlyerClientView);
-        commit("setClientPageView", data.getSelectedFlyerClientView);
-        commit("setClientPreviewLoading", false);
+        this.setClientPageView(data.getSelectedFlyerClientView);
+        this.setClientPreviewLoading(false);
       })
       .catch((err) => {
-        commit("setClientPreviewLoading", false);
+        this.setClientPreviewLoading(false);
         console.log(err);
       });
   },
 
-  getShoppingCart: ({commit}, payload) => {
+  getShoppingCart(payload) {
     apolloClient
       .query({
         query: GET_SHOPPING_CART,
@@ -744,12 +719,12 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const { getShoppingCart } = data
-        commit("setShoppingCart", getShoppingCart)
+        this.setShoppingCart(getShoppingCart)
       })
       .catch(err => console.error(err))
   },
 
-  getSingleItemRating: ({commit}, payload) => {
+  getSingleItemRating(payload) {
     apolloClient
       .query({
         query: GET_SINGLE_ITEM_RATING,
@@ -757,14 +732,12 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({ data }) => {
         const {getSingleItemRating} = data
-        commit('setSingleItemRating', getSingleItemRating)
+        this.setSingleItemRating(getSingleItemRating)
       })
       .catch(err => console.error(err))
   },
 
-  getSketchList: ({
-    commit
-  }, payload) => {
+  getSketchList(payload) {
     apolloClient
       .query({
         query: GET_SKETCH_LIST,
@@ -775,7 +748,7 @@ commitGuildDeals: ({commit}, payload) => {
       }) => {
         console.log(data);
         if (data.getSketchList) {
-          commit("setSketchList", data.getSketchList);
+          this.setSketchList(data.getSketchList);
         }
       })
       .catch((err) => {
@@ -783,10 +756,8 @@ commitGuildDeals: ({commit}, payload) => {
       });
   },
 
-  getFlyerList: ({
-    commit
-  }, payload) => {
-    commit("setLoading", true)
+  getFlyerList(payload) {
+    this.setLoading(true)
     apolloClient
       .query({
         query: GET_FLYER_LIST,
@@ -797,19 +768,17 @@ commitGuildDeals: ({commit}, payload) => {
       }) => {
         console.log(data);
         if (data.getFlyerList) {
-          commit("setFlyerList", data.getFlyerList);
-          commit("setLoading", false)
+          this.setFlyerList(data.getFlyerList);
+          this.setLoading(false)
         }
       })
       .catch((err) => {
         console.error(err);
-        commit("setLoading", false)
+        this.setLoading(false)
       });
   },
 
-  getTemplateList: ({
-    commit
-  }, payload) => {
+  getTemplateList(payload) {
     apolloClient
       .query({
         query: GET_TEMPLATE_LIST,
@@ -820,7 +789,7 @@ commitGuildDeals: ({commit}, payload) => {
       }) => {
         console.log(data);
         if (data.getTemplateList) {
-          commit("setTemplateList", data.getTemplateList);
+          this.setTemplateList(data.getTemplateList);
         }
       })
       .catch((err) => {
@@ -828,9 +797,7 @@ commitGuildDeals: ({commit}, payload) => {
       });
   },
 
-  getProductCategory: ({
-    commit
-  }) => {
+  getProductCategory() {
     // console.log("signup vendor")
     apolloClient
       .query({
@@ -840,16 +807,14 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data);
-        commit("setProductsCategories", data.getProductCategory);
+        this.setProductsCategories(data.getProductCategory);
       })
       .catch((err) => {
         console.error(err);
       });
   },
 
-  getServiceCategory: ({
-    commit
-  }) => {
+  getServiceCategory() {
     apolloClient
       .query({
         query: GET_SERVICES_CATEGORIES,
@@ -858,16 +823,14 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data);
-        commit("setServicesCategories", data.getServiceCategory);
+        this.setServicesCategories(data.getServiceCategory);
       })
       .catch((err) => {
         console.error(err);
       });
   },
 
-  getRestaurantCategory: ({
-    commit
-  }) => {
+  getRestaurantCategory() {
     apolloClient
       .query({
         query: GET_RESTAURANT_CATEGORIES,
@@ -876,9 +839,7 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data);
-        commit(
-          "setRestaurantCategories",
-          // Apollo Client 3 freezes query results, so sort a copy.
+        this.setRestaurantCategories(// Apollo Client 3 freezes query results, so sort a copy.
           [...data.getRestaurantCategory.items].sort()
         );
       })
@@ -887,7 +848,7 @@ commitGuildDeals: ({commit}, payload) => {
       });
   },
 
-  getVendorFlyers: ({commit}, payload) => {
+  getVendorFlyers(payload) {
     apolloClient
       .query({
         query: GET_VENDOR_FLYERS,
@@ -895,12 +856,12 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data})=> {
         const { getVendorFlyers } = data
-        commit('setVendorFlyers', getVendorFlyers)
+        this.setVendorFlyers(getVendorFlyers)
       })
       .catch(err=>console.error(err))
   },
 
-  getVendorGuildDeals: ({commit}, payload) => {
+  getVendorGuildDeals(payload) {
     apolloClient
       .query({
         query: GET_VENDOR_GUILD_DEALS,
@@ -908,23 +869,23 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const {getVendorGuildDeals} = data
-        commit("setGuildDeals", getVendorGuildDeals)
+        this.setGuildDeals(getVendorGuildDeals)
       })
       .catch(err => console.log(err))
   },
 
-  getVendorList: ({commit}) => {
+  getVendorList() {
     apolloClient
       .query( {query: GET_VENDOR_LIST})
       .then(({data})=>{
         const {getVendorList} = data
-        commit("setVendorList", getVendorList)
+        this.setVendorList(getVendorList)
       })
       .catch(err => console.error(err))
   },
 
-  getVendorOrders: ({commit}, payload) => {
-    commit('setVendorHomeLoading', true)
+  getVendorOrders(payload) {
+    this.setVendorHomeLoading(true)
     apolloClient
       .query({
         query: GET_VENDOR_ORDERS,
@@ -932,18 +893,18 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const { getVendorOrders } = data
-        commit("setVendorOrders", getVendorOrders)
-        commit('setVendorHomeLoading', false)
+        this.setVendorOrders(getVendorOrders)
+        this.setVendorHomeLoading(false)
       })
       .catch(err => 
        {
          console.error(err)
-        commit('setVendorHomeLoading', false)
+        this.setVendorHomeLoading(false)
        } 
        )
   },
 
-  getVendorSalesInfo: ({commit}, payload) => {
+  getVendorSalesInfo(payload) {
     apolloClient
       .query({
         query: GET_VENDOR_SALES_INFO,
@@ -951,12 +912,12 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data})=> {
         const { getVendorSalesInfo } = data
-        commit('setVendorSalesInfo', getVendorSalesInfo)
+        this.setVendorSalesInfo(getVendorSalesInfo)
       })
       .catch(err => console.error(err))
   },
 
-  getVendorSettlementRecords: ({commit}, payload) => {
+  getVendorSettlementRecords(payload) {
     apolloClient
       .query({
         query: GET_VENDOR_SETTLEMENT_RECORDS,
@@ -964,12 +925,12 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const { getVendorSettlementRecords } = data
-        commit("setVendorSettlementRecords", getVendorSettlementRecords)
+        this.setVendorSettlementRecords(getVendorSettlementRecords)
       })
       .catch(err => console.error(err))
   },
 
-  getVendorPromotionEvents: ({commit}, payload) => {
+  getVendorPromotionEvents(payload) {
     apolloClient
       .query({
         query: GET_VENDOR_PROMOTION_EVENTS,
@@ -977,13 +938,13 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const { getVendorPromotionEvents } = data
-        commit("setVendorPromotionEvents", getVendorPromotionEvents)
+        this.setVendorPromotionEvents(getVendorPromotionEvents)
       })
       .catch(err => console.error(err))
   },
 
-  getVendorInterface: ({commit}, payload) => {
-    commit("setLoading", true)
+  getVendorInterface(payload) {
+    this.setLoading(true)
     apolloClient
       .query({
         query: GET_VENDOR_INTERFACE,
@@ -992,17 +953,17 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({data}) => {
         const {getVendorInterface} = data
         // console.log(getVendorInterface)
-        commit("setVendorInterface", getVendorInterface)
-        commit("setCustomerRatings", getVendorInterface.customerRatings)
-        commit("setLoading", false)
+        this.setVendorInterface(getVendorInterface)
+        this.setCustomerRatings(getVendorInterface.customerRatings)
+        this.setLoading(false)
       })
       .catch(err => {
         console.error(err)
-        commit("setLoading", false)
+        this.setLoading(false)
       })
   },
 
-   joinGuild: ({commit, state}, payload) => {
+   joinGuild(payload) {
     apolloClient
       .mutate({
         mutation: JOIN_GUILD,
@@ -1011,33 +972,33 @@ commitGuildDeals: ({commit}, payload) => {
           // const residentData = cache.readQuery({ query: GET_CURRENT_RESIDENT})
           // console.log(joinGuild)
           let newResident
-          if(state.resident.guild == null) {
-            newResident = state.resident
+          if(this.resident.guild == null) {
+            newResident = this.resident
             newResident.guild = joinGuild
           } else {
-              newResident = { ...state.resident, guild: joinGuild }
+              newResident = { ...this.resident, guild: joinGuild }
           // console.log(newResident)
           }
          
-          commit("setResident", newResident)
+          this.setResident(newResident)
         },
         // refetchQueries: [{ query: GET_CURRENT_RESIDENT }, { query: GET_ALL_GUILDS }],
         // awaitRefetchQueries: true
       })
       .then(({data}) => {
         const {joinGuild} = data
-        // console.log(state.resident)
-        // console.log(state.guilds)
-        // router.go()
-        //  const newResident = { ...state.resident, ...{ guild: joinGuild}}
+        // console.log(this.resident)
+        // console.log(this.guilds)
+        // this.router.go()
+        //  const newResident = { ...this.resident, ...{ guild: joinGuild}}
         //   console.log(newResident)
-        //   commit("setResident", newResident)
+        //   this.setResident(newResident)
       })
       .catch(err => console.error(err))
   },
 
-  placeOrder: ({commit}, payload) => {
-    commit("setPlaceOrderLoading", true)
+  placeOrder(payload) {
+    this.setPlaceOrderLoading(true)
     apolloClient
       .mutate({
         mutation: PLACE_ORDER,
@@ -1046,29 +1007,29 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({data}) => {
         const { placeOrder} = data
         console.log(placeOrder)
-        commit("setResidentOrders", placeOrder)
-       commit("setPlaceOrderLoading", false)
-      //  router.push({name: "vendorInterface", params: { vendor: placeOrder[0].rendor }} )
-      // router.go(-3)
-      router.go()
+        this.setResidentOrders(placeOrder)
+       this.setPlaceOrderLoading(false)
+      //  this.router.push({name: "vendorInterface", params: { vendor: placeOrder[0].rendor }} )
+      // this.router.go(-3)
+      this.router.go()
 
       })
       .catch(err => {
         console.error(err)
-        commit("setPlaceOrderLoading", false)
+        this.setPlaceOrderLoading(false)
          }
         )
   },
 
-  quitGuild: ({commit, state}, payload) => {
+  quitGuild(payload) {
     apolloClient
       .mutate({
         mutation: QUIT_GUILD,
         variables: payload,
         update:(cache,{ data : { quitGuild }}) => {
-          const newResident = state.resident
+          const newResident = this.resident
           newResident.guild = null
-          commit("setResident", newResident)
+          this.setResident(newResident)
         },
         // refetchQueries: [{ query: GET_CURRENT_RESIDENT }, { query: GET_ALL_GUILDS }],
         // awaitRefetchQueries: true
@@ -1079,7 +1040,7 @@ commitGuildDeals: ({commit}, payload) => {
       .catch(err => console.error(err))
   },
 
-  saveCustomerRating: ({commit}, payload) => {
+  saveCustomerRating(payload) {
     // console.log(payload)
     apolloClient
       .mutate({
@@ -1089,25 +1050,25 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({data}) => {
         const { saveCustomerRating } = data
         // console.log(saveCustomerRating)
-        commit("setCustomerRatings", saveCustomerRating)
+        this.setCustomerRatings(saveCustomerRating)
       })
       .catch(err => console.error(err))
   },
 
-  saveGuildDeals: ({commit}, payload) => {
+  saveGuildDeals(payload) {
     apolloClient
     .mutate({
       mutation: SAVE_GUILD_DEALS,
       variables: payload
     })
     .then(({data}) => {
-      commit("setGuildDeals", data.saveGuildDeals)
-      router.go()
+      this.setGuildDeals(data.saveGuildDeals)
+      this.router.go()
     })
     .catch(err => console.log(err))
   },
 
-  saveSingleItemRating: ({commit}, payload) => {
+  saveSingleItemRating(payload) {
     apolloClient
       .mutate({
         mutation: SAVE_SINGLE_ITEM_RATING,
@@ -1115,16 +1076,13 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const { saveSingleItemRating } = data
-        commit('setSingleItemRating', saveSingleItemRating)
+        this.setSingleItemRating(saveSingleItemRating)
       })
       .catch(err => console.error(err))
   },
 
-  saveSketch: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  saveSketch(payload) {
+    this.setLoading(true);
     console.log("savesketch in store");
     apolloClient
       .mutate({
@@ -1134,34 +1092,31 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({
         data
       }) => {
-        // const index = state.userPosts.findIndex(
+        // const index = this.userPosts.findIndex(
         //   post => post._id === data.updateUserPost._id
         // );
         // const resident = [
-        //   ...state.userPosts.slice(0, index),
+        //   ...this.userPosts.slice(0, index),
         //   data.updateUserPost,
-        //   ...state.userPosts.slice(index + 1)
+        //   ...this.userPosts.slice(index + 1)
         // ];
         // console.log(data);
-        commit("setLoading", false);
-        commit("setSketchList", data.saveSketch);
-        router.push("/");
-        // router.go()
+        this.setLoading(false);
+        this.setSketchList(data.saveSketch);
+        this.router.push("/");
+        // this.router.go()
 
-        // commit("setSavedSketch", data.saveSketch);
+        // this.setSavedSketch(data.saveSketch);
         // localStorage.setItem('resident', JSON.stringify(data.updateProfile));
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  saveTemplate: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  saveTemplate(payload) {
+    this.setLoading(true);
     console.log("saveTemplate in store");
     apolloClient
       .mutate({
@@ -1171,35 +1126,32 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({
         data
       }) => {
-        // const index = state.userPosts.findIndex(
+        // const index = this.userPosts.findIndex(
         //   post => post._id === data.updateUserPost._id
         // );
         // const resident = [
-        //   ...state.userPosts.slice(0, index),
+        //   ...this.userPosts.slice(0, index),
         //   data.updateUserPost,
-        //   ...state.userPosts.slice(index + 1)
+        //   ...this.userPosts.slice(index + 1)
         // ];
         // console.log(data);
-        commit("setLoading", false);
-        commit("setTemplateList", data.saveTemplate);
-        commit("setTemplateIsSaved", true);
-        // router.push("/");
-        // router.go()
+        this.setLoading(false);
+        this.setTemplateList(data.saveTemplate);
+        this.setTemplateIsSaved(true);
+        // this.router.push("/");
+        // this.router.go()
 
-        // commit("setSavedSketch", data.saveSketch);
+        // this.setSavedSketch(data.saveSketch);
         // localStorage.setItem('resident', JSON.stringify(data.updateProfile));
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  saveFlyer: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  saveFlyer(payload) {
+    this.setLoading(true);
     console.log("saveflyer in store");
     apolloClient
       .mutate({
@@ -1210,8 +1162,8 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         // console.log(data);
-        commit("setLoading", false);
-        commit("setSavedFlyer", data.saveFlyer);
+        this.setLoading(false);
+        this.setSavedFlyer(data.saveFlyer);
         const {
           flyerId,
           flyerTitle,
@@ -1219,40 +1171,40 @@ commitGuildDeals: ({commit}, payload) => {
           setUp,
           distributed,
         } = data.saveFlyer;
-        state.savedFlyerList.push({
+        this.savedFlyerList.push({
           flyerId,
           flyerTitle,
           type,
           setUp,
           distributed,
         });
-        if (state.sketchList.length > 0) {
-          const index = _.findIndex(state.sketchList, (item) => {
+        if (this.sketchList.length > 0) {
+          const index = _.findIndex(this.sketchList, (item) => {
             return item.flyerId == flyerId;
           });
           if (index > -1) {
-            const newSketchList = state.sketchList.filter((item) => {
+            const newSketchList = this.sketchList.filter((item) => {
               return item.flyerId != flyerId;
             });
-            commit("setSketchList", newSketchList);
+            this.setSketchList(newSketchList);
           }
         }
-        // console.log(state.savedFlyerList)
-        // router.push("/");
-        // router.go()
+        // console.log(this.savedFlyerList)
+        // this.router.push("/");
+        // this.router.go()
 
-        // commit("setSavedSketch", data.saveSketch);
+        // this.setSavedSketch(data.saveSketch);
         // localStorage.setItem('resident', JSON.stringify(data.updateProfile));
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  saveShoppingCart: ({commit, state}, payload) => {
+  saveShoppingCart(payload) {
     // console.log(payload)
-    commit("setSaveShoppingCartLoading", true)
+    this.setSaveShoppingCartLoading(true)
     apolloClient
       .mutate({
         mutation: SAVE_SHOPPING_CART,
@@ -1260,7 +1212,7 @@ commitGuildDeals: ({commit}, payload) => {
         update:(cache, { data: {saveShoppingCart}}) => {
           const { itemCode, quantity } = saveShoppingCart
           // console.log(saveShoppingCart)
-          const cartData = state.shoppingCart
+          const cartData = this.shoppingCart
           if(cartData.length > 0){
               const index = _.findIndex(cartData, item => {
               return itemCode == item.itemCode
@@ -1270,30 +1222,30 @@ commitGuildDeals: ({commit}, payload) => {
             } else {
               cartData.push(saveShoppingCart)
             }
-            commit("setShoppingCart", cartData)
+            this.setShoppingCart(cartData)
           } else {
             cartData.push(saveShoppingCart)
-            commit("setShoppingCart", cartData)
+            this.setShoppingCart(cartData)
           }
         },
         refetchQueries: [{query: GET_SHOPPING_CART, variables: {resident: payload.resident}}]
       })
       .then(({ data }) => {
         const { saveShoppingCart } = data
-        // commit("setShoppingCart", saveShoppingCart)
+        // this.setShoppingCart(saveShoppingCart)
         // console.log(saveShoppingCart)
-    commit("setSaveShoppingCartLoading", false)
-    router.go()
+    this.setSaveShoppingCartLoading(false)
+    this.router.go()
         
       })
       .catch(err => {
         console.error(err)
-    commit("setSaveShoppingCartLoading", false)
+    this.setSaveShoppingCartLoading(false)
 
       })
   },
 
-  saveSubstituteItems: ({commit}, payload) => {
+  saveSubstituteItems(payload) {
     apolloClient
       .mutate({
         mutation: SAVE_SUBSTITUTE_ITEMS,
@@ -1305,11 +1257,9 @@ commitGuildDeals: ({commit}, payload) => {
       .catch(err => console.error(err))
   },
 
-  saveItemCatalog: ({
-    commit
-  }, payload) => {
+  saveItemCatalog(payload) {
     // console.log(payload)
-    commit("setItemCatalogLoading", true);
+    this.setItemCatalogLoading(true);
     apolloClient
       .mutate({
         mutation: SAVE_ITEM_CATALOG,
@@ -1319,17 +1269,17 @@ commitGuildDeals: ({commit}, payload) => {
         data
       }) => {
         
-        commit("setAllItemCatalog", data.saveItemCatalog);
-        commit("setItemCatalogLoading", false);
+        this.setAllItemCatalog(data.saveItemCatalog);
+        this.setItemCatalogLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        commit("setItemCatalogLoading", false);
+        this.setItemCatalogLoading(false);
       });
   },
 
-  searchAvailableDeals: ({commit}, payload) => {
-    commit('setSearchCouponLoading', true)
+  searchAvailableDeals(payload) {
+    this.setSearchCouponLoading(true)
     apolloClient
       .query({
         query:SEARCH_AVAILABLE_DEALS,
@@ -1339,20 +1289,20 @@ commitGuildDeals: ({commit}, payload) => {
         const {searchAvailableDeals} = data
         // console.log('searchAvailableCoupons', searchAvailableDeals)
         // if(searchAvailableDeals.length==0) {
-        //   commit('setSoughtCoupons', 'No Available Deal')
+        //   this.setSoughtCoupons('No Available Deal')
         // } else {
-          commit('setSoughtDeals', searchAvailableDeals)
+          this.setSoughtDeals(searchAvailableDeals)
         // }
         
-        commit('setSearchCouponLoading', false)
+        this.setSearchCouponLoading(false)
       })
       .catch(err => {
         console.error(err)
-        commit('setSearchCouponLoading', false)
+        this.setSearchCouponLoading(false)
       })
   },
 
-  sendMessage: ({commit}, payload) => {
+  sendMessage(payload) {
     apolloClient
       .mutate({
         mutation: SEND_MESSAGE,
@@ -1365,10 +1315,8 @@ commitGuildDeals: ({commit}, payload) => {
       .catch(err => console.error(err))
   },
 
-  setUpFlyer: ({
-    commit
-  }, payload) => {
-    commit("setVendorHomeLoading", true);
+  setUpFlyer(payload) {
+    this.setVendorHomeLoading(true);
     apolloClient
       .query({
         query: SET_UP_FLYER,
@@ -1382,16 +1330,15 @@ commitGuildDeals: ({commit}, payload) => {
           type,
           couponPages
         } = data.setUpFlyer;
-        commit("setSavedFlyer", data.setUpFlyer);
-        commit(
-          type == "FLYERCOUPON" ? "setPagePreview_C" : "setPagePreview",
-          couponPages
-        );
-        commit("setVendorHomeLoading", false);
+        this.setSavedFlyer(data.setUpFlyer);
+        this[
+          type == "FLYERCOUPON" ? "setPagePreview_C" : "setPagePreview"
+        ](couponPages);
+        this.setVendorHomeLoading(false);
         if (data.setUpFlyer.setUp) {
-          router.push("/vendorflyers/5");
+          this.router.push("/vendorflyers/5");
         } else {
-          router.push("/vendorflyers/4");
+          this.router.push("/vendorflyers/4");
         }
       })
       .catch((err) => {
@@ -1401,11 +1348,9 @@ commitGuildDeals: ({commit}, payload) => {
 
 
 
-  signupResident: ({
-    commit
-  }, payload) => {
-    commit("clearError");
-    commit("setLoading", true);
+  signupResident(payload) {
+    this.clearError();
+    this.setLoading(true);
     apolloClient
       .mutate({
         mutation: SIGNUP_RESIDENT,
@@ -1414,22 +1359,20 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({
         data
       }) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         // localStorage.setItem("token", data.signupResident.token);
-        // router.go();
+        // this.router.go();
       })
       .catch((err) => {
-        commit("setLoading", false);
-        commit("setError", err);
+        this.setLoading(false);
+        this.setError(err);
         console.error(err);
       });
   },
 
-  signupVendor: ({
-    commit
-  }, payload) => {
-    commit("clearError");
-    commit("setLoading", true);
+  signupVendor(payload) {
+    this.clearError();
+    this.setLoading(true);
     // console.log(payload);
     apolloClient
       .mutate({
@@ -1439,22 +1382,20 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({
         data
       }) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         // localStorage.setItem("token", data.signupResident.token);
-        // router.go();
+        // this.router.go();
       })
       .catch((err) => {
-        commit("setLoading", false);
-        commit("setError", err);
+        this.setLoading(false);
+        this.setError(err);
         console.error(err);
       });
   },
 
-  signinResident: ({
-    commit
-  }, payload) => {
-    commit("clearError");
-    commit("setLoading", true);
+  signinResident(payload) {
+    this.clearError();
+    this.setLoading(true);
     apolloClient
       .mutate({
         mutation: SIGNIN_RESIDENT,
@@ -1467,27 +1408,25 @@ commitGuildDeals: ({commit}, payload) => {
         // localStorage.setItem("token", data.signinResident.token);
         if (data.signinResident.confirmed) {
           localStorage.setItem("token", data.signinResident.token);
-          commit("setLoading", false);
+          this.setLoading(false);
           // console.log(data.signinUser.confirmed);
-          // commit("setConfirmed", data.signinResident.confirmed);
-          router.go();
+          // this.setConfirmed(data.signinResident.confirmed);
+          this.router.go();
         } else {
-          commit("setLoading", false);
-          commit("setError", "Please finish email verification");
+          this.setLoading(false);
+          this.setError("Please finish email verification");
         }
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
-        // commit("setError", err);
+        // this.setError(err);
       });
   },
 
-  signinVendor: ({
-    commit
-  }, payload) => {
-    commit("clearError");
-    commit("setLoading", true);
+  signinVendor(payload) {
+    this.clearError();
+    this.setLoading(true);
     apolloClient
       .mutate({
         mutation: SIGNIN_VENDOR,
@@ -1496,49 +1435,45 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({
         data
       }) => {
-        // commit("setLoading", true);
+        // this.setLoading(true);
         // console.log(data);
-        router.push("/");
+        this.router.push("/");
         // localStorage.setItem("token", data.signinResident.token);
         if (data.signinVendor.confirmed) {
           localStorage.setItem("vendortoken", data.signinVendor.token);
-          commit("setLoading", false);
-          router.go();
+          this.setLoading(false);
+          this.router.go();
         } else {
-          commit("setError", "Please finish email verification");
-          commit("setLoading", false);
+          this.setError("Please finish email verification");
+          this.setLoading(false);
         }
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
-        // commit("setError", err);
+        // this.setError(err);
       });
   },
 
-  signoutResident: async ({
-    commit
-  }) => {
-    commit("clearResident");
-    commit("setLoading", false)
+  async signoutResident() {
+    this.clearResident();
+    this.setLoading(false)
 
     localStorage.clear();
     await apolloClient.resetStore();
-    router.push("/");
+    this.router.push("/");
   },
 
-  signoutVendor: async ({
-    commit
-  }) => {
-    commit("clearVendor");
-    commit("setLoading", false)
+  async signoutVendor() {
+    this.clearVendor();
+    this.setLoading(false)
     localStorage.clear();
     await apolloClient.resetStore();
-    router.push("/");
-    // router.go();
+    this.router.push("/");
+    // this.router.go();
   },
 
-  startGuild: async ({commit, state}, payload) => {
+  async startGuild(payload) {
     apolloClient
       .mutate({
         mutation: START_GUILD,
@@ -1551,9 +1486,9 @@ commitGuildDeals: ({commit}, payload) => {
           })
 
           data.getCurrentResident = {...data.getCurrentResident, ...{guildOwned: startGuild.idAdded}, ...{guild: startGuild.guilds[guildAddedGuild]}}
-          // console.log(state.resident)
+          // console.log(this.resident)
           cache.writeQuery({query: GET_CURRENT_RESIDENT, data})
-          commit('setResident', data.getCurrentResident)
+          this.setResident(data.getCurrentResident)
         },
         refetchQueries: [{ query: GET_CURRENT_RESIDENT }, { query: GET_ALL_GUILDS }],
         awaitRefetchQueries: true
@@ -1561,16 +1496,16 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({data}) => {
         console.log(data)
         const { startGuild }  = data
-        // router.go()
-        // const newResident = {...state.resident, ...{guildOwned: startGuild.idAdded}, ...{guild: startGuild.guilds}}
+        // this.router.go()
+        // const newResident = {...this.resident, ...{guildOwned: startGuild.idAdded}, ...{guild: startGuild.guilds}}
 
-        // commit("setGuilds", startGuild.guilds)
-        // commit("setResident", newResident)
+        // this.setGuilds(startGuild.guilds)
+        // this.setResident(newResident)
       })
       .catch(err => console.error(err))
   },
 
- stashFlyer: async ({commit}, payload) => {
+ async stashFlyer(payload) {
     apolloClient
       .mutate({
         mutation: STASH_FLYER,
@@ -1612,7 +1547,7 @@ commitGuildDeals: ({commit}, payload) => {
       .catch(err => console.error(err))
  },
 
-  toggleGuildDealActive: async({commit}, payload) => {
+  async toggleGuildDealActive(payload) {
     apolloClient
       .mutate({
         mutation: TOGGLE_GUILD_DEAL_ACTIVE,
@@ -1620,15 +1555,12 @@ commitGuildDeals: ({commit}, payload) => {
       })
       .then(({data}) => {
         const { toggleGuildDealActive } = data
-        commit("setGuildDeals", toggleGuildDealActive)
+        this.setGuildDeals(toggleGuildDealActive)
       })
   },
 
-  updateAvatar: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  updateAvatar(payload) {
+    this.setLoading(true);
     apolloClient
       .mutate({
         mutation: UPDATE_AVATAR,
@@ -1637,51 +1569,48 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({
         data
       }) => {
-        // const index = state.userPosts.findIndex(
+        // const index = this.userPosts.findIndex(
         //   post => post._id === data.updateUserPost._id
         // );
         // const resident = [
-        //   ...state.userPosts.slice(0, index),
+        //   ...this.userPosts.slice(0, index),
         //   data.updateUserPost,
-        //   ...state.userPosts.slice(index + 1)
+        //   ...this.userPosts.slice(index + 1)
         // ];
-        // console.log(state.resident.avatarPic);
+        // console.log(this.resident.avatarPic);
         // console.log(data);
-        state.resident.avatarPic = data.updateAvatar.avatar;
-        commit("setLoading", false);
-        commit("setResident", state.resident);
+        this.resident.avatarPic = data.updateAvatar.avatar;
+        this.setLoading(false);
+        this.setResident(this.resident);
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  updateMonsterChest: ({commit}, payload) => {
+  updateMonsterChest(payload) {
     console.log(payload)
-    commit("setLoading", true)
+    this.setLoading(true)
     apolloClient
       .mutate({
         mutation: UPDATE_MONSTER_CHEST,
         variables: payload
       })
       .then(({data}) => {
-        commit("setLoading", false);
+        this.setLoading(false);
 
         console.log(data.updateMonsterChest)
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
 
         console.log(err)
       })
   },
 
-  updateProfile: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  updateProfile(payload) {
+    this.setLoading(true);
     apolloClient
       .mutate({
         mutation: UPDATE_PROFILE,
@@ -1690,36 +1619,34 @@ commitGuildDeals: ({commit}, payload) => {
         //   const data = cache.readQuery({query: GET_CURRENT_RESIDENT})
         //   data.getCurrentResident.profileFilled = true
         //   cache.writeQuery({query: GET_CURRENT_RESIDENT, data})
-        //   const resident = state.resident
+        //   const resident = this.resident
         //   resident.profileFilled = true
-        //   commit('setResident', resident)
+        //   this.setResident(resident)
         // }
       })
       .then(({
         data
       }) => {
         // console.log(data);
-        commit("setLoading", false);
-        commit("setResident", data.updateProfile);
+        this.setLoading(false);
+        this.setResident(data.updateProfile);
         // localStorage.setItem('resident', JSON.stringify(data.updateProfile));
         setTimeout(() => {
           // this.tranStart = false;
-          router.push("/");
-          // router.go()
+          this.router.push("/");
+          // this.router.go()
         }, 1000);
         
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  updateVendorProfile: ({
-    commit
-  }, payload) => {
+  updateVendorProfile(payload) {
     console.log(payload);
-    commit("setVendorProfileLoading", true);
+    this.setVendorProfileLoading(true);
     apolloClient
       .mutate({
         mutation: UPDATE_VENDOR_PROFILE,
@@ -1738,23 +1665,20 @@ commitGuildDeals: ({commit}, payload) => {
         // console.log(data);
         console.log(data.updateVendorProfile);
 
-        commit("setVendor", data.updateVendorProfile);
+        this.setVendor(data.updateVendorProfile);
         // localStorage.setItem('resident', JSON.stringify(data.updateProfile));
-        commit("setVendorProfileLoading", false);
-        router.replace("/");
+        this.setVendorProfileLoading(false);
+        this.router.replace("/");
         
       })
       .catch((err) => {
-        commit("setVendorProfileLoading", false);
+        this.setVendorProfileLoading(false);
         console.error(err);
       });
   },
 
-  updateSavedFlyer: ({
-    state,
-    commit
-  }, payload) => {
-    commit("setLoading", true);
+  updateSavedFlyer(payload) {
+    this.setLoading(true);
     console.log("updatesavedflyer in store");
     apolloClient
       .mutate({
@@ -1764,37 +1688,37 @@ commitGuildDeals: ({commit}, payload) => {
       .then(({
         data
       }) => {
-        // const index = state.userPosts.findIndex(
+        // const index = this.userPosts.findIndex(
         //   post => post._id === data.updateUserPost._id
         // );
         // const resident = [
-        //   ...state.userPosts.slice(0, index),
+        //   ...this.userPosts.slice(0, index),
         //   data.updateUserPost,
-        //   ...state.userPosts.slice(index + 1)
+        //   ...this.userPosts.slice(index + 1)
         // ];
         // console.log(data);
-        commit("setLoading", false);
-        commit("setSavedFlyer", data.updateSavedFlyer);
-        if (state.savedFlyerList.length > 0) {
-          const indexOfList = _.findIndex(state.savedFlyerList, (item) => {
+        this.setLoading(false);
+        this.setSavedFlyer(data.updateSavedFlyer);
+        if (this.savedFlyerList.length > 0) {
+          const indexOfList = _.findIndex(this.savedFlyerList, (item) => {
             return data.updateSavedFlyer.flyerId == item.flyerId;
           });
-          state.savedFlyerList[indexOfList].setUp = data.updateSavedFlyer.setUp;
+          this.savedFlyerList[indexOfList].setUp = data.updateSavedFlyer.setUp;
         }
 
-        // router.push("/");
-        // router.go()
+        // this.router.push("/");
+        // this.router.go()
 
-        // commit("setSavedSketch", data.saveSketch);
+        // this.setSavedSketch(data.saveSketch);
         // localStorage.setItem('resident', JSON.stringify(data.updateProfile));
       })
       .catch((err) => {
-        commit("setLoading", false);
+        this.setLoading(false);
         console.error(err);
       });
   },
 
-  updateShoppingCart: ({commit, state}, payload) => {
+  updateShoppingCart(payload) {
     apolloClient
       .mutate({
         mutation: UPDATE_SHOPPING_CART,
@@ -1804,11 +1728,11 @@ commitGuildDeals: ({commit}, payload) => {
           const {itemCode, quantity} = updateShoppingCart
 
           if (itemCode == null) {
-            commit("setShoppingCart", null)
+            this.setShoppingCart(null)
             return
           }
 
-          const items = state.shoppingCart
+          const items = this.shoppingCart
           const index = _.findIndex(items, item => {
             return item.itemCode == itemCode
           })
@@ -1819,7 +1743,7 @@ commitGuildDeals: ({commit}, payload) => {
             // console.log(items)
           }
           console.log(items)
-          commit("setShoppingCart", items)
+          this.setShoppingCart(items)
         },
         // optimisticResponse: {
         //   updateShoppingCart: {

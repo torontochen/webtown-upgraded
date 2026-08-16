@@ -73,7 +73,8 @@
 </template>
 
 <script>
- import {mapGetters} from "vuex"
+ import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
  import _ from "lodash"
  
  export default {
@@ -85,7 +86,7 @@
      },
 
      computed: {
-        ...mapGetters(["shoppingCart", "viewPortDimension", "resident"]),
+        ...mapState(useMainStore, ["shoppingCart", "viewPortDimension", "resident"]),
           
         maxQty() {
             let qty = []
@@ -99,7 +100,7 @@
 
      methods: {
          clearShoppingCart() {
-              this.$store.dispatch("updateShoppingCart", {
+              this.$store.updateShoppingCart({
                 resident: this.resident.residentName,
                 itemCode: null,
                 quantity: 0 
@@ -107,7 +108,7 @@
          },
 
          removeShoppingCartItem(itemCode) {
-            this.$store.dispatch("updateShoppingCart", {
+            this.$store.updateShoppingCart({
                 resident: this.resident.residentName,
                 itemCode,
                 quantity: 0 
@@ -138,7 +139,7 @@
          },
 
          updateShoppingCartQty(itemCode, quantity) {
-            this.$store.dispatch("updateShoppingCart", {
+            this.$store.updateShoppingCart({
                 resident: this.resident.residentName,
                 itemCode,
                 quantity

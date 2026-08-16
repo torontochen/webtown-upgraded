@@ -2424,7 +2424,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 
 import { CHECK_GUILD_NAME, 
          GET_CURRENT_RESIDENT, 
@@ -2680,7 +2681,15 @@ export default {
             const index = this.guildDealsStatus.findIndex(item => item.vendor == tran.vendor )
             if(index >= 0) {
               this.guildDealsStatus[index].transactions.push(tran)
-              this.$store.commit("setGuildDealStatus", this.guildDealsStatus)
+              // Was commit("setGuildDealStatus", ...) — note the singular
+              // "Deal". No such mutation has ever existed; the store's is
+              // setGuildDealsStatus. Vuex logged "unknown mutation type" and
+              // carried on, so this line has always been a no-op. Pinia would
+              // make it a TypeError instead, so it is disabled rather than
+              // silently activated — correcting the name would switch on a
+              // state write that has never run, on a screen behind auth that
+              // cannot be exercised here.
+              // this.$store.setGuildDealsStatus(this.guildDealsStatus)
             }
           }
         }
@@ -2694,12 +2703,12 @@ export default {
       //     if( messageReceived.receiverType == 'resident' && messageReceived.receiver == this.resident.residentName && !messageReceived.guild) {
       //        let newResident = this.resident
       //        newResident.messages.push(messageReceived)
-      //        this.$store.commit("setResident", newResident)
+      //        this.$store.setResident(newResident)
       //    }
       //     if( messageReceived.receiverType == 'resident' && messageReceived.receiver == this.resident.residentName && messageReceived.guild) {
       //        let newResident = this.resident
       //        newResident.guildMessages.push(messageReceived)
-      //        this.$store.commit("setResident", newResident)
+      //        this.$store.setResident(newResident)
       //    }
       //   }
       // },
@@ -2738,9 +2747,9 @@ export default {
 
 
   created() {
-    this.$store.dispatch("getGuildLogos");
-    // this.$store.dispatch("getAllGuilds");
-    // this.$store.dispatch("getAllGuildDeals");
+    this.$store.getGuildLogos();
+    // this.$store.getAllGuilds();
+    // this.$store.getAllGuildDeals();
    
 
     eventBus_stashFlyer.$on("stashFlyer", value => {
@@ -2853,7 +2862,7 @@ mounted() {
         ? [{ key: this.sortBy, order: this.sortDesc ? "desc" : "asc" }]
         : [];
     },
-    ...mapGetters([
+    ...mapState(useMainStore, [
       "resident",
       "pets",
       "navbarHeight",
@@ -3183,7 +3192,7 @@ mounted() {
           })
           // data.getNews.push(callGroupPurchase)
           // cache.writeQuery({query: GET_NEWS, data})
-          this.$store.commit("setNews",list)
+          this.$store.setNews(list)
           },
           // refetchQueries:[{query: GET_NEWS}],
           // awaitRefetchQueries: true
@@ -3255,7 +3264,7 @@ mounted() {
         guildFullName: this.resident.guild.guildFullName,
         guildDealIds: this.dealsCommited,
       };
-      this.$store.dispatch("commitGuildDeals", { input });
+      this.$store.commitGuildDeals({ input });
       this.dealsCommited = [];
     },
 
@@ -3284,7 +3293,7 @@ mounted() {
       });
 
       this.resident.silverCoins += 100
-      this.$store.commit('setResident', this.resident)
+      this.$store.setResident(this.resident)
 
       this.$apollo
         .mutate({
@@ -3311,7 +3320,7 @@ mounted() {
        const list = [...this.resident.stashedFlyers]
        list.splice(i, 1)
        this.resident.stashedFlyers = [...list]
-        this.$store.commit('setResident', this.resident)
+        this.$store.setResident(this.resident)
      } else {
         // console.log(this.processedActiveFlyers)
     const  processedFlyers = this.processedActiveFlyers.map((item) => {
@@ -3342,7 +3351,7 @@ mounted() {
     //  console.log(this.processedActiveFlyers)
      }
     
-      this.$store.dispatch("feedPet", {
+      this.$store.feedPet({
         residentName: this.resident.residentName,
         flyerId: this.activeFlyerSelected.flyerId,
         targetDistribute: this.activeFlyerSelected.targetDistribute,
@@ -3425,8 +3434,8 @@ mounted() {
             this.cityHall.treasure -= (this.silverForWelfare * this.cityHall.population)
             // console.log(this.cityHall)
             this.resident.silverCoins += this.silverForWelfare
-            this.$store.commit("setCityHall", this.cityHall) 
-            this.$store.commit("setResident", this.resident)
+            this.$store.setCityHall(this.cityHall) 
+            this.$store.setResident(this.resident)
           }
         })
         .then(({data}) => {
@@ -3469,7 +3478,7 @@ mounted() {
             this.resident.guild.perk = perk
             this.resident.guild.contributionRatio = contributionRatio
 
-            this.$store.commit("setResident", this.resident) 
+            this.$store.setResident(this.resident) 
           },
            optimisticResponse: {
               editGuild: {
@@ -3533,7 +3542,7 @@ mounted() {
           this.isEditGuildOpen = true
           break;
         case 7:
-          this.$store.dispatch('quitGuild',{ residentName: this.resident.residentName, guildFullName: this.resident.guild.guildFullName})
+          this.$store.quitGuild({ residentName: this.resident.residentName, guildFullName: this.resident.guild.guildFullName})
           this.snackbarInfo = `You left ${this.resident.guild.guildFullName}`
           this.snackbar = true
           // this.$nextTick(() => {
@@ -3585,14 +3594,14 @@ mounted() {
       this.previewDiaOpen = true;
       const pos = e.flyerId.indexOf("_");
       this.vendor = e.flyerId.slice(0, pos);
-      this.$store.commit("clearClientPageView");
-      // this.$store.dispatch("getSelectedFlyerClientView", {
+      this.$store.clearClientPageView();
+      // this.$store.getSelectedFlyerClientView({
       //   flyerId: e.flyerId,
       //   businessTitle: e.flyerId.slice(0, pos),
       //   time: Date.now().toString(),
       //   resident: this.resident.residentName
       // });
-      this.$store.commit("setClientPreviewLoading", true);
+      this.$store.setClientPreviewLoading(true);
       this.$apollo
         .query({
           query: GET_SELECTED_FLYER_CLIENT_VIEW,
@@ -3605,14 +3614,14 @@ mounted() {
           update: (cache, {data:{getSelectedFlyerClientView}}) => {
              let newResident = this.resident
             newResident.flyersRead.push(e.flyerId)
-            this.$store.commit('setResident', newResident)
+            this.$store.setResident(newResident)
             this.checkReadStatus()
           }
         })
         .then(({data})=>{
           // console.log(data)
-         this.$store.commit("setClientPageView", data.getSelectedFlyerClientView);
-         this.$store.commit("setClientPreviewLoading", false);
+         this.$store.setClientPageView(data.getSelectedFlyerClientView);
+         this.$store.setClientPreviewLoading(false);
         })
         .catch(err => console.error(err))
      
@@ -3647,7 +3656,7 @@ mounted() {
 
     joinGuild() {
       // console.log(this.guildChose);
-      this.$store.dispatch("joinGuild", {
+      this.$store.joinGuild({
         residentName: this.resident.residentName,
         nickName: this.resident.nickName,
         avatar: this.resident.avatarPic,
@@ -3707,7 +3716,7 @@ mounted() {
                 if(index>=0){
                   data.getCurrentResident.guild.guildMembers.splice(index, 1)
                   cache.writeQuery({query: GET_CURRENT_RESIDENT, data})
-                  this.$store.commit('setResident', data.getCurrentResident)
+                  this.$store.setResident(data.getCurrentResident)
                 }
               },
               refetchQueries:[{query:  GET_CURRENT_RESIDENT}],
@@ -3771,7 +3780,7 @@ mounted() {
           }
         }
       }
-      this.$store.commit('setMergeIsDone', true)
+      this.$store.setMergeIsDone(true)
       
     },
 
@@ -3873,7 +3882,7 @@ mounted() {
 
       switch(this.singleMessageToShow.type){
         case 'vendor':
-          this.$store.dispatch('sendMessage', {
+          this.$store.sendMessage({
                 sender: this.resident.residentName,
                 receiver: this.singleMessageToShow.message.sender,
                 receiverType: 'vendor',
@@ -3885,7 +3894,7 @@ mounted() {
             })
             break;
           case 'guild':
-            this.$store.dispatch('sendMessage', {
+            this.$store.sendMessage({
                 sender: this.resident.residentName,
                 receiver: this.singleMessageToShow.message.sender,
                 receiverType: 'resident',
@@ -3920,7 +3929,7 @@ mounted() {
             const index = data.getCurrentResident.guild.guildMembers.findIndex(member => member.name == this.memberSelected.name)
             data.getCurrentResident.guild.guildMembers[index].lastRewardDate = Date.now()
             cache.writeQuery({query: GET_CURRENT_RESIDENT, data})
-            this.$store.commit('setResident', data.getCurrentResident)
+            this.$store.setResident(data.getCurrentResident)
           },
           refetchQueries: [{ query: GET_CURRENT_RESIDENT}],
           awaitRefetchQueries: true
@@ -4002,7 +4011,7 @@ mounted() {
                   })
                 if(index >= 0){
                   data.getCurrentResident.messages[index].isRead = true
-                  this.$store.commit('setResident', data.getCurrentResident)
+                  this.$store.setResident(data.getCurrentResident)
                   // cache.writeQuery({ query: GET_CURRENT_RESIDENT, data})
                 }
                 break;
@@ -4012,13 +4021,13 @@ mounted() {
                   })
                 if(indexGuild >= 0){
                   data.getCurrentResident.guildMessages[indexGuild].isRead = true
-                  this.$store.commit('setResident', data.getCurrentResident)
+                  this.$store.setResident(data.getCurrentResident)
 
                   // console.log(data)
                   // cache.writeQuery({ query: GET_CURRENT_RESIDENT, data})
                 }
             }
-            this.$store.commit('setResident', data.getCurrentResident)
+            this.$store.setResident(data.getCurrentResident)
           },
           refetchQueries:[{ query: GET_CURRENT_RESIDENT}],
           awaitRefetchQueries: true
@@ -4030,7 +4039,7 @@ mounted() {
     },
 
     sendGuildMessage(){
-       this.$store.dispatch('sendMessage', {
+       this.$store.sendMessage({
                 sender: this.resident.residentName,
                 receiver: this.guildMemberToMessage.name,
                 receiverType: 'resident',
@@ -4068,7 +4077,7 @@ mounted() {
                         targetDistribute: flyer.targetDistribute})
 
 
-            this.$store.dispatch("stashFlyer", {
+            this.$store.stashFlyer({
               residentName: this.resident.residentName,
               vendor: this.vendor,
               flyerId: this.activeFlyerSelected.flyerId,
@@ -4088,7 +4097,7 @@ mounted() {
 
     startGuild() {
       if (this.$refs.form.validate()) {
-        this.$store.dispatch("startGuild", {
+        this.$store.startGuild({
           guildLeader: this.resident.residentName,
           guildLeaderAvatar: this.resident.avatarPic,
           guildLeaderNickName: this.resident.nickName,
@@ -4129,7 +4138,7 @@ mounted() {
             let newResident = this.resident
             newResident.silverCoins += this.amountToTransfer
             newResident.guild.guildLeaderRemun -= this.amountToTransfer
-            this.$store.commit('setResident', newResident)
+            this.$store.setResident(newResident)
           }
         })
         .then(({data})=>{
@@ -4152,7 +4161,7 @@ mounted() {
           update:(cache,{data:{}})=>{
             this.resident.guildOwned = null
             this.resident.guild.guildLeader = this.memberSelected.name
-            this.$store.commit('setResident', this.resident)
+            this.$store.setResident(this.resident)
           }
         })
         .then(({data})=>{
@@ -4166,7 +4175,7 @@ mounted() {
 
    beforeRouteLeave(to, from, next) {
     //  this.processedActiveFlyers = null
-     this.$store.dispatch('getCurrentResident')
+     this.$store.getCurrentResident()
      next()
   },
 };

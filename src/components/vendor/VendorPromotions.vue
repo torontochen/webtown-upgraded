@@ -557,7 +557,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import { GET_REWARD_ITEMS, GET_GAME_SHOP_SUBSTITUTE } from "../../queries/queries_query.js";
 import _ from "lodash";
 import moment from "moment"
@@ -634,7 +635,7 @@ export default {
      this.$apollo
           .query({query: GET_REWARD_ITEMS})
           .then(({data}) => {
-            this.$store.commit("setRewardItems", data.getRewardItems)
+            this.$store.setRewardItems(data.getRewardItems)
           })
 
      this.$apollo
@@ -687,7 +688,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(
+    ...mapState(useMainStore, 
       ["vendor", 
       "eventCategory", 
       "itemCatalogLoading", 
@@ -829,7 +830,7 @@ export default {
       this.exitDialog = false;
       this.itemsOnSaleSelected = []
      
-      this.$store.commit("setInDesign", false);
+      this.$store.setInDesign(false);
       this.$router.push("/");
     },
 
@@ -904,14 +905,14 @@ export default {
         return {itemName: item.itemName,
         quantity: item.quantity }
       })
-      this.$store.dispatch("updateMonsterChest", {
+      this.$store.updateMonsterChest({
         vendor: this.vendor.businessTitle,
         promotionItemTitle: title,
         promotionItemId: id,
         promotionType: type,
         rewardItems:  itemsToLoad
       })
-      this.$store.commit("setInDesign", false);
+      this.$store.setInDesign(false);
       this.$router.push("/");
     },
 
@@ -937,12 +938,12 @@ export default {
             this.allItemsCatalog[vendorItemCodeIndex].promoRate : this.allItemsCatalog[vendorItemCodeIndex].rate,
             // bondCouponId: this.savedFlyerList[bondCouponIdIndex].flyerId
         }
-        this.$store.dispatch("saveSubstituteItems", {
+        this.$store.saveSubstituteItems({
           vendor: this.vendor.businessTitle, 
           dateFrom: this.dateFrom,
           dateTo: this.dateTo,
           input: substituteInput})
-          this.$store.commit("setInDesign", false);
+          this.$store.setInDesign(false);
         this.$router.go()
 
         } else {
@@ -958,8 +959,8 @@ export default {
                         postOnPortal: this.isOnPortal}
 
         console.log(input)
-        this.$store.dispatch("createPromotionEvent", {input})
-         this.$store.commit("setInDesign", false);
+        this.$store.createPromotionEvent({input})
+         this.$store.setInDesign(false);
         this.$router.go()
         }
 

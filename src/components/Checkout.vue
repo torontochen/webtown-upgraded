@@ -326,7 +326,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex"
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 import moment from "moment"
 import _ from "lodash"
 import gmapsInit from "../utils/gmaps";
@@ -437,7 +438,7 @@ export default {
       const northEast = new google.maps.LatLng(44.519412, -78.032275);
       const bounds = new google.maps.LatLngBounds(southWest, northEast);
       // console.log(bounds);
-      // const resident = this.$store.getters.resident;
+      // const resident = this.$store.resident;
       // console.log(resident);
 
       // const resident = JSON.parse(localStorage.getItem("resident"));
@@ -575,7 +576,7 @@ export default {
 
 
     computed:{
-        ...mapGetters(["resident","soughtDeals", "searchCouponLoading", "placeOrderLoading", "vendorInterface"]),
+        ...mapState(useMainStore, ["resident","soughtDeals", "searchCouponLoading", "placeOrderLoading", "vendorInterface"]),
 
         convertedGold() {
             return Math.round(this.silverToConvert / 1000)
@@ -781,8 +782,8 @@ export default {
            } 
 
         // console.log(payload)
-           this.$store.dispatch("placeOrder", payload)
-           this.$store.commit("setShoppingCart", [])
+           this.$store.placeOrder(payload)
+           this.$store.setShoppingCart([])
         //    this.$router.go()
         },
 
@@ -800,7 +801,7 @@ export default {
                dealsTitle: this.dealsSoughtTitle,
                valueDiscountList: this.valueDiscountList,
            } 
-            this.$store.commit("setPlaceOrderLoading", true)
+            this.$store.setPlaceOrderLoading(true)
              this.$apollo
             .mutate({
                 mutation: PREPAY,
@@ -809,8 +810,8 @@ export default {
             .then(({data}) => {
                 const {prepay} = data
                 // console.log(prepay)
-                 this.$store.commit("setShoppingCart", [])
-                 this.$store.commit("setPlaceOrderLoading", false)
+                 this.$store.setShoppingCart([])
+                 this.$store.setPlaceOrderLoading(false)
                     this.$router.go()
             })
             .catch(err => console.error(err))
@@ -840,7 +841,7 @@ export default {
                 vendor: this.shoppingCartList[0].vendor,
                 time: Date.now().toString()
             }
-            this.$store.dispatch('searchAvailableDeals', {input})
+            this.$store.searchAvailableDeals({input})
         }
     },
 

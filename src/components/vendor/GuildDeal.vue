@@ -444,7 +444,8 @@
 </template>
 
 <script>
-import {mapGetters}  from 'vuex'
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import { GET_REWARD_ITEMS } from "../../queries/queries_query"
 import moment from 'moment'
 import _ from "lodash"
@@ -529,7 +530,7 @@ export default {
     this.$apollo
           .query({query: GET_REWARD_ITEMS})
           .then(({data}) => {
-            this.$store.commit("setRewardItems", data.getRewardItems)
+            this.$store.setRewardItems(data.getRewardItems)
           })
 
         if(this.guildDeals.length == 1) {
@@ -550,12 +551,12 @@ export default {
             this.dealType ="Total Purchase"
         }
         if(this.dealCate.length == 0 ) {
-            this.$store.commit("setInDesign", false);
+            this.$store.setInDesign(false);
         }
     },
 
     computed: {
-    ...mapGetters(["vendor", "rewardItems", "allItemsCatalog", "guildDeals"]),
+    ...mapState(useMainStore, ["vendor", "rewardItems", "allItemsCatalog", "guildDeals"]),
 
     currentDate() {
         return moment(Date.now()).format("YYYY-MM-DD");
@@ -600,7 +601,7 @@ export default {
 
         close() {
             this.guildDealLevels = []
-            this.$store.commit("setInDesign", false);
+            this.$store.setInDesign(false);
             this.$router.push("/")
         },
 
@@ -638,8 +639,8 @@ export default {
             }
             // console.log(guildDealsToSave)
 
-            this.$store.dispatch("saveGuildDeals", {input:  guildDealsToSave})
-            this.$store.commit("setInDesign", false);
+            this.$store.saveGuildDeals({input:  guildDealsToSave})
+            this.$store.setInDesign(false);
             // this.$router.push("/")
             
         },

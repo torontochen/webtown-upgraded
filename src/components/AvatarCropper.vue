@@ -96,7 +96,8 @@
 
 <script>
 import { Cropper, CircleStencil } from "vue-advanced-cropper";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../store/store";
 
 export default {
   components: {
@@ -136,7 +137,7 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters(["resident"])
+    // ...mapState(useMainStore, ["resident"])
   },
   mounted() {
     this.viewportWidth = window.innerWidth;
@@ -159,7 +160,7 @@ export default {
         this.avatar = this.preview;
       }
 
-      this.$store.dispatch("updateAvatar", {
+      this.$store.updateAvatar({
         email: this.resident.email,
         avatarUpdated: this.avatar
       });

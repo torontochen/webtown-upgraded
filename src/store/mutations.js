@@ -1,353 +1,387 @@
+/**
+ * Vuex mutations, now Pinia actions (Phase 4c).
+ *
+ * Pinia has no mutations — actions mutate state directly — so each of these
+ * became a method taking just the payload, with state.x written as this.x.
+ * The names are unchanged, which is what let the 149 commit() call sites be
+ * rewritten mechanically.
+ *
+ * They stay in their own file, separate from actions.js, because the split is
+ * still meaningful: these are synchronous state writes, actions.js is the
+ * Apollo layer.
+ */
 const mutations = {
-  setActiveFlyerList: (state, payload) => {
-    state.activeFlyerList = payload;
-    console.log(state.activeFlyerList )
+  setActiveFlyerList(payload) {
+    this.activeFlyerList = payload;
+    console.log(this.activeFlyerList )
   },
 
-  setAuthError: (state, payload) => {
-    state.authError = payload;
+  setAuthError(payload) {
+    this.authError = payload;
   },
 
-  setAllItemCatalog: (state, payload) => {
-    state.allItemsCatalog = payload;
-    //  console.log(state.allItemsCatalog)
+  setAllItemCatalog(payload) {
+    this.allItemsCatalog = payload;
+    //  console.log(this.allItemsCatalog)
   },
 
-  setAllGuildDeals: (state, payload) => {
-    state.allGuildDeals = payload
-    console.log(state.allGuildDeals)
+  setAllGuildDeals(payload) {
+    this.allGuildDeals = payload
+    console.log(this.allGuildDeals)
   },
 
-  setCityHall: (state, payload) => {
-    console.log(state.cityHall)
-    state.cityHall = payload
+  setCityHall(payload) {
+    console.log(this.cityHall)
+    this.cityHall = payload
   },
 
-  setClientPageView: (state, payload) => {
-    state.clientPageView = payload;
+  setClientPageView(payload) {
+    this.clientPageView = payload;
   },
 
-  setClientPreviewLoading: (state, payload) => {
-    state.clientPreviewLoading = payload;
-    // console.log(state.vendorHomeLoading)
+  setClientPreviewLoading(payload) {
+    this.clientPreviewLoading = payload;
+    // console.log(this.vendorHomeLoading)
   },
 
-  setCommitGuildDealLoading:(state, payload) => {
-    state.commitGuildDealLoading = payload
+  setCommitGuildDealLoading(payload) {
+    this.commitGuildDealLoading = payload
   },
 
-  setCustomerRatings: (state, payload) => {
-    state.customerRatings = payload
+  setCustomerRatings(payload) {
+    this.customerRatings = payload
   },
 
-  setDemandSearch: (state, payload) => {
-    state.demandSearch = payload;
+  setDemandSearch(payload) {
+    this.demandSearch = payload;
   },
 
-  setError: (state, payload) => {
-    state.error = payload;
-    // console.log(state.error);
-    // console.log(state.error.message);
+  setError(payload) {
+    this.error = payload;
+    // console.log(this.error);
+    // console.log(this.error.message);
   },
 
-  setEventCategory: (state, payload) => {
-    state.eventCategory = payload
+  setEventCategory(payload) {
+    this.eventCategory = payload
   },
 
-  setFlyerList: (state, payload) => {
-    state.savedFlyerList = payload;
+  setFlyerList(payload) {
+    this.savedFlyerList = payload;
   },
 
-  setFlyerFormatType: (state, payload) => {
-    state.flyerFormatType = payload;
+  setFlyerFormatType(payload) {
+    this.flyerFormatType = payload;
   },
 
-  setFingerPrint: (state, payload) => {
-    state.fingerPrint = payload;
-    // console.log(state.fingerPrint);
+  setFingerPrint(payload) {
+    this.fingerPrint = payload;
+    // console.log(this.fingerPrint);
   },
 
-  setFingerPrintIsSaved: (state, payload) => {
-    state.fingerPrintIsSaved = payload;
+  setFingerPrintIsSaved(payload) {
+    this.fingerPrintIsSaved = payload;
   },
 
-  setFooterHeight: (state, payload) => {
-    state.footerHeight = payload
-    // console.log('footerHeight', state.footerHeight)
+  setFooterHeight(payload) {
+    this.footerHeight = payload
+    // console.log('footerHeight', this.footerHeight)
   },
 
-  setGamePropList: (state, payload) => {
+  setGamePropList(payload) {
     // console.log(payload)
-    state.gamePropList = payload
+    this.gamePropList = payload
   },
 
-  setGameSubstituteList: (state, payload) => {
-    state.gameSubstituteList = payload
+  setGameSubstituteList(payload) {
+    this.gameSubstituteList = payload
   },
 
-  setVendorList: (state, payload) => {
-    state.vendorList = payload;
-    // console.log(state.vendorList)
+  setVendorList(payload) {
+    this.vendorList = payload;
+    // console.log(this.vendorList)
   },
 
-  setGuilds: (state, payload) => {
-    state.guilds = payload
-    // console.log(state.guilds)
+  setGuilds(payload) {
+    this.guilds = payload
+    // console.log(this.guilds)
   },
 
-  setGuildChatMessages: (state, payload) => {
-    // console.log(state.guildChatMessages)
-    state.guildChatMessages = payload
+  setGuildChatMessages(payload) {
+    // console.log(this.guildChatMessages)
+    this.guildChatMessages = payload
   },
 
-  setGuildDeals: (state, payload) => {
-    state.guildDeals = payload
-    console.log(state.guildDeals)
+  setGuildDeals(payload) {
+    this.guildDeals = payload
+    console.log(this.guildDeals)
   },
 
-  setGuildDealsStatus: (state, payload) => {
-    state.guildDealsStatus = payload
-    console.log(state.guildDealsStatus )
+  setGuildDealsStatus(payload) {
+    this.guildDealsStatus = payload
+    console.log(this.guildDealsStatus )
   },
 
 
-  setGuildLogos: (state, payload) => {
-    state.guildLogos = payload
+  setGuildLogos(payload) {
+    this.guildLogos = payload
   },
 
-  setInDesign: (state, payload) => {
-    state.inDesign = payload;
+  setInDesign(payload) {
+    this.inDesign = payload;
   },
 
-  setIsPromotionEventShowed: (state, payload) => {
-    state.isPromotionEventShowed = payload
+  setIsPromotionEventShowed(payload) {
+    this.isPromotionEventShowed = payload
   },
 
-  setIsSearchBtnDisabled: (state, payload) => {
-    state.isSearchBtnDisabled = payload
+  setIsSearchBtnDisabled(payload) {
+    this.isSearchBtnDisabled = payload
   },
 
-  setItemCatalogUpdated: (state, payload) => {
-    state.itemCatalogUpdated = payload;
+  setItemCatalogUpdated(payload) {
+    this.itemCatalogUpdated = payload;
   },
 
-  setItemCatalogSaved: (state, payload) => {
-    state.itemCatalogSaved = payload;
-    //  console.log(state.itemCatalogSaved)
+  setItemCatalogSaved(payload) {
+    this.itemCatalogSaved = payload;
+    //  console.log(this.itemCatalogSaved)
   },
-  setItemCatalogLoading: (state, payload) => {
-    state.itemCatalogLoading = payload;
-  },
-
-  setLoading: (state, payload) => {
-    state.loading = payload;
-    console.log('loading',state.loading)
+  setItemCatalogLoading(payload) {
+    this.itemCatalogLoading = payload;
   },
 
-  setMarkerList: (state, payload) => {
-    state.markerList = payload
-    // console.log(state.markerList)
+  setLoading(payload) {
+    this.loading = payload;
+    console.log('loading',this.loading)
   },
 
-  setMetroSpec: ( state, payload) => {
-    state.metroSpec = payload
-    // console.log(state.metroSpec)
+  setMarkerList(payload) {
+    this.markerList = payload
+    // console.log(this.markerList)
   },
 
-  setMergeIsDone:(state, payload) => {
-    state.mergeIsDone = payload
+  setMetroSpec(payload) {
+    this.metroSpec = payload
+    // console.log(this.metroSpec)
   },
 
-  setNavbarHeight: (state, payload) => {
-    state.navbarHeight = payload;
-    // console.log('navBarHeight', state.navbarHeight)
+  setMergeIsDone(payload) {
+    this.mergeIsDone = payload
   },
 
-  setNews: (state, payload) => {
-    state.news = payload
-    console.log(state.news)
+  setNavbarHeight(payload) {
+    this.navbarHeight = payload;
+    // console.log('navBarHeight', this.navbarHeight)
   },
 
-  setPets: (state, payload) => {
-    state.pets = payload;
+  setNews(payload) {
+    this.news = payload
+    console.log(this.news)
   },
 
-  setPlaceOrderLoading: (state, payload) => {
-    state.placeOrderLoading = payload
+  setPets(payload) {
+    this.pets = payload;
   },
 
-  setPromotionEvents: (state, payload) => {
-    state.promotionEvents = payload;
-    // console.log(state.promotionEvents)
+  setPlaceOrderLoading(payload) {
+    this.placeOrderLoading = payload
   },
 
-  setPromotionEventsProcessed: (state, payload) => {
-    state.promotionEventsProcessed = payload
-    // console.log(state.promotionEventsProcessed)
+  setPromotionEvents(payload) {
+    this.promotionEvents = payload;
+    // console.log(this.promotionEvents)
+  },
+
+  setPromotionEventsProcessed(payload) {
+    this.promotionEventsProcessed = payload
+    // console.log(this.promotionEventsProcessed)
 
   },
 
-  setPagePreview: (state, payload) => {
-    state.pagePreview = payload;
-    //  console.log(state.pagePreview);
+  setPagePreview(payload) {
+    this.pagePreview = payload;
+    //  console.log(this.pagePreview);
   },
-  setPagePreview_C: (state, payload) => {
-    state.pagePreview_C = payload;
-    //  console.log(state.pagePreview_C);
+  setPagePreview_C(payload) {
+    this.pagePreview_C = payload;
+    //  console.log(this.pagePreview_C);
   },
-  setProductsCategories: (state, payload) => {
-    state.productsCategories = payload;
-  },
-
-  setRestaurantCategories: (state, payload) => {
-    state.restaurantCategories = payload;
-    // console.log(state.restaurantCategories)
+  setProductsCategories(payload) {
+    this.productsCategories = payload;
   },
 
-  setResident: (state, payload) => {
-    state.resident = payload;
-    // console.log('resident in mutation',state.resident)
+  setRestaurantCategories(payload) {
+    this.restaurantCategories = payload;
+    // console.log(this.restaurantCategories)
   },
 
-  setResidentOrders: (state, payload) => {
-    state.residentOrders = payload
-    console.log(state.residentOrders)
+  setResident(payload) {
+    this.resident = payload;
+    // console.log('resident in mutation',this.resident)
   },
 
-  setRewardItems: (state, payload) => {
-    state.rewardItems = payload;
-    // console.log(state.rewardItems)
+  setResidentOrders(payload) {
+    this.residentOrders = payload
+    console.log(this.residentOrders)
   },
 
-  setSelectedTemplate: (state, payload) => {
-    state.selectedTemplate = payload;
-  },
-  setSelectedTemplate_C: (state, payload) => {
-    state.selectedTemplate_C = payload;
-    //  console.log(state.selectedTemplate_C)
+  setRewardItems(payload) {
+    this.rewardItems = payload;
+    // console.log(this.rewardItems)
   },
 
-  setSelectedSketch: (state, payload) => {
-    state.selectedSketch = payload;
-    //  console.log(state.selectedSketch);
+  setSelectedTemplate(payload) {
+    this.selectedTemplate = payload;
   },
-  setSelectedSketch_C: (state, payload) => {
-    state.selectedSketch_C = payload;
-    //  console.log(state.selectedSketch_C);
-  },
-
-  setSavedFlyer: (state, payload) => {
-    state.savedFlyer = payload;
+  setSelectedTemplate_C(payload) {
+    this.selectedTemplate_C = payload;
+    //  console.log(this.selectedTemplate_C)
   },
 
-  setSaveShoppingCartLoading: (state, payload) => {
-    state.saveShoppingCartLoading = payload
+  setSelectedSketch(payload) {
+    this.selectedSketch = payload;
+    //  console.log(this.selectedSketch);
+  },
+  setSelectedSketch_C(payload) {
+    this.selectedSketch_C = payload;
+    //  console.log(this.selectedSketch_C);
   },
 
-  setShoppingCart: (state, payload) => {
-    state.shoppingCart = payload
-    // console.log(state.shoppingCart)
+  setSavedFlyer(payload) {
+    this.savedFlyer = payload;
   },
 
-  setSimpleFlyer: (state, payload) => {
-    state.simpleFlyer.push(payload);
-    // console.log(state.simpleFlyer);
+  setSaveShoppingCartLoading(payload) {
+    this.saveShoppingCartLoading = payload
   },
 
-  setSingleItemRating: (state, payload) => {
-    state.singleItemRating = payload
-    // console.log(state.singleItemRating)
+  setShoppingCart(payload) {
+    this.shoppingCart = payload
+    // console.log(this.shoppingCart)
   },
 
-  setSearchCouponLoading: (state, payload) => {
-    state.searchCouponLoading = payload
+  setSimpleFlyer(payload) {
+    this.simpleFlyer.push(payload);
+    // console.log(this.simpleFlyer);
   },
 
-  setServicesCategories: (state, payload) => {
-    state.servicesCategories = payload;
+  setSingleItemRating(payload) {
+    this.singleItemRating = payload
+    // console.log(this.singleItemRating)
   },
 
-  setSketchList: (state, payload) => {
-    state.sketchList = payload;
+  setSearchCouponLoading(payload) {
+    this.searchCouponLoading = payload
+  },
+
+  setServicesCategories(payload) {
+    this.servicesCategories = payload;
+  },
+
+  setSketchList(payload) {
+    this.sketchList = payload;
   },
   
 
-  setSoughtDeals: (state, payload) => {
-    state.soughtDeals = payload
+  setSoughtDeals(payload) {
+    this.soughtDeals = payload
   },
 
-  setTargetDistributeNumber: (state, payload) => {
-    state.targetDistributeNumber = payload
+  setTargetDistributeNumber(payload) {
+    this.targetDistributeNumber = payload
   },
 
-  setTemplateList: (state, payload) => {
-    state.templateList = payload;
+  setTemplateList(payload) {
+    this.templateList = payload;
   },
 
-  setTemplateIsSaved: (state, payload) => {
-    state.templateIsSaved = payload;
+  setTemplateIsSaved(payload) {
+    this.templateIsSaved = payload;
   },
 
-  setVendor: (state, payload) => {
-    state.vendor = payload;
-     console.log(state.vendor);
+  setVendor(payload) {
+    this.vendor = payload;
+     console.log(this.vendor);
   },
 
-  setVendorHomeLoading: (state, payload) => {
-    state.vendorHomeLoading = payload;
-    // console.log(state.vendorHomeLoading)
+  setVendorHomeLoading(payload) {
+    this.vendorHomeLoading = payload;
+    // console.log(this.vendorHomeLoading)
   },
 
-  setVendorFlyers: (state, payload) => {
-    console.log(state.vendorFlyers )
-    state.vendorFlyers = payload
+  setVendorFlyers(payload) {
+    console.log(this.vendorFlyers )
+    this.vendorFlyers = payload
   },
 
-  setVendorProfileLoading: (state, payload) => {
-    state.vendorProfileLoading = payload;
-    // console.log(state.vendorHomeLoading)
+  setVendorProfileLoading(payload) {
+    this.vendorProfileLoading = payload;
+    // console.log(this.vendorHomeLoading)
   },
 
-  setVendorOrders: (state, payload) => {
-    state.vendorOrders = payload
-    console.log(state.vendorOrders)
+  setVendorOrders(payload) {
+    this.vendorOrders = payload
+    console.log(this.vendorOrders)
   },
 
-  setVendorSalesInfo: (state, payload) => {
-    state.vendorSalesInfo = payload
+  setVendorSalesInfo(payload) {
+    this.vendorSalesInfo = payload
   },
 
-  setVendorSettlementRecords: (state, payload) => {
-    state.vendorSettlementRecords = payload
-    console.log(state.vendorSettlementRecords)
+  setVendorSettlementRecords(payload) {
+    this.vendorSettlementRecords = payload
+    console.log(this.vendorSettlementRecords)
   },
 
-  setVendorPromotionEvents: (state, payload) => {
-    state.vendorPromotionEvents = payload
-    console.log(state.vendorPromotionEvents)
+  setVendorPromotionEvents(payload) {
+    this.vendorPromotionEvents = payload
+    console.log(this.vendorPromotionEvents)
   },
 
-  setVendorInterface: (state, payload) => {
-    state.vendorInterface = payload
-    // console.log(state.vendorInterface)
+  setVendorInterface(payload) {
+    this.vendorInterface = payload
+    // console.log(this.vendorInterface)
   },
 
-  setViewPortDimension: (state, payload) => {
-    state.viewPortDimension = payload
-    // console.log(state.viewPortDimension)
+  setViewPortDimension(payload) {
+    this.viewPortDimension = payload
+    // console.log(this.viewPortDimension)
   },
 
-  clearError: (state) => (state.error = null),
-  clearResident: (state) => (state.resident = null),
-  clearVendor: (state) => (state.vendor = null),
-  clearSimpleFlyer: (state) => (state.simpleFlyer = null),
-  clearPagePreview: (state) => (state.pagePreview = []),
-  clearPagePreview_C: (state) => (state.pagePreview_C = null),
-  clearSelectedSketch: (state) => (state.selectedSketch = null),
-  clearSelectedTemplate: (state) => (state.selectedTemplate = null),
-  clearSelectedSketch_C: (state) => (state.selectedSketch_C = null),
-  clearSelectedTemplate_C: (state) => (state.selectedTemplate_C = null),
-  clearClientPageView: (state) => (state.clientPageView = null),
+  clearError() {
+    this.error = null;
+  },
+  clearResident() {
+    this.resident = null;
+  },
+  clearVendor() {
+    this.vendor = null;
+  },
+  clearSimpleFlyer() {
+    this.simpleFlyer = null;
+  },
+  clearPagePreview() {
+    this.pagePreview = [];
+  },
+  clearPagePreview_C() {
+    this.pagePreview_C = null;
+  },
+  clearSelectedSketch() {
+    this.selectedSketch = null;
+  },
+  clearSelectedTemplate() {
+    this.selectedTemplate = null;
+  },
+  clearSelectedSketch_C() {
+    this.selectedSketch_C = null;
+  },
+  clearSelectedTemplate_C() {
+    this.selectedTemplate_C = null;
+  },
+  clearClientPageView() {
+    this.clientPageView = null;
+  },
 };
 
 export default mutations;

@@ -64,13 +64,18 @@ test("no query policy entry refers to a resolver that no longer exists", () => {
 // ---------------------------------------------------------------------------
 
 test("every query dispatched at app boot is still public", () => {
-  // src/main.js fires these from the root created() hook, before sign-in.
-  // If one of them ever becomes guarded, an anonymous page load errors out.
+  // src/main.js fires these just before app.mount(), before sign-in. If one of
+  // them ever becomes guarded, an anonymous page load errors out.
+  //
+  // Phase 4c changed the call form: Vuex's store.dispatch("getPets") is now a
+  // plain Pinia method call, store.getPets(). Only the names matter here.
   const mainJs = fs.readFileSync(
     path.join(__dirname, "..", "src", "main.js"),
     "utf8"
   );
-  const dispatched = [...mainJs.matchAll(/dispatch\("(\w+)"/g)].map((m) => m[1]);
+  const dispatched = [
+    ...mainJs.replace(/^\s*\/\/.*$/gm, "").matchAll(/^store\.(\w+)\(/gm),
+  ].map((m) => m[1]);
 
   // Map the store action names that differ from the query name.
   const actionToQuery = {

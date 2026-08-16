@@ -337,7 +337,8 @@
 
 <script>
 import moment from "moment";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import { useMainStore } from "../../store/store";
 import VueDraggableResizable from "vue-draggable-resizable";
 // optionally import default styles
 import "vue-draggable-resizable/style.css";
@@ -421,7 +422,7 @@ export default {
           // moment(Date.now()).format("MMMM Do YYYY, h:mm:ss a");
       }
       this.originType = type;
-      this.$store.commit("setFlyerFormatType", type);
+      this.$store.setFlyerFormatType(type);
       // console.log(type);
       this.flyerBackgroundColor = backgroundColor;
       this.sliderH = width;
@@ -535,14 +536,14 @@ export default {
           // console.log(this.preview[previewIndex].previewString)
         }
       }
-      this.$store.commit("clearPagePreview");
-      this.$store.commit("setPagePreview", this.preview);
+      this.$store.clearPagePreview();
+      this.$store.setPagePreview(this.preview);
     });
 
     //Save Sketch
     eventBus_saveSketch.$on("saveSketch", () => {
       // console.log("save sketch at start");
-      this.$store.commit("clearError");
+      this.$store.clearError();
       // console.log(this.pageSave);
 
       const pageSaveIndex = _.findIndex(this.pageSave, (item) => {
@@ -619,15 +620,13 @@ export default {
       // console.log(Math.round(sizeOf(input) / (1024 * 1024)));
       if (Math.round(sizeOf(input) / (1024 * 1024)) <= 15) {
         // console.log("save sketch");
-        this.$store.dispatch("saveSketch", {
+        this.$store.saveSketch({
           input,
         });
         sketchToSave = [];
-        this.$store.commit("setInDesign", false);
+        this.$store.setInDesign(false);
       } else {
-        this.$store.commit(
-          "setError",
-          "This size of draft is over limit, please downsize photos or texts"
+        this.$store.setError("This size of draft is over limit, please downsize photos or texts"
         );
         return;
       }
@@ -636,7 +635,7 @@ export default {
     //Save Flyer
     eventBus_saveFlyer.$on("saveFlyer", () => {
       console.log("save flyer at start");
-      this.$store.commit("clearError");
+      this.$store.clearError();
       // console.log(this.flyerId);
       const pageSaveIndex = _.findIndex(this.pageSave, (item) => {
         // console.log(item);
@@ -712,15 +711,15 @@ export default {
           // console.log(pageNodeToSave)
           this.preview[index].previewString = pageNodeToSave.outerHTML
           this.preview[index].id = pageSaveItem.nodeId
-         this.$store.commit("clearPagePreview");
-      this.$store.commit("setPagePreview", this.preview)
+         this.$store.clearPagePreview();
+      this.$store.setPagePreview(this.preview)
         }
         
 
       });
       // console.log(sketchToSave);
-      // this.$store.commit("clearPagePreview");
-      // this.$store.commit("setPagePreview", this.preview)
+      // this.$store.clearPagePreview();
+      // this.$store.setPagePreview(this.preview)
       // console.log(this.preview)
       const input = {
         sketchPages: flyerToSave,
@@ -735,14 +734,12 @@ export default {
       };
       // console.log("save flyer");
       if (Math.round(sizeOf(input) / (1024 * 1024)) <= 15) {
-        this.$store.dispatch("saveFlyer", {
+        this.$store.saveFlyer({
           input,
         });
         flyerToSave = [];
       } else {
-        this.$store.commit(
-          "setError",
-          "This size of flyer is over limit, please downsize photos or texts"
+        this.$store.setError("This size of flyer is over limit, please downsize photos or texts"
         );
         return;
       }
@@ -751,7 +748,7 @@ export default {
     // Save Template
     eventBus_saveTemplate.$on("saveTemplate", (eventValue) => {
       console.log("save template at start");
-      this.$store.commit("clearError");
+      this.$store.clearError();
       // console.log(this.flyerId);
       const { templateChoice, templateId, templateTagName } = eventValue;
       const pageSaveIndex = _.findIndex(this.pageSave, (item) => {
@@ -832,14 +829,12 @@ export default {
         businessTitle: this.vendor.businessTitle,
       };
       if (Math.round(sizeOf(input) / (1024 * 1024)) <= 15) {
-        this.$store.dispatch("saveTemplate", {
+        this.$store.saveTemplate({
           input,
         });
         templateToSave = [];
       } else {
-        this.$store.commit(
-          "setError",
-          "This size of template is over limit, please downsize photos or texts"
+        this.$store.setError("This size of template is over limit, please downsize photos or texts"
         );
         return;
       }
@@ -1046,7 +1041,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
+    ...mapState(useMainStore, [
       "vendor",
       "simpleFlyer",
       "selectedSketch",
