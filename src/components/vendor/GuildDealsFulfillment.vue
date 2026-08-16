@@ -36,10 +36,10 @@
                         ></v-select>
                         <v-spacer></v-spacer> -->
                     <v-btn-toggle v-model="sortDesc" mandatory>
-                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
+                      <v-btn variant="flat" size="small"  color="primary" :value="false">
                         <v-icon>mdi-arrow-up</v-icon>
                       </v-btn>
-                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
+                      <v-btn variant="flat" size="small"  color="primary" :value="true">
                         <v-icon>mdi-arrow-down</v-icon>
                       </v-btn>
                     </v-btn-toggle>

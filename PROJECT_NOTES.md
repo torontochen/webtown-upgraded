@@ -31,9 +31,10 @@ Running record of the staged upgrade, phase by phase.
 | 5 — Dependency cleanup | ✅ Done | `2afb41f`+ |
 | 5b — v-date-picker model | ✅ Done | `908d12d`+ |
 | 5c — v-data-iterator slots | ✅ Done | `a38bcd2`+ |
+| 5d — UI fallout from the flip | ✅ Done | `0f19a0e`+ |
 
 **All phases are complete.** The app runs on Vue 3.5 + Vuetify 3.13 + Vite 7 +
-Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 130 tests,
+Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 131 tests,
 build) and `npm run test:e2e` green (22 guard checks + 4 subscription checks)
 against live Atlas.
 
@@ -1769,6 +1770,89 @@ the root element as a stray DOM attribute.
 > As with the pickers, the iterators still have not been seen **in their own
 > screens** — resident orders and guild deals need a resident account, deal
 > fulfilment and vendor orders a vendor one.
+
+---
+
+## Phase 5d — UI fallout from the flip, found by using the app ✅
+
+Five defects reported from a **signed-in session** — the screens no automated
+check in this project can reach. Four were regressions the migration introduced;
+one had been broken since 4a-ii and nobody had noticed.
+
+### The two systemic ones
+
+**`icon` left on buttons that render text.** The 4b-4 codemod converted
+`<v-btn text plain icon>` to `variant="text"` and kept `icon`. In Vuetify 3
+`icon` clamps a button to a 48px circle regardless of content, so the city-hall
+bar rendered "T TORONTO" and "[TORONTO G" — the middle of each label, clipped
+either side. 6 buttons.
+
+> Worth recording *how* the first pass missed one: the detector used
+> `<v-btn\b`, and `\b` matches between `n` and `-` — so `<v-btn-toggle>`
+> was treated as a `<v-btn>` whose body ran to the first `</v-btn>`, swallowing
+> the button inside it. `<v-btn(?![\w-])` is the fix. Same class of error as the
+> `[^;]` newline bug in Phase 5.
+
+**97 `color="<name> lighten-N"` prop values.** Vuetify 3 has no space-separated
+colour modifiers. The material palette keeps them *hyphenated*
+(`red-lighten-1`), theme colours have no variants at all. So 11 became
+`name-dir-N` and 90 dropped to the base colour. This is why the sort toggle had
+one filled and one blank button.
+
+### The one that predates 4b-4
+
+**`<v-img src="./assets/...">` never resolved under Vite.** `@vitejs/plugin-vue`
+only rewrites `src` on real HTML tags — `<img>`, `<source>`, `<video>` — so a
+path on a *Vuetify component* was passed through as a literal string and
+resolved against the page URL at runtime. The header logo has been missing
+since the Vite migration in **4a-ii**; webpack's loader had handled it.
+
+Fixed by feeding `vite-plugin-vuetify`'s `transformAssetUrls` into the vue
+plugin. The proof is in the build output: it now emits **7 image assets** that
+were never bundled before — the logo, `vendor1.png`, the four flyer-format
+images and the sales badge.
+
+A second bug hid behind it: with the image finally loading, the logo still drew
+at 0×0. vue-router 4 renders a plain inline `<a>`, which gives a block child no
+width to size against. The anchors are `d-inline-block` now and the images have
+a concrete `width`.
+
+### The rest
+
+**Guild chat, own messages had no avatar or name — my bug from 4b-3c.**
+App.vue's `onMessageWasSent` pushes the emitted object straight into
+`messageList`, so it has to be a complete *message*, not just the parts the
+mutation needs. vue-beautiful-chat stamped `author: "me"` itself; the
+replacement did not. So a resident's own messages had no author, `isMine()` was
+false, they rendered as somebody else's, and the avatar lookup and nickname came
+back empty. Now emits `author`, `nickName` (a new prop, fed by a
+`myGuildNickName` computed) and a `MM-DD HH:mm` `meta` matching the server's.
+
+**Shopping cart badge and account avatar.** `overlap` and `:value` are Vuetify 2
+(`model-value` now, and badges overlap by default), and `offset-x="50"`
+`offset-y="30"` were tuned to Vuetify 2 geometry — with v3 defaults they threw
+the badge well off the icon. The avatar had `right` (not a v3 prop) and a 30×30
+image floating inside a 64px circle with the dropdown caret *inside* it; the
+caret now sits beside a `cover` image.
+
+**Sort labels wrapped one word per line.** Vuetify 3 puts a radio's label inside
+the selection control's flex row, where it shrank to 37px; Vuetify 2 kept it
+outside and let it overflow. A `white-space: nowrap` on the label.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **131 tests**, production build.
+  `npm run test:e2e` — 22/22 + 4/4.
+- Public page confirmed in the browser: the app bar reads
+  `GREAT TORONTO | 2,320,618 | 75 | 100 | [TORONTO GLORY]WEIR` complete, the
+  **boundary logo is back**, and the sort labels read on one line each.
+- GuildChat mounted in the live runtime: sending now emits
+  `{ author: "me", nickName, type: "text", data: { text, meta } }` and the
+  message renders right-aligned with its timestamp.
+
+> **Still unconfirmed by me:** the cart badge and account avatar, which need a
+> signed-in resident. The Vuetify 2 props removed there are unambiguous, but the
+> result has not been seen.
 
 ---
 

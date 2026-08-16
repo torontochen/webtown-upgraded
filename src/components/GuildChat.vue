@@ -110,6 +110,12 @@
  * listener** — they emitted into nothing. Emoji still render (`type: "emoji"`
  * messages are handled); only the picker UI is gone, and typing an emoji works.
  */
+const pad = (n) => String(n).padStart(2, "0");
+
+/** Matches the "MM-DD HH:mm" App.vue stamps on messages arriving from the server. */
+const formatMeta = (d) =>
+  `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
 export default {
   name: "GuildChat",
 
@@ -117,6 +123,9 @@ export default {
     messageList: { type: Array, default: () => [] },
     participants: { type: Array, default: () => [] },
     isOpen: { type: Boolean, default: false },
+    // The signed-in resident's guild nickname, stamped onto their own
+    // outgoing messages so they read the same as everyone else's.
+    nickName: { type: String, default: "" },
     // Same nested shape the library took, so App.vue's `colors` object is
     // passed through untouched.
     colors: { type: Object, default: () => ({}) },
@@ -175,8 +184,22 @@ export default {
     send() {
       const text = this.draft.trim();
       if (!text) return;
-      // The shape onMessageWasSent already destructures.
-      this.$emit("send", { type: "text", data: { text } });
+
+      // App.vue's onMessageWasSent pushes this object straight into
+      // messageList, so it has to be a *complete* message, not just the parts
+      // the mutation needs.
+      //
+      // vue-beautiful-chat stamped author "me" itself before invoking the
+      // callback. The first version of this component did not, so sent
+      // messages arrived with no author — isMine() was false, they rendered
+      // as somebody else's, and the avatar lookup and nickname came back
+      // empty. That is the missing-avatar report.
+      this.$emit("send", {
+        author: "me",
+        nickName: this.nickName,
+        type: "text",
+        data: { text, meta: formatMeta(new Date()) },
+      });
       this.draft = "";
     },
 

@@ -10,7 +10,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -65,13 +65,13 @@
                           mandatory
                         >
                           <v-btn variant="flat" size="small" 
-                            color="primary lighten-1"
+                            color="primary"
                             :value="false"
                           >
                             <v-icon>mdi-arrow-up</v-icon>
                           </v-btn>
                           <v-btn variant="flat" size="small" 
-                            color="primary lighten-1"
+                            color="primary"
                             :value="true"
                           >
                             <v-icon>mdi-arrow-down</v-icon>
@@ -348,7 +348,7 @@
                           <span class="text-caption">
                           <v-rating
                               :value="item.rating"
-                              background-color="orange lighten-3"
+                              background-color="orange-lighten-3"
                               color="orange"
                               medium
                               half-increments
@@ -362,14 +362,14 @@
                           {{ $filters.convertCustomerRatingTime(item.time) }}
                           <!-- <v-icon
                             v-if="!active"
-                            color="grey lighten-1"
+                            color="grey-lighten-1"
                           >
                             mdi-star-outline
                           </v-icon>
 
                           <v-icon
                             v-else
-                            color="yellow darken-3"
+                            color="yellow-darken-3"
                           >
                             mdi-star
                           </v-icon> -->
@@ -557,7 +557,7 @@
         class="mx-auto"
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
           density="compact"
           flat
@@ -612,7 +612,7 @@
 
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
           flat
           density="compact"
@@ -661,7 +661,7 @@
 
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
         >
           <v-toolbar-title>Order&nbsp;{{orderToFulfill.orderNo}}</v-toolbar-title>
@@ -693,7 +693,7 @@
         v-model="snackbar"
         centered
         theme="dark"
-        color="primary lighten-2"
+        color="primary"
         class="pa-3"
         timeout="3000"
         >

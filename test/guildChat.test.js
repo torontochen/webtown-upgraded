@@ -49,11 +49,24 @@ test("the callback props became events, and all three are wired", () => {
   }
 });
 
-test("send emits the shape onMessageWasSent destructures", () => {
-  // onMessageWasSent reads message.type and message.data.text — the library's
-  // shape. Changing it here would break the guild chat mutation.
-  assert.match(CHAT, /\$emit\("send", \{ type: "text", data: \{ text \} \}\)/);
+test("send emits a complete message, not just what the mutation needs", () => {
+  // App.vue's onMessageWasSent pushes this object straight into messageList,
+  // so it has to render as well as transmit. The first version omitted
+  // `author`, which made isMine() false: a resident's own messages came out
+  // styled as somebody else's, with a blank avatar and no nickname.
+  assert.match(CHAT, /\$emit\("send", \{/);
+  assert.match(CHAT, /author: "me",/);
+  assert.match(CHAT, /nickName: this\.nickName,/);
+  assert.match(CHAT, /data: \{ text, meta: formatMeta\(new Date\(\)\) \}/);
+
+  // and still what the mutation destructures
+  assert.match(CHAT, /type: "text",/);
   assert.match(APP, /message\.type == "text" \? message\.data\.text/);
+});
+
+test("App.vue supplies the nickname the sender stamps on their own messages", () => {
+  assert.match(APP, /:nick-name="myGuildNickName"/);
+  assert.match(APP, /myGuildNickName\(\) \{/);
 });
 
 test("message text is rendered as text, never v-html", () => {

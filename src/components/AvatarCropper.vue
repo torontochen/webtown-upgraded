@@ -78,14 +78,14 @@
       <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn variant="text" size="small" 
-                    color="primary lighten-1"
+                    color="primary"
                     class="d-inline-block mr-2 mt-6"
                     :disabled="!isFormValid"
                     @click="saveCropped"
                   >Crop & Save</v-btn>
                   <v-btn variant="text"
                     @click="$emit('abort-avatar')"
-                    color="primary lighten-1"
+                    color="primary"
                     class="d-inline-block mr-6 mt-6 ml-1" size="small" 
                   >Abort</v-btn>
                

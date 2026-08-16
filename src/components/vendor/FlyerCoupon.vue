@@ -238,14 +238,14 @@
                     <v-btn
                       x-small
                       @click="couponSwitchFlyer"
-                      color="primary darken-5"
+                      color="primary"
                     >
                       flyer
                     </v-btn>
                     <v-btn
                       x-small
                       @click="couponSwitchCoupon"
-                      color="primary darken-5"
+                      color="primary"
                     >
                       coupon
                     </v-btn>

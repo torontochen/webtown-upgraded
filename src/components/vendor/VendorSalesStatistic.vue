@@ -34,7 +34,7 @@
                         <v-sparkline
                         :value="monthToDateSalesSparkLine"
                         :labels="dateOfMonth"
-                        color="primary lighten-4"
+                        color="primary"
                         
                         >
                         </v-sparkline>
@@ -64,7 +64,7 @@
                         <v-sparkline
                         :value="monthToDateOrdersSparkLine"
                         :labels="dateOfMonth"
-                        color="primary lighten-4"
+                        color="primary"
                         >
                         </v-sparkline>
                          <v-row class="my-2">
@@ -101,7 +101,7 @@
                         <v-sparkline
                         :value="yearToDateSalesSparkLine"
                         :labels="month"
-                        color="primary lighten-4"
+                        color="primary"
                         >
                         </v-sparkline>
                          <v-row class="my-2">
@@ -130,7 +130,7 @@
                         <v-sparkline
                         :value="yearToDateOrdersSparkLine"
                         :labels="month"
-                        color="primary lighten-4"
+                        color="primary"
                         >
                         </v-sparkline>
                          <v-row class="my-2">

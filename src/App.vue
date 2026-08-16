@@ -5,13 +5,12 @@
     <v-navigation-drawer app temporary fixed v-model="drawer">
       <v-toolbar color="white" theme="dark" flat>
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-        <router-link to="/" style="cursor: pointer">
+        <router-link to="/" class="d-inline-block" style="cursor: pointer">
           <!-- <h1 class="title pl-3">Cybertown</h1> -->
           <v-img
             src="./assets/images/Screen_Shot_2022-10-14_at_11.56.26_AM-removebg-preview.png"
+            width="30"
             max-height="30"
-            max-width="30"
-            z-index="10"
             class="d-block ml-2 mb-2"
           ></v-img>
         </router-link>
@@ -51,11 +50,11 @@
         <!-- boundary logo -->
         <!-- <v-toolbar-title class="hidden-xs-only ml-10"> -->
         <v-container class="ml-6 mb-1">
-          <router-link to="/" style="cursor: pointer">
+          <router-link to="/" class="d-inline-block" style="cursor: pointer">
             <v-img
               src="./assets/images/Screen_Shot_2022-10-14_at_11.56.26_AM-removebg-preview.png"
+              width="200"
               max-height="150"
-              max-width="200"
               class="d-block mt-7"
             ></v-img>
           </router-link>
@@ -120,8 +119,7 @@
           <v-btn-toggle v-model="btn" tile color="" group>
             <!-- metro -->
             <v-btn variant="text" 
-              icon
-              class="mr-16 ml-n3"
+              class="mr-3 ml-n3"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
@@ -131,8 +129,7 @@
 
             <!-- treasure -->
             <v-btn variant="text" 
-              icon
-              class="mx-16"
+              class="mx-3"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
@@ -142,8 +139,7 @@
 
             <!-- Population -->
             <v-btn variant="text" 
-              icon
-              class="mr-6 ml-8"
+              class="mx-3"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
@@ -153,8 +149,7 @@
 
             <!-- Strength -->
             <v-btn variant="text" 
-              icon
-              class="mx-16"
+              class="mx-3"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
@@ -176,8 +171,7 @@
 
             <!-- Governor -->
             <v-btn variant="text" 
-              icon
-              class="ml-16"
+              class="ml-3"
               color="primary"
               v-if="cityHall && !vendor && !vendorParlour"
             >
@@ -226,13 +220,10 @@
             color="accent"
             :content="shoppingCart ? shoppingCart.length : null"
             bordered
-            overlap
-            offset-x="50"
-            offset-y="30"
-            :value="shoppingCart.length > 0"
+            :model-value="shoppingCart.length > 0"
           >
-            <v-btn icon x-large @click="toShoppingCart" class="mt-3">
-              <v-icon color="primary lighten-1">mdi-cart-outline</v-icon>
+            <v-btn icon size="x-large" @click="toShoppingCart" class="mt-3">
+              <v-icon color="primary">mdi-cart-outline</v-icon>
             </v-btn>
           </v-badge>
 
@@ -255,13 +246,14 @@
                 >
                   <template v-slot:activator="{ props }">
                     <v-container class="mt-3">
-                      <v-avatar v-bind="props" size="64" color="white" right>
-                        <v-img :src="resident.avatarPic" height="30" width="30">
-                        </v-img>
-                        <v-icon start small class="ml-n2 mt-n2" color="primary">
-                          arrow_drop_down
+                      <div v-bind="props" class="d-flex align-center">
+                        <v-avatar size="48" color="white">
+                          <v-img :src="resident.avatarPic" cover></v-img>
+                        </v-avatar>
+                        <v-icon size="small" color="primary">
+                          mdi-menu-down
                         </v-icon>
-                      </v-avatar>
+                      </div>
                     </v-container>
                   </template>
 
@@ -459,6 +451,7 @@
             :participants="participants"
             :is-open="isChatOpen"
             :message-list="messageList"
+            :nick-name="myGuildNickName"
             :colors="colors"
             @open="openChat"
             @close="closeChat"
@@ -1429,6 +1422,18 @@ export default {
   },
 
   computed: {
+    /**
+     * The signed-in resident's nickname within their guild. GuildChat stamps it
+     * on outgoing messages so they carry the same nickname as the ones that
+     * come back from the server.
+     */
+    myGuildNickName() {
+      const members = this.resident?.guild?.guildMembers;
+      if (!members) return "";
+      const me = members.find((m) => m.name === this.resident.residentName);
+      return me ? me.nickName : "";
+    },
+
     ...mapState(useMainStore, [
       "demandSearch",
       "vendor",

@@ -79,7 +79,7 @@
           >
          
           <!-- <v-spacer></v-spacer><span>Paid By:&nbsp;${{orderDetails.totalAmount.toFixed(2)}}</span> -->
-          <v-toolbar theme="dark" density="compact" flat height="30" rounded color="primary lighten-2"
+          <v-toolbar theme="dark" density="compact" flat height="30" rounded color="primary"
             >
             <v-spacer></v-spacer>
             <v-toolbar-title class="text-subtitle-1 font-weight-bold text-center" 

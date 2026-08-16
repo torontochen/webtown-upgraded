@@ -12,7 +12,7 @@
             <v-btn
               color="primary"
               theme="dark"
-              class="mb-2" v-bind="props" icon
+              class="mb-2" v-bind="props" 
               x-small
               :disabled="itemsBound.length>0&&(redeemType=='CASH_DISCOUNT'||redeemType=='CASH_VALUE')"
             >
@@ -59,10 +59,10 @@
             >
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn variant="text" color="blue darken-1"  @click="closeDelete"
+              <v-btn variant="text" color="blue-darken-1"  @click="closeDelete"
                 >Cancel</v-btn
               >
-              <v-btn variant="text" color="blue darken-1"  @click="deleteItemConfirm"
+              <v-btn variant="text" color="blue-darken-1"  @click="deleteItemConfirm"
                 >OK</v-btn
               >
               <v-spacer></v-spacer>

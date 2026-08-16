@@ -9,7 +9,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-5"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -341,10 +341,10 @@
                         class="mt-6"
                         theme="dark"
                       >
-                        <v-btn variant="flat" size="small"  value="flyer" color="primary darken-5">
+                        <v-btn variant="flat" size="small"  value="flyer" color="primary">
                           flyer
                         </v-btn>
-                        <v-btn variant="flat" size="small"  value="coupon" color="primary darken-5">
+                        <v-btn variant="flat" size="small"  value="coupon" color="primary">
                           coupon
                         </v-btn>
                       </v-btn-toggle>
@@ -439,7 +439,7 @@
 
                   <v-btn variant="outlined"
                     :disabled="templateIsSaved"
-                    color="info lighten-1"
+                    color="info"
                     type="submit"
                     class="d-inline-block mr-2" size="small" 
                     v-if="templateIsSaved"
@@ -776,7 +776,7 @@
                       <!-- !isDesign || !isFormat || !isPreview || !isDistribute || -->
                       <v-btn variant="flat"
                         :disabled="!couponReady"
-                        color="primary lighten-1"
+                        color="primary"
                         type="submit"
                         class="d-inline-block mr-2"
                         @click="handleUpdateSave" 
@@ -1117,13 +1117,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn variant="text"
-            color="primary lighten-2" 
+            color="primary" 
             @click="saveTemplate"
             :disabled="disableTempChoice"
             >Save</v-btn
           >
           <v-btn variant="text"
-            color="primary lighten-2" 
+            color="primary" 
             @click="saveTemplateDialog = false"
             >Cancel</v-btn
           >

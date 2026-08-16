@@ -9,7 +9,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -160,7 +160,7 @@
                                 <v-row>
                                   <v-icon
                                   @click="deleteLogo()"
-                                  color="primary lighten-1"
+                                  color="primary"
                                   class="d-block mb-2"
                                   v-if="logo"
                                 >
@@ -455,7 +455,7 @@
                                       <v-col cols="12">
                                         <v-icon
                                           @click="deleteBuzPhoto(index)"
-                                          color="primary lighten-1"
+                                          color="primary"
                                           class="d-block mb-2"
                                         >
                                           <!-- mdi-close -->
@@ -686,7 +686,7 @@
                       </v-form>
                     </v-card>
                     <v-btn variant="flat"
-                      color="primary lighten-1"
+                      color="primary"
                       type="submit"
                       class="d-inline-block mr-2"
                       @click="handleSignupVendor" 
@@ -716,7 +716,7 @@
                             type="info"
                             transition="scale-transition"
                             density="compact"
-                            color="accent lighten-1"
+                            color="accent"
                             class="title"
                           >
                             A confirmation email has been sent to

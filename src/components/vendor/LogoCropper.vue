@@ -92,7 +92,7 @@
               <v-col cols="4" class="pl-12">
                 <v-row class="my-12">
                   <v-btn variant="text"
-                    color="primary lighten-1"
+                    color="primary"
                     class="d-inline-block mr-2 mt-6"
                     :disabled="!isFormValid"
                     @click="saveCropped" 
@@ -100,7 +100,7 @@
                   >
                   <v-btn variant="outlined"
                     @click="$emit('abort-logo')"
-                    color="primary lighten-1"
+                    color="primary"
                     class="d-inline-block mr-6 mt-6 ml-1" 
                     >Abort</v-btn
                   >

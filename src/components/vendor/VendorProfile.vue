@@ -9,7 +9,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-5"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -175,7 +175,7 @@
                             ></v-img>
                             <v-icon
                               @click="addLogo = true"
-                              color="primary lighten-1"
+                              color="primary"
                               class="d-block mt-8 pl-2" start
                               small
                             >
@@ -442,7 +442,7 @@
                                   <v-col cols="12">
                                     <v-icon
                                       @click="deleteBuzPhoto(index)"
-                                      color="primary lighten-1"
+                                      color="primary"
                                       class="d-block mb-2"
                                     >
                                       <!-- mdi-close -->

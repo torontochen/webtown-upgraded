@@ -135,7 +135,7 @@
                         type="info"
                         transition="scale-transition"
                         density="compact"
-                        color="accent lighten-1"
+                        color="accent"
                         class="title"
                       >
                         A confirmation email has been sent to
@@ -149,7 +149,7 @@
                 <v-btn variant="flat"
                   :loading="loading"
                   :disabled="!isFormValid || !emailOk"
-                  color="primary lighten-1"
+                  color="primary"
                   @click="handleSignupResident" size="large" 
                 >
                   <template #loader><span class="custom-loader">

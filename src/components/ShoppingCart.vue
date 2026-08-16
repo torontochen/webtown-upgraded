@@ -23,12 +23,12 @@
                             <span class="text-subtitle-1  text-fontColor mx-3 font-weight-bold">Price:</span>
                             <span class="text-red text-subtitle-1 font-weight-bold mx-3" >On Sale {{ $filters.formatCurrencyAmount(item.promoRate) }}</span>
                             <span class="text-decoration-line-through text-body-1 font-weight-light text-fontColor mx-3">Was {{ $filters.formatCurrencyAmount(item.rate) }}</span>
-                            <span class="mx-1 text-silver" v-if="item.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{ $filters.formatIntAmount(item.rewardSilver) }}</span>
+                            <span class="mx-1 text-silver" v-if="item.rewardSilver"><v-icon color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(item.rewardSilver) }}</span>
                         </v-row>
                         <v-row v-else class="my-1 ml-3" >
                             <span class="text-subtitle-1  text-fontColor font-weight-bold mx-3">Price:</span>
                             <span class="text-subtitle-1 font-weight-medium text-fontColor mx-3">{{ $filters.formatCurrencyAmount(item.rate) }}</span>
-                            <span class="mx-1 text-silver" v-if="item.rewardSilver"><v-icon color="silver darken-1">mdi-coin</v-icon>{{ $filters.formatIntAmount(item.rewardSilver) }}</span>
+                            <span class="mx-1 text-silver" v-if="item.rewardSilver"><v-icon color="silver">mdi-coin</v-icon>{{ $filters.formatIntAmount(item.rewardSilver) }}</span>
                         </v-row>
                         <v-row class="my-3 ml-3">
                             <span class="text-primary font-weight-li text-body-2 mx-3">Sold by: {{item.vendorName}}</span>

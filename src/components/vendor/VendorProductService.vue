@@ -11,7 +11,7 @@
                     indeterminate
                     :size="60"
                     :width="4"
-                    color="primary lighten-3"
+                    color="primary"
                   ></v-progress-circular>
                 </v-row>
               </v-container>
@@ -188,7 +188,7 @@
                             <v-row>
                               <v-col cols="12">
                                 <v-textarea density="compact"
-                                  background-color="grey lighten-3"
+                                  background-color="grey-lighten-3"
                                   color="cyan"
                                   label="Product Specfication"
                                   v-model="editedItem.specification"
@@ -234,7 +234,7 @@
                           >Cancel</v-btn
                         >
                         <v-btn variant="text"
-                          color="blue darken-1" 
+                          color="blue-darken-1" 
                           @click="deleteItemConfirm"
                           :disabled="lastItemWarning"
                           >OK</v-btn

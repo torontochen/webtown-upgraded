@@ -7,7 +7,7 @@
                 <v-card-text>
                     <v-rating
                         v-model="rating"
-                        background-color="orange lighten-3"
+                        background-color="orange-lighten-3"
                         color="orange"
                         large
                         half-increments
@@ -58,7 +58,7 @@
                         {{item.customerName}}
                     <v-rating
                         :value="item.rating"
-                        background-color="orange lighten-3"
+                        background-color="orange-lighten-3"
                         color="orange"
                         medium
                         class="ml-2"

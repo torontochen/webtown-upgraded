@@ -42,7 +42,7 @@
               >
                 <v-progress-circular
                   indeterminate
-                  color="grey lighten-5"
+                  color="grey-lighten-5"
                 ></v-progress-circular>
               </v-row> -->
             <!-- </template> -->
@@ -135,7 +135,7 @@
                                   <v-col cols="12">
                                     <v-icon
                                       @click="deleteBuzPhoto(index)"
-                                      color="primary lighten-1"
+                                      color="primary"
                                       class="d-block mb-2"
                                     >
                                       mdi-close-circle-outline

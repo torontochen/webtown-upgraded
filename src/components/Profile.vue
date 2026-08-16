@@ -11,7 +11,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -423,7 +423,7 @@
                                 v-slot:default="{ active, toggle }"
                                 :value="pet.petName"
                               >
-                                <v-tooltip bottom color="primary lighten-1">
+                                <v-tooltip bottom color="primary">
                                   <template v-slot:activator="{ props }">
                                     <v-card
                                       :color="
@@ -508,7 +508,7 @@
                             mailingInfo ||
                             !isFormValid
                           "  
-                          color="primary lighten-1"
+                          color="primary"
                           type="submit"
                           class="d-inline-block mr-2"
                           @click="handleUpdateProfile"
@@ -519,7 +519,7 @@
                           Save
                         </v-btn>
                         <v-btn variant="text"
-                          color="primary lighten-1"
+                          color="primary"
                           @click="handleCancel"
                           class="d-inline-block mr-6 ml-1" 
                         >

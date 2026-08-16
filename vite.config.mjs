@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import vuetify from "vite-plugin-vuetify";
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 
 /**
  * Vite + Vue 3 + Vuetify 3 (Phase 4b-4).
@@ -13,7 +13,18 @@ import vuetify from "vite-plugin-vuetify";
  * from 2.18 MB to 2.88 MB then.
  */
 export default defineConfig({
-  plugins: [vue(), vuetify({ autoImport: true })],
+  plugins: [
+    // `transformAssetUrls` teaches the SFC compiler that Vuetify components
+    // take asset paths too. Out of the box @vitejs/plugin-vue only rewrites
+    // `src` on real HTML tags — `<img>`, `<source>`, `<video>` — so a
+    // `<v-img src="./assets/logo.png">` was passed through as a literal string
+    // and resolved against the page URL at runtime, i.e. 404.
+    //
+    // That is why the header logo and several in-app images have been missing
+    // since the Vite migration in 4a-ii; webpack's loader had handled them.
+    vue({ template: { transformAssetUrls } }),
+    vuetify({ autoImport: true }),
+  ],
 
   resolve: {
     alias: {

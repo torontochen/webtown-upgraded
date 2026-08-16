@@ -439,7 +439,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-5"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -556,14 +556,14 @@
           @change="processPromotionEvents"
         >
           <v-btn variant="flat" size="small" 
-            color="primary lighten-1"
+            color="primary"
             :value="false"
             :disabled="!canProcessEvents"
           >
             <v-icon>mdi-arrow-up</v-icon>
           </v-btn>
           <v-btn variant="flat" size="small" 
-            color="primary lighten-1"
+            color="primary"
             :value="true"
             :disabled="!canProcessEvents"
           >
@@ -727,7 +727,7 @@
                             >
                             <v-rating
                               :value="event.vendorRating"
-                              background-color="accent lighten-3"
+                              background-color="accent"
                               color="accent"
                               x-small
                               half-increments
@@ -868,7 +868,7 @@
               />
               <v-rating
                 :value="pickedVendor.vendorRating"
-                background-color="accent lighten-3"
+                background-color="accent"
                 color="accent"
                 x-small
                 v-if="pickedVendor.vendorRating"
@@ -1839,6 +1839,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// The "sort by" column is position:fixed, so its width comes from the inline
+// min-width rather than from the grid. Vuetify 3 puts a radio's label *inside*
+// the selection control's flex row, where it shrinks to whatever is left after
+// the 40px input — about 37px, enough to wrap "vendor title" one word per
+// line. Vuetify 2 kept the label outside that row and let it overflow.
+//
+// Stopping the label from shrinking is the fix; the column is wide enough.
+:deep(.v-selection-control .v-label) {
+  white-space: nowrap;
+  overflow: visible;
+  flex: none;
+}
+
 // * {
 //   margin: 0;
 //   padding: 0;

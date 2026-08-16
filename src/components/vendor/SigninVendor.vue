@@ -22,7 +22,7 @@
               indeterminate
               :size="120"
               :width="7"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -108,7 +108,7 @@
                   <v-btn variant="flat"
                     :loading="loading"
                     :disabled="!isFormValid || loading"
-                    color="primary lighten-1"
+                    color="primary"
                     type="submit"
                     right 
                   >

@@ -9,7 +9,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -25,7 +25,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -95,7 +95,7 @@
           <v-tabs
             v-model="tab"
             background-color="transparent"
-            color="primary lighten-1"
+            color="primary"
             grow
             >
                 <v-tab
@@ -129,7 +129,7 @@
                 <!-- Events -->
                 <v-window-item>
                     <!-- <v-card
-                    color="fontColor lighten-4"
+                    color="fontColor"
                     flat
                     >
                     <v-card-text> -->
@@ -141,7 +141,7 @@
                 <!-- Customer -->
                 <v-window-item>
                     <!-- <v-card
-                    color="fontColor lighten-4"
+                    color="fontColor"
                     flat
                     > -->
                     <!-- <v-card-text> -->
@@ -156,7 +156,7 @@
                 <!-- Gallery -->
                 <v-window-item>
                     <!-- <v-card
-                    color="fontColor lighten-4"
+                    color="fontColor"
                     flat
                     >
                     <v-card-text> -->
@@ -168,7 +168,7 @@
                 <!-- Other Info -->
                 <v-window-item>
                     <!-- <v-card
-                    color="fontColor lighten-4"
+                    color="fontColor"
                     flat
                     >
                         <v-card-text> -->

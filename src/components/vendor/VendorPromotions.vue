@@ -9,7 +9,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>

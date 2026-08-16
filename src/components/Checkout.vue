@@ -20,7 +20,7 @@
                     indeterminate
                     :size="60"
                     :width="4"
-                    color="primary lighten-5"
+                    color="primary"
                     ></v-progress-circular>
 
                     
@@ -189,7 +189,7 @@
                         class="mr-16"
                         :loading="searchCouponLoading"
                         :disabled="searchCouponLoading"
-                        color="shade darken-2"
+                        color="shade"
                         rounded
                         style="background-color: #F5F5F5"
                         @click="searchCoupon" size="small" 

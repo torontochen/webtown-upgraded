@@ -16,7 +16,7 @@
                         </v-img>
                         <v-card-text class="text-silver">
                             <v-row>
-                                <v-icon color="silver darken-2">mdi-coin</v-icon><span class="mx-1">{{item.rewardSilver > 0 ? item.rewardSilver: 0}}</span>
+                                <v-icon color="silver">mdi-coin</v-icon><span class="mx-1">{{item.rewardSilver > 0 ? item.rewardSilver: 0}}</span>
                             </v-row>
                             <v-row>
                                 <v-card-title v-text="item.description" class="text-fontColor text-subtitle-1 text--darken-1 text-truncate d-inline-block"></v-card-title>

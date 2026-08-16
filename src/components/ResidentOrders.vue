@@ -25,10 +25,10 @@
           <template v-if="$vuetify.display.mdAndUp">
             <v-spacer></v-spacer>
             <v-btn-toggle v-model="sortDesc" mandatory>
-              <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
+              <v-btn variant="flat" size="small"  color="primary" :value="false">
                 <v-icon>mdi-arrow-up</v-icon>
               </v-btn>
-              <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
+              <v-btn variant="flat" size="small"  color="primary" :value="true">
                 <v-icon>mdi-arrow-down</v-icon>
               </v-btn>
             </v-btn-toggle>
@@ -133,7 +133,7 @@
 
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
         >
           <v-toolbar-title>Dispute Order</v-toolbar-title>
@@ -180,7 +180,7 @@
 
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
           density="compact"
           flat
@@ -206,7 +206,7 @@
             >total:&nbsp;{{ $filters.formatCurrencyAmount(orderToCancel.totalAmount-orderToCancel.totalDiscount + orderToCancel.tax + orderToCancel.shipping * 1.13) }}</span>
          
           <!-- <v-spacer></v-spacer><span>Paid By:&nbsp;${{orderDetails.totalAmount.toFixed(2)}}</span> -->
-          <v-toolbar theme="dark" density="compact" flat height="30" rounded color="primary lighten-2"
+          <v-toolbar theme="dark" density="compact" flat height="30" rounded color="primary"
             >
             <v-spacer></v-spacer>
             <v-toolbar-title class="text-subtitle-1 font-weight-bold text-center" 

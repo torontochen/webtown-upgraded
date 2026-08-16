@@ -11,7 +11,7 @@
       <v-col cols="2">
         <v-sheet
         theme="dark"
-        color="accent lighten-2"
+        color="accent"
         elevation="10"
         :height="viewPortDimension.height*0.11"
         class="pa-4 mr-5"
@@ -24,7 +24,7 @@
         </v-sheet>
         <v-sheet
         theme="dark"
-        color="secondary lighten-2"
+        color="secondary"
         elevation="10"
         :height="viewPortDimension.height*0.11"
         class="pa-4 my-5 mr-5"
@@ -373,7 +373,7 @@
       <v-col cols="2"  v-if="resident.guild">
               <v-sheet
                 theme="dark"
-                color="primary lighten-1"
+                color="primary"
                 elevation="10"
                 :height="viewPortDimension.height*0.38"
                 class="pa-4"
@@ -1304,10 +1304,10 @@
                         ></v-select>
                         <v-spacer></v-spacer> -->
                     <v-btn-toggle v-model="sortDesc" mandatory>
-                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
+                      <v-btn variant="flat" size="small"  color="primary" :value="false">
                         <v-icon>mdi-arrow-up</v-icon>
                       </v-btn>
-                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
+                      <v-btn variant="flat" size="small"  color="primary" :value="true">
                         <v-icon>mdi-arrow-down</v-icon>
                       </v-btn>
                     </v-btn-toggle>
@@ -1552,10 +1552,10 @@
                         ></v-select>
                         <v-spacer></v-spacer> -->
                     <v-btn-toggle v-model="sortDesc" mandatory>
-                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="false">
+                      <v-btn variant="flat" size="small"  color="primary" :value="false">
                         <v-icon>mdi-arrow-up</v-icon>
                       </v-btn>
-                      <v-btn variant="flat" size="small"  color="primary lighten-1" :value="true">
+                      <v-btn variant="flat" size="small"  color="primary" :value="true">
                         <v-icon>mdi-arrow-down</v-icon>
                       </v-btn>
                     </v-btn-toggle>
@@ -2051,7 +2051,7 @@
         class="mx-auto"
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
         >
           <v-toolbar-title>Vendor Messages</v-toolbar-title>
@@ -2116,7 +2116,7 @@
         class="mx-auto"
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
         >
           <v-toolbar-title>Guild Messages</v-toolbar-title>
@@ -2215,7 +2215,7 @@
         class="mx-auto"
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
         >
           <v-toolbar-title>{{singleMessageToShow.type=='guild'?'Guild':'Vendor'}}&nbsp; Message</v-toolbar-title>
@@ -2269,7 +2269,7 @@
 
       >
         <v-toolbar
-          color="primary lighten-1"
+          color="primary"
           theme="dark"
         >
           <v-toolbar-title>Guild Message</v-toolbar-title>
@@ -2368,7 +2368,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -2384,7 +2384,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -2400,7 +2400,7 @@
               indeterminate
               :size="60"
               :width="4"
-              color="primary lighten-3"
+              color="primary"
             ></v-progress-circular>
           </v-row>
         </v-container>
@@ -2412,7 +2412,7 @@
         v-model="snackbar"
         centered
         theme="dark"
-        color="primary lighten-2"
+        color="primary"
         class="pa-3"
         timeout="3000"
         >
