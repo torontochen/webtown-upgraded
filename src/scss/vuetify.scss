@@ -1,16 +1,32 @@
-// Vuetify 2 styles, compiled from source so the SASS variable overrides below
-// still apply.
+// Vuetify 2 styles for the Vite build.
 //
-// vue-cli-plugin-vuetify used to pick `src/scss/variables.scss` up by
-// convention and hand it to vuetify-loader, which is webpack-only. Under Vite
-// the entry point is explicit: main.js imports this file. Without it the
-// Montserrat font override silently reverts to Vuetify's Roboto default.
+// This MUST be the precompiled full stylesheet, not `vuetify/src/styles/main.sass`.
 //
-// The `~` prefix in the old import was webpack syntax; Vite resolves bare
-// package specifiers directly.
-$body-font-family: "Montserrat", sans-serif;
-$heading-font-family: $body-font-family;
-$btn-active-opacity: 0.05;
-$btn-toggle-btn-opacity: 0.4;
+// main.sass carries only Vuetify's *generic* styles — typography, elevation,
+// transitions, spacing helpers. Each component's own CSS lives beside it in
+// vuetify/src/components/<Name>/<Name>.sass, and vuetify-loader was what
+// imported those per component as it found them in templates. vuetify-loader is
+// webpack-only, so under Vite importing main.sass alone yields ~1700 generic
+// rules and *zero* component rules.
+//
+// The symptom was subtle rather than obviously-unstyled: text and colours
+// looked right, but `.v-navigation-drawer` never received its
+// `position: fixed`, so a closed drawer sat in normal flow occupying 720px and
+// shoved the app bar and the whole page grid ~756px down the page.
+//
+// The precompiled sheet contains every component's styles.
+@import "vuetify/dist/vuetify.min.css";
 
-@import "vuetify/src/styles/main.sass";
+// The SASS variable overrides that `src/scss/variables.scss` used to feed
+// vuetify-loader ($body-font-family / $heading-font-family) cannot apply to an
+// already-compiled stylesheet, so they are reproduced here as plain CSS. This
+// is what those variables emitted.
+.v-application,
+.v-application .headline,
+.v-application .title,
+.v-application .subtitle-1,
+.v-application .subtitle-2,
+.v-application [class^="text-"],
+.v-application [class*=" text-"] {
+  font-family: "Montserrat", sans-serif;
+}
