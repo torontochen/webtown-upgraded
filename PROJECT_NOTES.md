@@ -24,8 +24,10 @@ Running record of the staged upgrade, phase by phase.
 | 4c — Pinia + Apollo Client 3 | Not started | |
 | 5 — Dependency cleanup | Not started | |
 
-⚠️ One known regression is open on `master` (flyer card photos blank) —
-see "KNOWN REGRESSION" below. Root cause is NOT established.
+✅ No known regressions are open. The "flyer card photos blank" report was
+investigated on 2026-08-16 and **closed as not a bug** — see
+"CLOSED — flyer card photos" below. It reproduces identically on the webpack
+build; it is an artefact of inspecting a page that is not being painted.
 
 Run `npm run verify` after any change — lint, 77 tests, and a production build.
 Tests use Node's built-in runner; no test framework dependency.
@@ -685,44 +687,100 @@ tracked as 4a-ii.
 
 ## Open items and judgement calls
 
-### KNOWN REGRESSION — flyer card photos do not render under Vite
+### CLOSED — "flyer card photos do not render under Vite" was not a regression
 
-**Status: real, but NOT correctly diagnosed. Treat prior explanations as unreliable.**
+**Status: resolved 2026-08-16. There is no bug in the application. The blank
+photos were an artefact of how the page was being measured.**
 
-The flyer cards on the home page render their border, SALE badge, vendor name,
-title and date, but the photo area is blank. Under the webpack build the same
-cards showed food photography, so this is a genuine regression introduced by the
-Vite migration.
+#### How the photos are bound
 
-Two measurements taken minutes apart disagreed, which is why no root cause is
-claimed here:
+`src/views/Home.vue:607` — a Vuetify `v-img`, not a plain `<img>` and not a CSS
+background:
 
-| Run | `.v-image__image` elements | with a `background-image` | fully opaque |
-|---|---|---|---|
-| 1 | 56 | 10 | 0 (still 0 after a 4s wait) |
-| 2 | 46 | **0** | 0 |
+```html
+<v-img :src="event.eventPhoto" contain height="220" class="my-1">
+  <img v-event-type-photo="event.eventType" ... />   <!-- the SALE badge -->
+</v-img>
+```
 
-In run 2, all 22 real `<img>` tags on the page were `complete` with
-`naturalWidth > 0` — the SALE badges, logos and map markers all load fine. So
-image loading as such is not broken; something specific to the flyer photo path
-is.
+`event.eventPhoto` is a base64 `data:image/jpeg` string from GraphQL (~42 kB
+each). The SALE badge is a real `<img>` **inside** the `v-img`'s default slot,
+which is why the badge always rendered while the photo did not — and why "real
+`<img>` tags all load fine" was true and irrelevant.
 
-The varying counts suggest the photos may be gated on scroll/intersection
-(the project depends on `vue-intersection-observer`) or populated
-asynchronously, which would make a single-snapshot measurement misleading —
-exactly the trap the first two attempts fell into.
+#### Root cause
 
-**Do not trust the earlier "v-img fade-in never fires / opacity stuck at 0"
-explanation.** It fit run 1 and is contradicted by run 2.
+`VImg` renders its image as a `<div class="v-image__image">` wrapped in a Vue
+`<transition name="fade-transition" mode="in-out">`. Vue 2's transition module
+drives the fade with `nextFrame()`, which is a **double
+`requestAnimationFrame`**. The `fade-transition-enter` class — `opacity: 0` —
+is only removed inside that callback.
 
-Suggested approach for whoever picks this up:
-1. Find how flyer photos are actually bound — `v-img :src`, a plain `<img>`, or
-   a CSS background — in `src/views/Home.vue` and the flyer card component.
-   The two runs disagreeing on element counts means the binding should be
-   identified before measuring anything.
-2. Compare that element's DOM against the webpack build (`git checkout 97f3c3a`)
-   side by side, rather than reasoning from Vite behaviour alone.
-3. Only then form a hypothesis.
+The browser pane the app was being inspected in reports
+`document.visibilityState === "hidden"`, and a hidden page gets **zero**
+`requestAnimationFrame` callbacks. Measured live: `rafTicks: 0` over a full
+second. So every `v-img` loaded its image, wrote the correct
+`background-image`, and then sat at `opacity: 0` forever.
+
+Confirmed on the running app — the component state and the DOM disagree, which
+is the whole story:
+
+| Probe | Value |
+|---|---|
+| `vm.isLoading` | `false` — the image finished loading |
+| `vm.currentSrc` | `data:image/jpeg;base64,/9j/4AAQ…` |
+| `vm.hasError` | `false` |
+| rendered element `class` | `v-image__image v-image__image--contain fade-transition-enter fade-transition-enter-active` |
+| rendered element `style` | `background-image: url("data:image/jpeg;base64,/9j/…")` |
+| computed `opacity` | `0` |
+
+**Taking a screenshot forces the page to paint**, which lets the queued
+`requestAnimationFrame` callbacks run and the fade complete. That single fact
+explains every contradiction in the old notes:
+
+- **Run 1 vs run 2 disagreeing.** Neither was wrong. `.v-image__image` elements
+  *accumulate* while rAF is stalled: each fade leaves a stuck `-enter` element
+  behind, and the `mode: "in-out"` leave — which also waits on `nextFrame` —
+  leaves a stuck `-leave-active` element behind. The count is just how many
+  images had loaded by the moment of the snapshot, doubled. At 1280×720 after a
+  screenshot: 89 elements, 43 with a background, 43 opaque. Before any
+  screenshot at 768×1024: 46 elements, 0 with a background.
+- **"opacity stuck at 0" was the correct observation**, and the notes were wrong
+  to retract it. It was dismissed because run 2 showed no `background-image` at
+  all — but that only meant fewer images had loaded yet, not that the
+  explanation was false.
+
+#### The webpack build does exactly the same thing
+
+Built and ran `97f3c3a` in a git worktree with its own `node_modules`
+(vue-cli 4 / webpack 4 / `vuetify/lib` + `vuetify-loader`) and probed it in the
+same hidden pane, same 768×1024 viewport:
+
+| Build | `.v-image__image` | with `background-image` | opaque | rAF ticks/s |
+|---|---|---|---|---|
+| Vite (`master`) | 46 | 0 | 0 | 0 |
+| webpack (`97f3c3a`) | 46 | 0 | 0 | 0 |
+
+Identical, to the element. The first screenshot of the webpack build shows the
+same blank cards; the second shows the food photography. The claim that
+"under the webpack build the same cards showed food photography" came from a
+session that happened to screenshot before measuring — it was comparing a
+painted page against an unpainted one.
+
+Nothing was changed in the application to close this.
+
+#### Methodology note for future browser verification
+
+`v-img` is used in ~40 places across this app, so this affects any visual check.
+Anything gated on `requestAnimationFrame` — every Vuetify transition, every
+`v-fade-transition`/`v-expand-transition`, `v-menu` and `v-dialog` open
+animations — will appear frozen mid-transition when the page is inspected
+without being painted.
+
+**Take a screenshot first, then measure**, and take a second screenshot when
+checking a transition's end state. Treat "element exists with correct inline
+style but computed opacity 0 and a `*-enter` class still attached" as the
+signature of an unpainted page, not an application bug.
 
 ### Phase 4a-ii — what the Vite migration still needs
 
