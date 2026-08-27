@@ -25,3 +25,6 @@ logs
 *.njsproj
 *.sln
 *.sw?
+
+# Tool output — not project source
+graphify-out/
