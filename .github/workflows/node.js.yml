@@ -27,7 +27,24 @@ jobs:
     # The dependency tree predates npm's strict peer resolution, so the
     # legacy resolver is required — same as ci.yml. Without this flag npm ci
     # fails EUSAGE: the lock is only valid under the legacy resolver.
-    - run: npm ci --legacy-peer-deps
+    # --no-audit/--no-fund trim memory and time on the small runner.
+    - name: Ensure swap space
+      run: |
+        swapon --show | grep -q . && { echo "swap already active"; exit 0; }
+        if [ "$(id -u)" -eq 0 ]; then SUDO=""; else SUDO="sudo -n"; fi
+        if ! $SUDO true 2>/dev/null; then
+          echo "::warning::no swap and no root/passwordless sudo; npm ci may be OOM-killed"
+          exit 0
+        fi
+        if [ ! -e /swapfile ]; then
+          $SUDO fallocate -l 4G /swapfile
+          $SUDO chmod 600 /swapfile
+          $SUDO mkswap /swapfile
+          grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' | $SUDO tee -a /etc/fstab
+        fi
+        $SUDO swapon /swapfile || echo "::warning::swapon failed; continuing without swap"
+        free -h
+    - run: npm ci --legacy-peer-deps --no-audit --no-fund
     - run: npm run build
     - run: |
             touch .env
