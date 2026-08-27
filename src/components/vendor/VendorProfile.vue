@@ -22,7 +22,7 @@
       <v-col cols="12">
         <v-container>
           <v-card flat>
-            <v-card-title class="headline primary  text-white">
+            <v-card-title class="text-h5 bg-primary text-white">
               Vendor Profile
             </v-card-title>
             <!-- <v-container> -->
@@ -58,7 +58,7 @@
                               :rules="passwordRules"
                               label="New Password"
                               placeholder=""
-                              prepend-icon="extension"
+                              prepend-icon="mdi-puzzle"
                               type="password"
                               v-model.trim="password"
                               required
@@ -74,7 +74,7 @@
                               :rules="passwordConfirmRules"
                               label="Confirm Password"
                               v-model.trim="passwordConfirmation"
-                              prepend-icon="gavel"
+                              prepend-icon="mdi-gavel"
                               type="password"
                               required
                               counter="8"
@@ -422,7 +422,7 @@
                               At least one business photo is needed
                             </v-alert>
                           <v-slide-group show-arrows>
-                            <v-slide-item
+                            <v-slide-group-item
                               v-for="(photo, index) in photosUpload"
                               :key="index"
                               v-slot:default="{ toggle }"
@@ -461,7 +461,7 @@
                                       </v-scale-transition> -->
                                 </v-row>
                               </v-card>
-                            </v-slide-item>
+                            </v-slide-group-item>
                           </v-slide-group>
                         </v-col>
                       </v-row>
@@ -483,7 +483,6 @@
                                     required
                                     append-outer-icon="mdi-plus"
                                     @click:append-outer="addPhoneNo"
-                                    :value="businessPhone"
                                     hint="Click + to add phone No."
                                   >
                                     <!-- @blur.once="inputPhoneNo" -->
@@ -670,7 +669,7 @@
                       :disabled="businessHours.length < 7" 
                     >
                       <template #loader><span class="custom-loader">
-                        <v-icon>cached</v-icon>
+                        <v-icon>mdi-cached</v-icon>
                       </span></template>
                       Save
                     </v-btn>
@@ -1729,8 +1728,10 @@ let hours = []
       this.showDialog = false;
       this.$store.setInDesign(false);
       // eventBus_vendorParlour.$emit("vendorParlour", false);
+      // No `this.to = null` here: vue-router 4 runs the guards asynchronously,
+      // so clearing it now would beat beforeRouteLeave to the read and re-open
+      // the dialog. The guard clears it.
       this.$router.push(this.to);
-      this.to = null;
     },
     updateLogo(logo) {
       // console.log(logo);

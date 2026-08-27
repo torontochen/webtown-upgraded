@@ -38,21 +38,30 @@
 </template>
 
 <script>
+/**
+ * All four call sites bind this with `v-model`. Under Vue 2 that meant the
+ * `value` prop, which is what this component declared. Vue 3's `v-model` means
+ * `modelValue`, so `value` was never set and `dialogSpark` was always
+ * undefined — the dialog only ever opened because the undeclared `modelValue`
+ * fell through as an attribute onto the root `v-dialog`, which happens to have
+ * a prop of that name. It worked by accident, and `emits` was undeclared so
+ * the two events fell through the same way.
+ *
+ * Declaring both makes the binding real rather than incidental.
+ */
 export default {
-  props: ["value", "component"],
-
-  data() {
-    return {};
+  props: {
+    modelValue: { type: Boolean, default: false },
+    component: { type: String, default: "" },
   },
 
-  watch: {},
+  emits: ["yes-leave", "abort-leave"],
 
   computed: {
     dialogSpark() {
-      // console.log(this.value);
-      return this.value;
-    }
-  }
+      return this.modelValue;
+    },
+  },
 };
 </script>
 

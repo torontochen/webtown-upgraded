@@ -21,7 +21,7 @@
       <!-- <v-col cols="12"> -->
         <v-container>
           <v-card>
-            <v-card-title class="headline primary  text-white">
+            <v-card-title class="text-h5 bg-primary text-white">
               Who am I
             </v-card-title>
             <v-container>
@@ -231,7 +231,7 @@
                                       <v-text-field
                                         v-model="birthday"
                                         label="Birthday date"
-                                        prepend-icon="event"
+                                        prepend-icon="mdi-calendar"
                                         v-bind="props" density="compact"
                                       ></v-text-field>
                                     </template>
@@ -294,7 +294,7 @@
                                 density="compact"
                                 outlined
                                 type="warning"
-                                :value="personalInfo"
+                                :model-value="personalInfo"
                               >
                                 Personal Info has to be completed once started
                               </v-alert>
@@ -381,7 +381,7 @@
                                 density="compact"
                                 outlined
                                 type="warning"
-                                :value="mailingInfo"
+                                :model-value="mailingInfo"
                               >
                                 Mailing Info has to be completed once started
                               </v-alert>
@@ -417,17 +417,17 @@
                               mandatory
                               center-active
                             >
-                              <v-slide-item
+                              <v-slide-group-item
                                 v-for="pet in pets"
                                 :key="pet.petName"
-                                v-slot:default="{ active, toggle }"
+                                v-slot:default="{ isSelected: active, toggle }"
                                 :value="pet.petName"
                               >
                                 <v-tooltip bottom color="primary">
                                   <template v-slot:activator="{ props }">
                                     <v-card
                                       :color="
-                                        active ? 'primary' : 'primary lighten-4'
+                                        active ? 'primary' : 'indigo-lighten-4'
                                       "
                                       class="ma-4"
                                       height="200"
@@ -458,7 +458,7 @@
                                     {{ petRealName(pet.petName) + ' ' + pet.petPerformance }}
                                   </p>
                                 </v-tooltip>
-                              </v-slide-item>
+                              </v-slide-group-item>
                             </v-slide-group>
                             <!-- </v-sheet> -->
                             <!-- </v-row> -->
@@ -514,7 +514,7 @@
                           @click="handleUpdateProfile"
                         >
                           <template #loader><span class="custom-loader">
-                            <v-icon>cached</v-icon>
+                            <v-icon>mdi-cached</v-icon>
                           </span></template>
                           Save
                         </v-btn>
@@ -1138,9 +1138,14 @@ export default {
         // this.to = null;
         return;
       }
+      // `this.to = null` used to follow this push. vue-router 3 ran the
+      // guards synchronously, so beforeRouteLeave read `this.to` before that
+      // line executed. vue-router 4 navigation is fully async, so the null
+      // won the race: the guard saw no pending target, took the else branch,
+      // and re-opened this very dialog — making it impossible to leave the
+      // page. The guard clears `this.to` itself, which is the correct place.
       this.$router.push(this.to);
       this.signOut = false;
-      this.to = null;
     },
 
     updateAvatar(image) {

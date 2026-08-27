@@ -81,7 +81,7 @@
           v-if="!vendorParlour && !vendor"
           class="d-flex-inline px-1 pt-4 justify-center"
           v-model="geoSearch"
-          prepend-inner-icon="place"
+          prepend-inner-icon="mdi-map-marker"
           placeholder="any wish, any demand, anythings..."
           color="primary"
           single-line
@@ -89,26 +89,25 @@
         ></v-autocomplete> -->
 
         <!-- vendor navbar items -->
+        <!-- Three problems here, all Vuetify-2-era:
+             - `src="../public/static/…"`: files in public/ are served from the
+               root, so Vite could not resolve this and the image 404'd.
+             - the label lived *inside* a fixed 80x100 <v-avatar>, which is
+               overflow:hidden — so "Vendor Parlour" was clipped to "Ven Parl".
+             - that avatar is taller than Vuetify 3's 64px toolbar row.
+             Now a plain flex row sized to fit the bar. -->
         <v-row
           v-if="vendorParlour || vendor"
-          class="d-flex mt-1 justify-start align-center"
-          justify="end"
-          style="right: 40px"
+          class="d-flex justify-end align-center flex-grow-0 mr-4"
+          no-gutters
         >
-          <!-- justify="end" -->
-          <v-avatar class="rounded-lg mr-3" tile height="80" width="100">
-            <v-img
-              src="../public/static/vendor1.png"
-              icon
-              max-height="50"
-              max-width="50"
-              z-index="10"
-            >
-            </v-img>
-            <h5 class="text-primary d-block ml-n2">
-              Vendor Parlour
-            </h5>
-          </v-avatar>
+          <v-img
+            src="/static/vendor1.png"
+            max-height="40"
+            max-width="40"
+            class="mr-2"
+          ></v-img>
+          <h5 class="text-primary text-no-wrap">Vendor Parlour</h5>
         </v-row>
 
         <!-- Resident Nav Bar -->
@@ -212,7 +211,7 @@
         <v-container
           v-if="resident && !vendorParlour && !vendor"
           density="compact"
-          class="d-flex justify-center align-center"
+          class="d-flex justify-end align-center pa-0"
         >
           <!-- shopping cart icon -->
           <v-spacer></v-spacer>
@@ -222,18 +221,27 @@
             bordered
             :model-value="shoppingCart.length > 0"
           >
-            <v-btn icon size="x-large" @click="toShoppingCart" class="mt-3">
+            <!-- `mt-3` was tuned to Vuetify 2's taller bar. With v3 geometry
+                 it pushed the button past the 64px app bar, which put the
+                 badge bubble above the bar's top edge and clipped it. -->
+            <v-btn icon size="large" @click="toShoppingCart">
               <v-icon color="primary">mdi-cart-outline</v-icon>
             </v-btn>
           </v-badge>
 
           <v-tooltip right>
             <template v-slot:activator="{ props }">
+              <!-- `:height="navbarHeight"` made this hover target fill the
+                   Vuetify 2 bar. navbarHeight is the whole app bar (112px:
+                   64px row + 48px extension), and Vuetify 3 puts this inside
+                   the 64px .v-toolbar__content, which is overflow:hidden — so
+                   the stack ran 40px past the top of the bar and the cart
+                   badge and avatar were clipped. Sizes to content now. -->
               <v-card
                 flat
-                class="pa-1"
+                class="pa-1 d-flex align-center"
                 max-width="200"
-                :height="navbarHeight" v-bind="props"
+                v-bind="props"
               >
                 <v-menu
                   right
@@ -245,7 +253,7 @@
                   :disabled="displayValid"
                 >
                   <template v-slot:activator="{ props }">
-                    <v-container class="mt-3">
+                    <v-container class="pa-0">
                       <div v-bind="props" class="d-flex align-center">
                         <v-avatar size="48" color="white">
                           <v-img :src="resident.avatarPic" cover></v-img>
@@ -272,16 +280,23 @@
                             : 'white',
                       }"
                     >
-                      <v-icon
-                        class="mr-2"
-                        density="compact"
-                        :color="
-                          dropdownItem.title == 'Sign Out'
-                            ? displayColor
-                            : 'primary'
-                        "
-                        >{{ dropdownItem.icon }}</v-icon
-                      >
+                      <!-- Vuetify 3 puts default-slot content inside
+                           .v-list-item__content, which is a block — so the icon
+                           stacked *above* the label instead of sitting beside
+                           it, making every row double height. #prepend is the
+                           v3 slot for a leading icon. -->
+                      <template #prepend>
+                        <v-icon
+                          class="mr-2"
+                          density="compact"
+                          :color="
+                            dropdownItem.title == 'Sign Out'
+                              ? displayColor
+                              : 'primary'
+                          "
+                          >{{ dropdownItem.icon }}</v-icon
+                        >
+                      </template>
                       <v-list-item-title
                         :class="
                           !displayValid ? 'text-primary' : 'text-fontColor'
@@ -361,25 +376,27 @@
           v-model="authSnackbar"
           color="secondary"
           :timeout="3000"
-          bottom
+          location="bottom"
         >
           <h3 class="text-center mr-2">
-            You are now Signed in!<v-icon>check_circle</v-icon>
+            You are now Signed in!<v-icon>mdi-check-circle</v-icon>
           </h3>
           <!-- <v-btn variant="text" theme="dark"   @click="authSnackbar = false"> Close </v-btn> -->
         </v-snackbar>
 
         <!-- News Snackbar -->
 
+        <!-- `outlined`, `bottom` and `multi-line` are Vuetify 2 props. Without
+             a variant the news ticker rendered as a solid accent block with
+             white text; it was an outlined bar with accent text on white. -->
         <v-snackbar
           color="accent"
           :timeout="-1"
-          bottom
-          :value="true"
-          outlined
+          location="bottom"
+          :model-value="true"
+          variant="outlined"
           multi-line
           :width="viewPortDimension.width"
-          height="20"
           v-if="newsLine"
         >
           <span @click="isNewsDialogOpen = true" style="cursor: pointer">
@@ -395,9 +412,9 @@
           v-model="wishSnackbar"
           color="primary"
           :timeout="3000"
-          centered
+          location="center"
         >
-          <v-icon>check_circle</v-icon>
+          <v-icon>mdi-check-circle</v-icon>
           <h3>You send the wish out</h3>
           <v-btn variant="text" theme="dark"  @click="wishSnackbar = false"> Close </v-btn>
         </v-snackbar>
@@ -408,9 +425,9 @@
           v-model="authErrorSnackbar"
           color="warning"
           :timeout="6000"
-          bottom
+          location="bottom"
         >
-          <v-icon class="mr-3">cancel</v-icon>
+          <v-icon class="mr-3">mdi-cancel</v-icon>
           <h3>{{ authError.message }}</h3>
           <v-btn variant="text" theme="dark"  @click="signIn = true"> Sign in </v-btn>
         </v-snackbar>
@@ -418,16 +435,20 @@
         <!-- House Floating Button -->
         <v-tooltip top v-if="resident">
           <template v-slot:activator="{ props }">
-            <v-btn icon
+            <!-- `bottom right fixed` were Vuetify 2 positional props; none of
+                 them exist in Vuetify 3, so this fab was rendering inline at
+                 the top-left of v-main instead of floating bottom-right. -->
+            <v-btn
+              icon
               color="primary"
-              bottom
-              right
-              fixed size="large"
+              size="large"
               theme="dark"
               to="/openhouse"
+              class="position-fixed"
+              style="bottom: 24px; right: 24px; z-index: 5"
               v-bind="props"
             >
-              <v-icon size="50">home </v-icon>
+              <v-icon size="36">mdi-home</v-icon>
             </v-btn>
           </template>
           <span>My Home</span>
@@ -1061,13 +1082,13 @@ export default {
           confirmation === this.password || "Password must match",
       ],
       items: [
-        { icon: "chat", title: "Posts", link: "/posts" },
-        { icon: "lock_open", title: "Sign In" },
-        { icon: "create", title: "Sign Up", link: "/signup" },
+        { icon: "mdi-chat", title: "Posts", link: "/posts" },
+        { icon: "mdi-lock-open", title: "Sign In" },
+        { icon: "mdi-pencil", title: "Sign Up", link: "/signup" },
       ],
       accountDropdown: [
         {
-          icon: "description",
+          icon: "mdi-file-document-outline",
           title: "Profile",
           foo: "handleProfile",
           display: "false",
@@ -1080,7 +1101,7 @@ export default {
           display: "displayValid",
         },
         {
-          icon: "exit_to_app",
+          icon: "mdi-exit-to-app",
           title: "Sign Out",
           foo: "handleSignoutResident",
           display: "displayValid",
@@ -1175,18 +1196,29 @@ export default {
               messageReceived.receiver == this.resident.residentName &&
               !messageReceived.guild
             ) {
-              let newResident = this.resident;
-              newResident.messages.push(messageReceived);
-              this.$store.setResident(newResident);
+              // Apollo Client 3 freezes query results, and `this.resident` is
+              // one. `let newResident = this.resident` is a reference, not a
+              // copy, so pushing threw "Cannot add property N, object is not
+              // extensible" and the message was dropped. Rebuilt as new
+              // objects — the same fix Phase 4b-4 applied to the three cache
+              // updates it could reach without signing in.
+              this.$store.setResident({
+                ...this.resident,
+                messages: [...this.resident.messages, messageReceived],
+              });
             }
             if (
               messageReceived.receiverType == "resident" &&
               messageReceived.receiver == this.resident.residentName &&
               messageReceived.guild
             ) {
-              let newResident = this.resident;
-              newResident.guildMessages.push(messageReceived);
-              this.$store.setResident(newResident);
+              this.$store.setResident({
+                ...this.resident,
+                guildMessages: [
+                  ...this.resident.guildMessages,
+                  messageReceived,
+                ],
+              });
             }
           }
         },
@@ -1221,12 +1253,17 @@ export default {
               (item) => item.orderNo == orderNo
             );
             if (index >= 0) {
+              // Spreading gives a new array, but the *elements* are still the
+              // frozen Apollo objects — so writing orders[index].x threw and
+              // the status update never landed. Replace the element instead.
               const orders = [...this.residentOrders];
-              orders[index].isCanceled = isCanceled;
-              orders[index].isUnderDispute = isUnderDispute;
-              orders[index].isConfirmed = isConfirmed;
-              orders[index].disputeInfo = content;
-              // console.log(orders)
+              orders[index] = {
+                ...orders[index],
+                isCanceled,
+                isUnderDispute,
+                isConfirmed,
+                disputeInfo: content,
+              };
               this.$store.setResidentOrders(orders);
             }
           }
@@ -1251,9 +1288,19 @@ export default {
         query: RESIDENT_SILVER_UPDATED,
         result({ data }) {
           const { residentSilverUpdated } = data;
-          if (residentSilverUpdated.resident == this.resident.residentName) {
-            this.resident.silverCoins = residentSilverUpdated.silver;
-            this.$store.setResident(this.resident);
+          // `this.resident` was dereferenced with no null check. Subscriptions
+          // are broadcast to every socket, so any resident's silver update
+          // threw for a signed-out visitor.
+          if (
+            this.resident &&
+            residentSilverUpdated.resident == this.resident.residentName
+          ) {
+            // Frozen Apollo result — assigning silverCoins in place threw
+            // "Cannot assign to read only property".
+            this.$store.setResident({
+              ...this.resident,
+              silverCoins: residentSilverUpdated.silver,
+            });
           }
         },
       },

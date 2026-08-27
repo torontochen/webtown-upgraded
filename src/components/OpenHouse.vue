@@ -200,7 +200,7 @@
                           color="red"
                           offset-x="-80"
                           offset-y="10"
-                          :value="newMessages>0"
+                          :model-value="newMessages>0"
                         >
                       </v-badge> 
                         
@@ -222,7 +222,7 @@
                            <v-badge
                           inline
                           :content="flyersUnread.toString()"
-                          :value="flyersUnread>0"
+                          :model-value="flyersUnread>0"
                         ></v-badge>
                         </v-list-item-title>
                           
@@ -259,7 +259,7 @@
                           color="red"
                           inline
                           :content="guildMessageCount.toString()"
-                          :value="guildMessageCount>0"
+                          :model-value="guildMessageCount>0"
                         > </v-badge>
                             </v-list-item-title
                           >
@@ -277,7 +277,7 @@
                           color="red"
                           inline
                           :content="messageCount.toString()"
-                          :value="messageCount>0"
+                          :model-value="messageCount>0"
                         ></v-badge>
                           </v-list-item-title>
                         </v-list-item>
@@ -604,10 +604,10 @@
                     center-active
                     required
                   >
-                    <v-slide-item
+                    <v-slide-group-item
                       v-for="(logo, i) in guildLogos"
                       :key="i"
-                      v-slot:default="{ active, toggle }"
+                      v-slot:default="{ isSelected: active, toggle }"
                       :value="logo.logoString"
                     >
                       <v-card
@@ -635,7 +635,7 @@
                           </v-scale-transition>
                         </v-row>
                       </v-card>
-                    </v-slide-item>
+                    </v-slide-group-item>
                   </v-slide-group>
                 </v-card>
               </v-col>
@@ -749,10 +749,10 @@
                     center-active
                     required
                   >
-                    <v-slide-item
+                    <v-slide-group-item
                       v-for="(logo, i) in guildLogos"
                       :key="i"
-                      v-slot:default="{ active, toggle }"
+                      v-slot:default="{ isSelected: active, toggle }"
                       :value="logo.logoString"
                     >
                       <v-card
@@ -780,7 +780,7 @@
                           </v-scale-transition>
                         </v-row>
                       </v-card>
-                    </v-slide-item>
+                    </v-slide-group-item>
                   </v-slide-group>
                 </v-card>
               </v-col>
@@ -2349,7 +2349,7 @@
             <v-btn variant="text" :disabled='!AIPrompt || isAIThinking' @click="chatToBot"  :loading='isAIThinking' >
               <v-icon large color="primary">mdi-send-outline</v-icon>
               <template #loader><span class="custom-loader">
-                        <v-icon>cached</v-icon>
+                        <v-icon>mdi-cached</v-icon>
                       </span></template>
               </v-btn>
           </v-col>
@@ -2410,7 +2410,7 @@
   <!-- Snack Bar -->
      <v-snackbar
         v-model="snackbar"
-        centered
+        location="center"
         theme="dark"
         color="primary"
         class="pa-3"
@@ -3074,11 +3074,16 @@ mounted() {
 
     allyGuild(){
        const { guild } = this.resident
-        if(guild.allies&&guild.allies.length>=0){
-          this.resident.guild.allies.push({guildFullName:this.guildToAlly, request: false})
-        } else {
-          this.resident.guild = {...this.resident.guild, allies: [{guildFullName:this.guildToAlly, request: false}]}
-          }
+        // Apollo Client 3 freezes query results, so pushing into
+        // resident.guild.allies in place threw "object is not extensible".
+        const newAlly = { guildFullName: this.guildToAlly, request: false }
+        this.$store.setResident({
+          ...this.resident,
+          guild: {
+            ...guild,
+            allies: guild.allies ? [...guild.allies, newAlly] : [newAlly],
+          },
+        })
       this.snackbarInfo = `Allied with ${this.guildToAlly}`
       this.snackbar = true
 
@@ -3268,8 +3273,16 @@ mounted() {
 
      disally(guildFullName){
        const { guild } = this.resident
-        const i = guild.allies.findIndex(item => item.guildFullName == guildFullName)
-        this.resident.guild.allies.splice(i, 1)
+        // Frozen Apollo result — splicing allies in place threw.
+        this.$store.setResident({
+          ...this.resident,
+          guild: {
+            ...guild,
+            allies: guild.allies.filter(
+              item => item.guildFullName !== guildFullName
+            ),
+          },
+        })
       this.snackbarInfo = `Disallied with ${guildFullName}`
       this.snackbar = true
 
@@ -3317,8 +3330,8 @@ mounted() {
        })
        const list = [...this.resident.stashedFlyers]
        list.splice(i, 1)
-       this.resident.stashedFlyers = [...list]
-        this.$store.setResident(this.resident)
+       // Frozen Apollo result — assigning stashedFlyers on it threw.
+       this.$store.setResident({ ...this.resident, stashedFlyers: list })
      } else {
         // console.log(this.processedActiveFlyers)
     const  processedFlyers = this.processedActiveFlyers.map((item) => {
@@ -4063,16 +4076,24 @@ mounted() {
         if (flyer.flyerId == this.activeFlyerSelected.flyerId) {
           array.splice(i, 1);
 
-          this.resident.stashedFlyers.push({
-                        flyerId: flyer.flyerId,
-                        flyerTitle: flyer.flyerTitle,
-                        flyerType: flyer.flyerType,
-                        dateFrom: flyer.dateFrom,
-                        dateTo: flyer.dateTo,
-                        promoInfo: flyer.promoInfo,
-                        logo: item.logo,
-                        vendor: item.businessTitle,
-                        targetDistribute: flyer.targetDistribute})
+          // Frozen Apollo result — pushing onto stashedFlyers in place threw.
+          this.$store.setResident({
+            ...this.resident,
+            stashedFlyers: [
+              ...this.resident.stashedFlyers,
+              {
+                flyerId: flyer.flyerId,
+                flyerTitle: flyer.flyerTitle,
+                flyerType: flyer.flyerType,
+                dateFrom: flyer.dateFrom,
+                dateTo: flyer.dateTo,
+                promoInfo: flyer.promoInfo,
+                logo: item.logo,
+                vendor: item.businessTitle,
+                targetDistribute: flyer.targetDistribute,
+              },
+            ],
+          })
 
 
             this.$store.stashFlyer({
@@ -4157,9 +4178,15 @@ mounted() {
             guildId: this.resident.guildOwned
           },
           update:(cache,{data:{}})=>{
-            this.resident.guildOwned = null
-            this.resident.guild.guildLeader = this.memberSelected.name
-            this.$store.setResident(this.resident)
+            // Frozen Apollo result — both assignments threw in place.
+            this.$store.setResident({
+              ...this.resident,
+              guildOwned: null,
+              guild: {
+                ...this.resident.guild,
+                guildLeader: this.memberSelected.name,
+              },
+            })
           }
         })
         .then(({data})=>{

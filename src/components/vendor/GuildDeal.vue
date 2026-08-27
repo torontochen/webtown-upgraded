@@ -200,7 +200,7 @@
                         <v-text-field
                         v-model="dateFrom"
                         label="From"
-                        prepend-inner-icon="event"
+                        prepend-inner-icon="mdi-calendar"
                         readonly
                         v-bind="props"
                         :rules="fromDateRules"
@@ -232,7 +232,7 @@
                         <v-text-field
                         v-model="dateTo"
                         label="To"
-                        prepend-inner-icon="event"
+                        prepend-inner-icon="mdi-calendar"
                         readonly
                         :rules="toDateRules"
                         v-bind="props"

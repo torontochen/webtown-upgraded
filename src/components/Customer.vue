@@ -57,7 +57,7 @@
                         </v-avatar>
                         {{item.customerName}}
                     <v-rating
-                        :value="item.rating"
+                        :model-value="item.rating"
                         background-color="orange-lighten-3"
                         color="orange"
                         medium
@@ -69,7 +69,7 @@
                         readonly
                     ></v-rating>
                     </v-card-title>
-                    <v-card-text class="white text--primary">
+                    <v-card-text class="bg-white text-high-emphasis">
                     <p class="text-fontColor">{{item.comments}}</p>
                     
                     </v-card-text>
@@ -121,13 +121,13 @@ export default {
 
         ratingColor(rating) {
             if (rating >= 4) {
-                return 'green lighten-2'
+                return 'green-lighten-2'
             }
             if (rating < 4 && rating >= 3) {
-                return 'yellow darken-1'
+                return 'yellow-darken-1'
             }
             if( rating <= 2) {
-                return 'red lighten-2'
+                return 'red-lighten-2'
             }
         },
 

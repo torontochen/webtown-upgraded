@@ -399,16 +399,21 @@
                         : 'primary'
                     "
                   >
-                    <v-icon
-                      class="mr-2"
-                      density="compact"
-                      :color="
-                        dropdownItem.title == 'Sign Out' && inDesign
-                          ? '#c6c6c6'
-                          : 'primary'
-                      "
-                      >{{ dropdownItem.icon }}</v-icon
-                    >
+                    <!-- Vuetify 3 puts default-slot content in a block
+                         .v-list-item__content, so the icon stacked above the
+                         label. #prepend is the v3 leading-icon slot. -->
+                    <template #prepend>
+                      <v-icon
+                        class="mr-2"
+                        density="compact"
+                        :color="
+                          dropdownItem.title == 'Sign Out' && inDesign
+                            ? '#c6c6c6'
+                            : 'primary'
+                        "
+                        >{{ dropdownItem.icon }}</v-icon
+                      >
+                    </template>
                     <v-list-item-title
                       :class="inDesign ? '' : 'text-primary'"
                       class="font-weight-medium"
@@ -425,7 +430,11 @@
     </v-toolbar>
 
     <v-main class="pt-7">
-      <VendorHomePage>
+      <!-- `showDashboard` tells VendorHomePage whether to render its dashboard
+           or the routed child screen. Under Vue 2 that was decided implicitly
+           by slot-fallback semantics, which Vue 3 changed — see the comment in
+           VendorHomePage.vue. -->
+      <VendorHomePage :show-dashboard="$route.matched.length <= 1">
         <router-view />
       </VendorHomePage>
     </v-main>
@@ -726,7 +735,7 @@
                               {{ event.vendor }}</span
                             >
                             <v-rating
-                              :value="event.vendorRating"
+                              :model-value="event.vendorRating"
                               background-color="accent"
                               color="accent"
                               x-small
@@ -867,7 +876,7 @@
                 max-width="60"
               />
               <v-rating
-                :value="pickedVendor.vendorRating"
+                :model-value="pickedVendor.vendorRating"
                 background-color="accent"
                 color="accent"
                 x-small
@@ -1054,12 +1063,12 @@ export default {
     vendorSelected: null,
     vendorAccountDropdown: [
       {
-        icon: "description",
+        icon: "mdi-file-document-outline",
         title: "Profile",
         foo: "handleProfile",
       },
       {
-        icon: "exit_to_app",
+        icon: "mdi-exit-to-app",
         title: "Sign Out",
         foo: "handleSignoutVendor",
       },
@@ -1128,8 +1137,12 @@ export default {
             this.vendor &&
             this.vendor.businessTitle == vendorOrderAdded.vendor
           ) {
-            this.vendorOrders.push(vendorOrderAdded);
-            this.$store.setVendorOrders(this.vendorOrders);
+            // Apollo Client 3 freezes query results, so pushing into this
+            // array in place throws "object is not extensible".
+            this.$store.setVendorOrders([
+              ...this.vendorOrders,
+              vendorOrderAdded,
+            ]);
           }
         },
       },
@@ -1142,9 +1155,10 @@ export default {
             this.vendor &&
             this.vendor.businessTitle == vendorSettlementRecordAdded.vendor
           ) {
-            this.vendorSettlementRecords.push(vendorSettlementRecordAdded);
-            this.$store.setVendorSettlementRecords(this.vendorSettlementRecords
-            );
+            this.$store.setVendorSettlementRecords([
+              ...this.vendorSettlementRecords,
+              vendorSettlementRecordAdded,
+            ]);
           }
         },
       },

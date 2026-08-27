@@ -49,7 +49,14 @@
             <!-- iterated items -->
             <v-card class="pa-0" @click="showOrderDetails(item)">
               <v-card-title>
-                <v-img :src="item.orderItems[0].photo" v-if='item.orderItems.length>0'></v-img>
+                <!-- orderItems comes back null for older orders. Vue 2
+                     swallowed the resulting render error and carried on; Vue 3
+                     propagates it, so this one expression blanked the whole
+                     Orders page. -->
+                <v-img
+                  v-if="item.orderItems && item.orderItems.length > 0"
+                  :src="item.orderItems[0].photo"
+                ></v-img>
               </v-card-title>
               <v-card-text>
                 <v-col>
@@ -387,8 +394,10 @@ export default {
         isCanceled: true
       }
       const index = this.residentOrders.findIndex(item => item.orderNo == this.orderToCancel.orderNo)
+      // Elements of an Apollo result stay frozen even after the array is
+      // spread, so writing orders[index].x threw. Replace the element.
       const orders = [...this.residentOrders]
-      orders[index].isCanceled = true
+      orders[index] = { ...orders[index], isCanceled: true }
       this.$store.setResidentOrders(orders)
       this.isCancelOpen = false
       this.$apollo
@@ -450,7 +459,7 @@ export default {
       }
       const index = this.residentOrders.findIndex(item => item.orderNo == order.orderNo)
       const orders = [...this.residentOrders]
-      orders[index].isUnderDispute = false
+      orders[index] = { ...orders[index], isUnderDispute: false }
       this.$store.setResidentOrders(orders)
       this.$apollo
         .mutate({
@@ -477,7 +486,7 @@ export default {
       this.isDisputeOpen = false
        const index = this.residentOrders.findIndex(item => item.orderNo == this.disputeOrder.orderNo)
       const orders = [...this.residentOrders]
-      orders[index].isUnderDispute = true
+      orders[index] = { ...orders[index], isUnderDispute: true }
       this.$store.setResidentOrders(orders)
       this.$apollo
         .mutate({
@@ -506,6 +515,8 @@ export default {
     },
 
     totalItemCount(items) {
+      // orderItems is null on older orders — see the v-img guard above.
+      if (!items) return 0;
       let count = 0;
       items.map((item) => {
         count = count + item.quantity;

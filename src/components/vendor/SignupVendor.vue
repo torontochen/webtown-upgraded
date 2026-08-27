@@ -21,7 +21,7 @@
       <v-col cols="12">
         <v-container>
           <v-card flat>
-            <v-card-title class="headline primary  text-white">
+            <v-card-title class="text-h5 bg-primary text-white">
               Do Businsess The Simple Way
             </v-card-title>
             <v-container>
@@ -59,7 +59,7 @@
                                 :rules="emailRules"
                                 label="Registration Email"
                                 v-model.trim="email"
-                                prepend-icon="email"
+                                prepend-icon="mdi-email"
                                 type="email"
                                 :error-messages="errorMessage"
                                 clearable
@@ -76,7 +76,7 @@
                                 :rules="passwordRules"
                                 label="Password"
                                 placeholder=""
-                                prepend-icon="extension"
+                                prepend-icon="mdi-puzzle"
                                 type="password"
                                 v-model.trim="password"
                                 required
@@ -92,7 +92,7 @@
                                 :rules="passwordConfirmRules"
                                 label="Confirm Password"
                                 v-model.trim="passwordConfirmation"
-                                prepend-icon="gavel"
+                                prepend-icon="mdi-gavel"
                                 type="password"
                                 required
                                 counter="8"
@@ -435,7 +435,7 @@
                           <v-row>
                             <v-col cols="12">
                               <v-slide-group show-arrows>
-                                <v-slide-item
+                                <v-slide-group-item
                                   v-for="(photo, index) in photosUpload"
                                   :key="index"
                                   v-slot:default="{ toggle }"
@@ -474,7 +474,7 @@
                                       </v-scale-transition> -->
                                     </v-row>
                                   </v-card>
-                                </v-slide-item>
+                                </v-slide-group-item>
                               </v-slide-group>
                             </v-col>
                           </v-row>
@@ -497,7 +497,6 @@
                                         required
                                         append-outer-icon="mdi-plus"
                                         @click:append-outer="addPhoneNo"
-                                        :value="businessPhone"
                                         :rules="businessPhoneRules"
                                         hint="Click + to add phone No."
                                       >
@@ -694,7 +693,7 @@
                       <!-- :disabled="businessHours.length < 7" -->
 
                       <template #loader><span class="custom-loader">
-                        <v-icon>cached</v-icon>
+                        <v-icon>mdi-cached</v-icon>
                       </span></template>
                       Save
                     </v-btn>
@@ -1470,8 +1469,10 @@ export default {
       eventBus_vendorParlour.$emit("vendorParlour", false);
 
       // this.$router.go();
+      // No `this.to = null` here: vue-router 4 runs the guards asynchronously,
+      // so clearing it now would beat beforeRouteLeave to the read and re-open
+      // the dialog. The guard clears it.
       this.$router.replace(this.to);
-      this.to = null;
     },
     updateLogo(logo) {
       // console.log(logo);

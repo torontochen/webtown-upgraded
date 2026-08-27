@@ -128,8 +128,8 @@
                 <v-color-picker
                   v-if="flyerOrCoupon == 'flyer'"
                   mode="hexa"
-                  :value="color"
-                  @input="changeBackgroundColor"
+                  :model-value="color"
+                  @update:model-value="changeBackgroundColor"
                 ></v-color-picker>
               </v-menu>
 
@@ -156,8 +156,8 @@
                 <v-color-picker
                   v-if="flyerOrCoupon !== 'flyer'"
                   mode="hexa"
-                  :value="color_C"
-                  @input="changeBackgroundColor_C"
+                  :model-value="color_C"
+                  @update:model-value="changeBackgroundColor_C"
                 ></v-color-picker>
               </v-menu>
 

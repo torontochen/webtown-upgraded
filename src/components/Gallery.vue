@@ -27,7 +27,7 @@
                                 :src="photo"
                                 :lazy-src="photo"
                                 aspect-ratio="1"
-                                class="grey lighten-2 d-inline-block rounded-lg"
+                                class="bg-grey-lighten-2 d-inline-block rounded-lg"
                             >
                              <!-- :src="`/${vendor}/${photo}`"
                                 :lazy-src="`/${vendor}/${photo}`" -->

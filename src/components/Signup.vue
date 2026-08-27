@@ -27,11 +27,23 @@
       rounded="5"
       class="ma-auto"
     >
-      <v-btn absolute top right size="small" icon theme="dark" @click="$emit('closeSignUp')">
-        <v-icon theme="dark">mdi-close</v-icon>
-      </v-btn>
-      <v-card-subtitle class="primary text-h6 text-white">
-        get started here!
+      <!-- `absolute top right` are Vuetify 2 props with no v3 equivalent, so
+           this fell into normal flow at the card's top-left. Moved into the
+           header. -->
+      <v-card-subtitle
+        class="bg-primary text-h6 text-white d-flex align-center pa-4"
+      >
+        <span>get started here!</span>
+        <v-spacer></v-spacer>
+        <v-btn
+          size="small"
+          icon
+          variant="text"
+          theme="dark"
+          @click="$emit('closeSignUp')"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-card-subtitle>
       <v-container>
         <v-form ref="form" class="px-4">
@@ -43,7 +55,7 @@
                 label="Email"
                 placeholder=""
                 v-model="email"
-                prepend-icon="email"
+                prepend-icon="mdi-email"
                 type="email"
                 @blur="emailCheck"
                 :error-messages="errorMessage"
@@ -87,7 +99,7 @@
                 label="Confirm Password"
                 placeholder=""
                 v-model="passwordConfirmation"
-                prepend-icon="gavel"
+                prepend-icon="mdi-gavel"
                 type="password"
                 required
                 counter="8"
@@ -98,7 +110,7 @@
                 :rules="passwordRules"
                 label="Password"
                 placeholder=""
-                prepend-icon="extension"
+                prepend-icon="mdi-puzzle"
                 type="password"
                 v-model="password"
                 required
@@ -110,7 +122,7 @@
                 :rules="postalCodeRules"
                 label="Postal Code (type valid postal code , map will show up)"
                 id="postalCode"
-                prepend-icon="place"
+                prepend-icon="mdi-map-marker"
                 required
                 hint="Postal Code Of Any Favorite Places in GTA such as Residence, Work Place..."
                 type="text"
@@ -153,7 +165,7 @@
                   @click="handleSignupResident" size="large" 
                 >
                   <template #loader><span class="custom-loader">
-                    <v-icon>cached</v-icon>
+                    <v-icon>mdi-cached</v-icon>
                   </span></template>
                   Sign Up
                 </v-btn>

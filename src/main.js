@@ -89,8 +89,13 @@ const apolloProvider = createApolloProvider({
 // queries, so ordering relative to the first render is unchanged.
 const app = createApp(App);
 
-app.use(router);
+// Pinia goes in before the router. vue-router 4 performs its initial
+// navigation during install, so a guarded URL opened directly (/profile, any
+// vendor screen) runs AuthGuard at that moment — and the guard calls
+// useMainStore(), which needs an active Pinia. Installed the other way round it
+// throws "no active Pinia" on a hard page load.
 app.use(pinia);
+app.use(router);
 app.use(vuetify);
 app.use(apolloProvider);
 app.use(VueMasonryPlugin);

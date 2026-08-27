@@ -238,7 +238,7 @@
                           <v-text-field
                           v-model="dateFrom"
                           label="From"
-                          prepend-inner-icon="event"
+                          prepend-inner-icon="mdi-calendar"
                           readonly
                           v-bind="props"
                           :rules="fromDateRules"
@@ -268,7 +268,7 @@
                           <v-text-field
                           v-model="dateTo"
                           label="To"
-                          prepend-inner-icon="event"
+                          prepend-inner-icon="mdi-calendar"
                           readonly
                           :rules="toDateRules"
                           v-bind="props"
@@ -368,7 +368,7 @@
                     <!-- price -->
                     <v-col cols="6">
                       <v-text-field
-                          :value="substituteItemPrice"
+                          :model-value="substituteItemPrice"
                           label="Price"
                           readonly density="compact"
                           prefix="$"
@@ -461,7 +461,7 @@
                           <v-text-field
                           v-model="dateFrom"
                           label="From"
-                          prepend-inner-icon="event"
+                          prepend-inner-icon="mdi-calendar"
                           readonly
                           v-bind="props"
                           :rules="fromDateRules"
@@ -491,7 +491,7 @@
                           <v-text-field
                           v-model="dateTo"
                           label="To"
-                          prepend-inner-icon="event"
+                          prepend-inner-icon="mdi-calendar"
                           readonly
                           :rules="toDateRules"
                           v-bind="props"

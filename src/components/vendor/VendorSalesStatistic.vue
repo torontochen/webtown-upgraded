@@ -32,15 +32,15 @@
                      
                     <v-sheet color="primary" class="pa-2" rounded>
                         <v-sparkline
-                        :value="monthToDateSalesSparkLine"
+                        :model-value="monthToDateSalesSparkLine"
                         :labels="dateOfMonth"
-                        color="primary"
+                        color="indigo-lighten-4"
                         
                         >
                         </v-sparkline>
                         <v-row class="my-2">
                             <v-spacer></v-spacer>
-                            <span class="text-h6 font-weight-bold text-primary">Sales</span>
+                            <span class="text-h6 font-weight-bold text-indigo-lighten-4">Sales</span>
                             <v-spacer></v-spacer>
                         </v-row>
                     </v-sheet>
@@ -62,14 +62,14 @@
 
                     <v-sheet color="primary" class="pa-2" rounded>
                         <v-sparkline
-                        :value="monthToDateOrdersSparkLine"
+                        :model-value="monthToDateOrdersSparkLine"
                         :labels="dateOfMonth"
-                        color="primary"
+                        color="indigo-lighten-4"
                         >
                         </v-sparkline>
                          <v-row class="my-2">
                             <v-spacer></v-spacer>
-                            <span class="text-h6 font-weight-bold text-primary">Orders</span>
+                            <span class="text-h6 font-weight-bold text-indigo-lighten-4">Orders</span>
                             <v-spacer></v-spacer>
                         </v-row>
                     </v-sheet>
@@ -99,14 +99,14 @@
                      
                     <v-sheet color="primary" class="pa-2" rounded>
                         <v-sparkline
-                        :value="yearToDateSalesSparkLine"
+                        :model-value="yearToDateSalesSparkLine"
                         :labels="month"
-                        color="primary"
+                        color="indigo-lighten-4"
                         >
                         </v-sparkline>
                          <v-row class="my-2">
                             <v-spacer></v-spacer>
-                            <span class="text-h6 font-weight-bold text-primary">Sales</span>
+                            <span class="text-h6 font-weight-bold text-indigo-lighten-4">Sales</span>
                             <v-spacer></v-spacer>
                         </v-row>
                     </v-sheet>
@@ -128,14 +128,14 @@
 
                     <v-sheet color="primary" class="pa-2" rounded>
                         <v-sparkline
-                        :value="yearToDateOrdersSparkLine"
+                        :model-value="yearToDateOrdersSparkLine"
                         :labels="month"
-                        color="primary"
+                        color="indigo-lighten-4"
                         >
                         </v-sparkline>
                          <v-row class="my-2">
                             <v-spacer></v-spacer>
-                            <span class="text-h6 font-weight-bold text-primary">Orders</span>
+                            <span class="text-h6 font-weight-bold text-indigo-lighten-4">Orders</span>
                             <v-spacer></v-spacer>
                         </v-row>
                     </v-sheet>

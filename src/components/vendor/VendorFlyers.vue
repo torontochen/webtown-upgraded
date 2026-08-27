@@ -64,6 +64,7 @@
                             >
                               Simple Flyer
                             </div>
+                              <div v-else>Simple Flyer</div>
                           </template></v-radio
                         >
                         <v-radio label="Simple Coupon" value="COUPON">
@@ -74,6 +75,7 @@
                             >
                               Simple Coupon
                             </div>
+                              <div v-else>Simple Coupon</div>
                           </template>
                         </v-radio>
                         <v-radio label="Multiply Coupons" value="MULTICOUPON">
@@ -84,6 +86,7 @@
                             >
                               Multiply Coupons
                             </div>
+                              <div v-else>Multiply Coupons</div>
                           </template></v-radio
                         >
                         <v-radio
@@ -97,6 +100,7 @@
                             >
                               Flyer with Multiply Coupons
                             </div>
+                              <div v-else>Flyer with Multiply Coupons</div>
                           </template></v-radio
                         >
                       </v-radio-group>
@@ -417,7 +421,7 @@
                     theme="dark" 
                   >
                     <template #loader><span class="custom-loader">
-                      <v-icon>cached</v-icon>
+                      <v-icon>mdi-cached</v-icon>
                     </span></template>
                     Back To Design
                   </v-btn>
@@ -432,7 +436,7 @@
                     v-if="!templateIsSaved"
                   >
                     <template #loader><span class="custom-loader">
-                      <v-icon>cached</v-icon>
+                      <v-icon>mdi-cached</v-icon>
                     </span></template>
                     Save as template
                   </v-btn>
@@ -445,7 +449,7 @@
                     v-if="templateIsSaved"
                   >
                     <template #loader><span class="custom-loader">
-                      <v-icon>cached</v-icon>
+                      <v-icon>mdi-cached</v-icon>
                     </span></template>
                     template is saved
                   </v-btn>
@@ -459,7 +463,7 @@
                     @click="saveAndDistribute"
                   >
                     <template #loader><span class="custom-loader">
-                      <v-icon>cached</v-icon>
+                      <v-icon>mdi-cached</v-icon>
                     </span></template>
                     Save Design and Continue
                   </v-btn>
@@ -546,7 +550,7 @@
                                 <v-text-field
                                   v-model="dateFrom"
                                   label="From"
-                                  prepend-inner-icon="event"
+                                  prepend-inner-icon="mdi-calendar"
                                   readonly
                                   v-bind="props"
                                   :rules="fromDateRules"
@@ -576,7 +580,7 @@
                                 <v-text-field
                                   v-model="dateTo"
                                   label="To"
-                                  prepend-inner-icon="event"
+                                  prepend-inner-icon="mdi-calendar"
                                   readonly
                                   :rules="toDateRules"
                                   v-bind="props"
@@ -782,7 +786,7 @@
                         @click="handleUpdateSave" 
                       >
                         <template #loader><span class="custom-loader">
-                          <v-icon>cached</v-icon>
+                          <v-icon>mdi-cached</v-icon>
                         </span></template>
                         Save
                       </v-btn>
@@ -1067,7 +1071,7 @@
                     @click="handleDistribute"
                   >
                     <template #loader><span class="custom-loader">
-                      <v-icon>cached</v-icon>
+                      <v-icon>mdi-cached</v-icon>
                     </span></template>
                    Pay & Distribute
                   </v-btn>
@@ -2205,8 +2209,10 @@ export default {
       }
       this.killHtmlConverter = true;
       this.$store.setInDesign(false);
+      // No `this.to = null` here: vue-router 4 runs the guards asynchronously,
+      // so clearing it now would beat beforeRouteLeave to the read and re-open
+      // the dialog. The guard clears it.
       this.$router.push(this.to);
-      this.to = null;
     },
   },
 

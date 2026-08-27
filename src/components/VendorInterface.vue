@@ -194,7 +194,7 @@
 
        <v-snackbar
         v-model="snackbar"
-        centered
+        location="center"
         theme="dark"
         color="primary"
         

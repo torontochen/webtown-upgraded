@@ -18,9 +18,27 @@
     </v-row>
 
     <!-- <v-container> -->
-      <transition name="slide-fade">
-      <slot>
-        <v-expansion-panels popout :disabled="vendorHomeLoading" v-model="item" mandatory :width="viewPortDimension.width * 0.8">
+      <!-- This used to be <transition><slot>…dashboard as fallback…</slot></transition>.
+           Two problems, both from the Vue 3 flip:
+
+           1. Vue 2 rendered an unmatched <router-view/> as a comment vnode and
+              treated it as whitespace, so the slot counted as empty and the
+              dashboard fallback showed. In Vue 3 <router-view/> is a component
+              vnode, so the slot always counted as filled and the vendor's home
+              screen was blank. Which side to show is now an explicit decision
+              made by the parent from the route.
+
+           2. The <transition> wrapper is gone. Wrapping a branch that swaps
+              between the dashboard and a routed child left the content missing
+              outright on some navigations — Vue 3 transitions drive insertion
+              and removal through requestAnimationFrame, and a swap that does
+              not complete strands both branches. The animation was decorative;
+              correct rendering is not. -->
+
+      <div v-if="showDashboard" key="dashboard">
+        <!-- `popout` and `width` are not Vuetify 3 props; they fell through
+             onto the DOM element as stray attributes. -->
+        <v-expansion-panels :disabled="vendorHomeLoading" v-model="item" mandatory>
           
           <!-- Active Orders -->
           <v-expansion-panel :disabled="vendorOrders.length==0">
@@ -347,7 +365,7 @@
                         <template #append>
                           <span class="text-caption">
                           <v-rating
-                              :value="item.rating"
+                              :model-value="item.rating"
                               background-color="orange-lighten-3"
                               color="orange"
                               medium
@@ -535,8 +553,10 @@
             <v-expansion-panel-text> </v-expansion-panel-text>
           </v-expansion-panel> -->
         </v-expansion-panels>
-      </slot>
-    </transition>
+      </div>
+      <div v-else key="subroute">
+        <slot></slot>
+      </div>
     <!-- </v-container> -->
 
     
@@ -691,7 +711,7 @@
     <!-- Snack Bar -->
      <v-snackbar
         v-model="snackbar"
-        centered
+        location="center"
         theme="dark"
         color="primary"
         class="pa-3"
@@ -727,6 +747,11 @@ export default {
         OrderItemDetails,
         Events
     },
+  props: {
+    // True when no vendor sub-route is open, i.e. show the dashboard rather
+    // than the routed child screen. See the template comment.
+    showDashboard: { type: Boolean, default: true },
+  },
   data() {
     return {
         customerToMessage: null,
@@ -746,7 +771,10 @@ export default {
         snackbar: false,
         snackbarInfo: null,
         vendorSettlement: null,
-        item: [0],
+        // Vuetify 3's v-expansion-panels takes a number (or an array only with
+        // `multiple`). The Vuetify 2 array form made VExpansionPanels throw
+        // during render, which blanked the whole vendor dashboard.
+        item: 0,
         // isOrderFilled: [],
         isReplyMsgOpen: false,
         isFulfillOpen: false,
@@ -882,6 +910,12 @@ export default {
       // console.log(itemsOnSale)
       return itemsOnSale
       }
+      // Without this the computed returns undefined until the catalog query
+      // resolves, and the template's `allItemsOnSale.length == 0` throws
+      // inside VExpansionPanels' render — which blanked the entire vendor
+      // dashboard and left the vnode tree in a broken state it never
+      // recovered from, even once the data arrived.
+      return []
     },
 
     ready() {

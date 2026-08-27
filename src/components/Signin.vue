@@ -35,11 +35,21 @@
     </v-row> -->
 
     <v-card :max-height="(viewportHeight * 10) / 10" rounded="5">
-     <v-btn absolute top right size="small" icon  theme="dark"  @click="$emit('closeSignIn')" >
-          <v-icon theme="dark">mdi-close</v-icon>
+      <!-- `absolute top right` are Vuetify 2 props with no v3 equivalent, so
+           the close button fell into normal flow at the card's top-left and
+           sat on top of the title. It lives in the title bar now. -->
+      <v-card-title class="text-h6 bg-primary text-white d-flex align-center">
+        <span>welcome back!</span>
+        <v-spacer></v-spacer>
+        <v-btn
+          size="small"
+          icon
+          variant="text"
+          theme="dark"
+          @click="$emit('closeSignIn')"
+        >
+          <v-icon>mdi-close</v-icon>
         </v-btn>
-      <v-card-title class="text-h6 primary text-white" >
-        welcome back!
       </v-card-title>
 
       <!-- Error Alert -->
@@ -70,7 +80,7 @@
                       :rules="emailRules"
                       label="Email"
                       v-model="email"
-                      prepend-icon="email"
+                      prepend-icon="mdi-email"
                       required
                       placeholder=""
                     >
@@ -83,7 +93,7 @@
                     <v-text-field
                       :rules="passwordRules"
                       label="Password"
-                      prepend-icon="extension"
+                      prepend-icon="mdi-puzzle"
                       type="password"
                       v-model="password"
                       required
@@ -112,7 +122,7 @@
                     right 
                   >
                     <template #loader><span class="custom-loader">
-                      <v-icon>cached</v-icon>
+                      <v-icon>mdi-cached</v-icon>
                     </span></template>
                     Sign In
                   </v-btn>

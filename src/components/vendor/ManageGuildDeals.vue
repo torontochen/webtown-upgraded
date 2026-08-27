@@ -75,8 +75,13 @@
 
                     <!-- <td v-convert-date="{toOrFrom: 'From: ', date: deal.dateFrom}"></td>
                     <td v-convert-date="{toOrFrom: 'To: ', date: deal.dateTo}"></td> -->
-                    <td >From: {{ $filters.convertDate(item.dateFrom) }}</td>
-                    <td >To: {{ $filters.convertDate(item.dateTo) }}</td>
+                    <!-- These read `item`, but the row loop binds `deal` — so
+                         `item` was undefined. Vue 2 rendered the filter on
+                         undefined as empty and only warned; Vue 3 throws, which
+                         blanked this whole table. The commented-out originals
+                         above confirm `deal` is the intended source. -->
+                    <td >From: {{ $filters.convertDate(deal.dateFrom) }}</td>
+                    <td >To: {{ $filters.convertDate(deal.dateTo) }}</td>
                     <td>
                         <v-tooltip right color="#757575">
                             <template v-slot:activator="{ props }">

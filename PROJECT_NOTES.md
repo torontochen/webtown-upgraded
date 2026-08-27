@@ -32,6 +32,7 @@ Running record of the staged upgrade, phase by phase.
 | 5b — v-date-picker model | ✅ Done | `908d12d`+ |
 | 5c — v-data-iterator slots | ✅ Done | `a38bcd2`+ |
 | 5d — UI fallout from the flip | ✅ Done | `0f19a0e`+ |
+| 5e — The signed-in pass (resident + vendor) | ✅ Done | uncommitted |
 
 **All phases are complete.** The app runs on Vue 3.5 + Vuetify 3.13 + Vite 7 +
 Apollo Client 3 + Pinia, with `npm run verify` green (0 lint errors, 131 tests,
@@ -1853,6 +1854,230 @@ outside and let it overflow. A `white-space: nowrap` on the label.
 > **Still unconfirmed by me:** the cart badge and account avatar, which need a
 > signed-in resident. The Vuetify 2 props removed there are unambiguous, but the
 > result has not been seen.
+
+---
+
+## Phase 5e — the signed-in pass, with real credentials ✅
+
+Every phase from 4b onward closed with the same caveat: *"not verified, behind
+auth"*. This phase signed in as a resident and as a vendor and walked the
+screens. **The reason nobody had ever verified them is that they were
+unreachable.**
+
+### The blocker: AuthGuard was broken by the Pinia migration
+
+Phase 4c deleted `store/getters.js` — all 74 Vuex getters were pass-throughs and
+Pinia exposes state directly. `src/AuthGuard.js` was missed. It still read
+`store.getters.resident`, and `store/store.js` default-exports `useMainStore`,
+a **function**. So `store.getters` was `undefined` and the guard threw
+
+```
+TypeError: Cannot read properties of undefined (reading 'resident')
+```
+
+on every navigation. vue-router 4 turns a throwing guard into a rejected
+navigation, so **all 13 guarded routes silently refused to open** — `/profile`,
+`/openhouse`, and the 11 vendor screens. Nothing surfaced it: every call site is
+`this.$router.push(...)` with no `await` and no `.catch()`, so the rejection was
+swallowed and the click just did nothing.
+
+Fixed by calling `useMainStore()` inside the guard. `app.use(pinia)` also had to
+move **before** `app.use(router)`: vue-router 4 runs its initial navigation
+during install, so opening a guarded URL directly would otherwise hit the guard
+before an active Pinia existed.
+
+### `v-slide-item` does not exist in Vuetify 3
+
+Checking every `<v-*>` tag in the codebase against Vuetify's own
+`dist/json/importMap.json` found exactly one that no longer exists —
+`v-slide-item`, at **6 sites**. Its Vuetify 3 name is `v-slide-group-item`, and
+the slot props changed from `{ active, toggle }` to `{ isSelected, toggle }`.
+
+As an unknown component it received no slot props, so
+`v-slot:default="{ active, toggle }"` threw *"Cannot destructure property
+'active' of 'undefined'"* and took down the entire render of **Profile,
+OpenHouse, VendorGallery, VendorProfile and SignupVendor**.
+
+Aliased as `{ isSelected: active, toggle }` so no slot body changed — the same
+technique 4b-5 used for `v-hover`.
+
+### The vendor dashboard: two independent causes
+
+`VendorHomePage` renders the dashboard as **fallback content** of its default
+slot, with `Home.vue` passing `<router-view/>` into it.
+
+1. Vue 2 rendered an unmatched `<router-view/>` as a comment vnode, and slot
+   resolution skipped comments as whitespace — so the slot counted as empty and
+   the fallback showed. In Vue 3 it is a component vnode, so the slot always
+   counted as filled. Replaced with an explicit `showDashboard` prop driven from
+   `$route.matched.length`.
+
+2. With the dashboard finally rendering, it immediately threw: the
+   `allItemsOnSale` computed has no `else` branch, so it returns `undefined`
+   until the catalog query resolves, and the template does
+   `allItemsOnSale.length == 0`. That threw inside `VExpansionPanels` and left
+   the vnode tree in a state it never recovered from. Returns `[]` now.
+
+Also `item: [0]` — Vuetify 3's `v-expansion-panels` takes a number unless
+`multiple` is set; the Vuetify 2 array form made the component throw.
+
+The `<transition name="slide-fade">` around that branch was **removed**. Vue 3
+transitions drive insertion and removal through `requestAnimationFrame`, and a
+swap that does not complete strands *both* branches — the vendor screens came up
+blank on some navigations. The animation was decorative; correct rendering is
+not.
+
+### The leave-confirmation dialog was an inescapable trap
+
+`yesLeave()` in four components did:
+
+```js
+this.$router.push(this.to);
+this.to = null;          // ← runs before the guard reads this.to
+```
+
+vue-router 3 ran guards synchronously, so `beforeRouteLeave` read `this.to`
+before that line executed. **vue-router 4 navigation is fully async**, so the
+null won the race: the guard saw no pending target, took its else branch, and
+re-opened the very dialog the user had just dismissed. There was no way off
+Profile, VendorFlyers, VendorProfile or SignupVendor. The guards clear `this.to`
+themselves, which is the correct place, so the racing assignment is gone.
+
+`CustomDialog` was also working only by accident: all four call sites bind it
+with `v-model`, but it declared `props: ["value"]`. Vue 3's `v-model` means
+`modelValue`, so `value` was never set and the `dialogSpark` computed was always
+`undefined` — the dialog opened purely because the undeclared `modelValue` fell
+through as an attribute onto the root `v-dialog`, which happens to have a prop
+of that name. Now declared properly, along with its `emits`.
+
+### More Apollo Client 3 frozen results
+
+4b-4 fixed the three it could reach without signing in. Behind auth there were
+**twelve more**, all mutating frozen query results in place:
+
+| Where | What |
+|---|---|
+| `App.vue` | `messageReceived` ×2 (`.messages.push`, `.guildMessages.push`), `orderStatusChanged` (wrote `orders[index].x` — spreading the array leaves the *elements* frozen), `residentSilverAdded` |
+| `Home.vue` | `vendorOrderAdded`, `vendorSettlementRecordAdded` |
+| `OpenHouse.vue` | `allyGuild`, `disally`, stash-flyer ×2, transfer-leadership |
+| `ResidentOrders.vue` | cancel, dispute, cancel-dispute |
+
+`residentSilverAdded` also dereferenced `this.resident` with no null check, and
+subscriptions are broadcast to every socket — so any resident's silver update
+threw for a signed-out visitor.
+
+### Two latent bugs that Vue 3 made fatal
+
+Vue 2 swallowed render errors per-expression and warned; Vue 3 propagates them
+and blanks the component.
+
+- **`ResidentOrders.vue`** — `item.orderItems.length` where `orderItems` comes
+  back `null` on older orders. The Orders page rendered nothing at all. With a
+  guard it shows all 25 orders.
+- **`ManageGuildDeals.vue`** — two cells read `item.dateFrom` / `item.dateTo`
+  while the row loop binds `deal`. Byte-identical in the Vue 2 original, where it
+  rendered as empty text. Now the table renders its rows.
+
+### Vuetify 2 leftovers the earlier codemods missed
+
+| Fix | Count | Symptom |
+|---|---|---|
+| bare `class="primary"` / `"white"` / `"grey lighten-2"` → `bg-*` | 10 | Vuetify 3 has no bare background-colour classes. **Six dialog headers were white text on a transparent background** — the titles were invisible |
+| `:value` → `:model-value` on `v-sparkline`, `v-rating`, `v-badge`, `v-alert`, `v-snackbar`, `v-color-picker` | 17 | The four sales sparklines drew an **empty path**; alerts ignored their visibility binding and showed permanently |
+| `color="primary lighten-4"` restored as `indigo-lighten-4` | 4 + 4 labels | 5d's codemod dropped 90 colour variants to the base colour. On the sales charts that put a **primary line and primary label on a primary sheet** — invisible. Theme `primary` is `#5C6BC0` = Indigo 400, so `indigo-lighten-4` (`#C5CAE9`) is the exact Vuetify 2 shade, not an invention |
+| `'primary lighten-4'` etc. inside bound expressions | 7 | Same codemod, but string literals in `:color` expressions were never scanned. Unselected pet cards rendered identical to the selected one |
+| `absolute top right` on dialog close buttons | 3 | Not v3 props — the buttons fell into normal flow at the card's **top-left, on top of the title** |
+| `bottom right fixed` on the "My Home" fab | 1 | Rendered inline at the top-left of `v-main` instead of floating |
+| `:height="navbarHeight"` on the account card | 1 | navbarHeight is the whole 112px app bar; inside the 64px `.v-toolbar__content` (overflow:hidden) it pushed the stack 40px past the top, **clipping the cart badge and avatar** |
+| Vendor Parlour badge | 1 | `src="../public/static/…"` 404'd (public/ serves from root), and the label sat *inside* a fixed 80×100 `v-avatar` — `overflow:hidden` clipped "Vendor Parlour" to "Ven Parl" |
+| `v-radio` label slots in VendorFlyers | 4 | Each had both a `label` prop and a `#label` slot whose `v-if` only matched the *selected* option. Vue 2 fell back to the prop; Vue 3 does not — so **all four flyer-format options were unlabelled** |
+
+### Found by diffing a before/after screenshot of the home page
+
+The project owner compared the Vue 2 home page against the upgraded one. Three
+regressions came out of that which no amount of "does it render" checking would
+have caught, because every one of them renders *something*.
+
+**46 icons were invisible — Material Icons ligature names under an MDI set.**
+`index.html` loads both the MDI 4.x sheet and the Material Icons font, and
+Vuetify 2's default icon set resolved bare ligatures like `home`,
+`description`, `exit_to_app`, `check_circle`, `email`, `extension`, `gavel`,
+`place`, `cached`, `event`, `chat`, `create`, `cancel`, `lock_open`. Vuetify 3
+is configured with `defaultSet: "mdi"`, which turns `<v-icon>description</v-icon>`
+into the class `mdi-description` — a rule that does not exist, so nothing draws.
+
+The screenshot made it obvious: in the account menu, **"My Wish" had its icon
+and "Profile" and "Sign Out" did not** — because `mdi-hand-heart` was already an
+MDI name and the other two were ligatures. Same cause for the empty "My Home"
+fab and the missing tick on the sign-in snackbar.
+
+All 14 names mapped to MDI equivalents (47 sites), each **verified to exist in
+the 4.x sheet the CDN actually serves** before the edit — MDI 4 predates a lot
+of current icon names. Measured after: 22/22 icons on the home page resolve to a
+real glyph.
+
+**The account dropdown rendered double-height with stacked icons.** Vuetify 3
+puts default-slot content inside `.v-list-item__content`, a block — so
+`<v-icon>` followed by `<v-list-item-title>` stacked vertically instead of
+sitting side by side. The 4b-4 codemod converted 31 `v-list-item-icon` wrappers
+to `#prepend`, but these two menus had a bare `<v-icon>` with no wrapper, so it
+matched nothing. Rows went 57px → 40px and the menu 93px → 158px wide, and the
+Sign Out row's `#E3F2FD` highlight came back with it.
+
+**The news ticker had become a solid orange block.** `outlined` is not a
+Vuetify 3 prop, so the snackbar lost its variant; it should be accent text and
+border on white. While there, `bottom` and `centered` are Vuetify 2 positional
+props — 6 snackbars marked `centered` were silently rendering at the bottom.
+All converted to `location`.
+
+> Checked and **not** a regression: the vendor panel's rating stars. They are
+> absent in the "after" screenshot only because it happened to be showing
+> Pizzeria Via Mercanti, whose `vendorRating` is `null`; the `v-if` is doing its
+> job. Driving the panel to UshiTei Japanese BBQ (3.25) renders 5 stars with
+> half-increments correctly.
+
+### What is now confirmed working, with real data
+
+**Resident** (`jc.4ukitchen`): Profile (form, map, pet slide-group), My Home
+(treasury 37,295 silver, guild [Toronto Sun], pet), Shopping Cart, Orders (25
+orders — the 5c `v-data-iterator` finally seen in its own screen), guild chat
+launcher, cart badge and account menu.
+
+**Vendor** (`Pizza King`): the dashboard (7 panels — Active Orders over 118 real
+orders, On Sale, Customer Messages, Ratings, Events, Campaign Performance,
+Current Customer), Sales Statistic (MTD/YTD with working sparklines),
+Settlement Records, Membership, Product & Service Catalog, Gallery, Promotions,
+Profile, Manage Guild Deals, Guild Deals Fulfilment, and the flyer designer's
+Vuetify 3 stepper.
+
+### Verification
+
+- `npm run verify` — 0 lint errors, **131 tests**, production build. Bundle
+  2,123 kB.
+- `npm run test:e2e` — **22/22 guard checks + 4/4 subscription checks** against
+  live Atlas, so none of this disturbed the Phase 1 authorization layer.
+
+> **Methodology, confirming the note under "CLOSED — flyer card photos":** this
+> cost real time again. `v-img` at `opacity: 0` with the image fully loaded
+> (`complete: true`, `naturalWidth: 512`), `<Transition>` leaving both branches
+> stranded, a `v-dialog` scrim frozen after its model went false, and a
+> detached-but-populated subtree all showed up as "bugs" that were only an
+> unpainted pane. **Screenshot first, then measure — and re-measure after a
+> screenshot before believing any transition-dependent result.**
+
+### Not done
+
+- Mutating vendor/guild actions (ally a guild, transfer leadership, publish a
+  deal, distribute a flyer, take a payment) were **not fired** — they write to
+  the live database. The code paths were corrected and read-verified, not
+  exercised.
+- The flyer designer past step 1: selecting a format renders, but the Quill
+  editor on the Design step and the save/distribute flow were not driven.
+- ~860 static props flagged by a check against Vuetify's `web-types.json` are
+  **not** all real: that manifest does not flatten inherited props, so
+  `max-width`, `hide-details` and friends are false positives. Only observed
+  breakage was fixed. A proper prop audit wants the runtime component
+  definitions, not the manifest.
 
 ---
 

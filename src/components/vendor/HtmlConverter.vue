@@ -93,8 +93,8 @@
                 </template>
                 <v-color-picker
                   mode="hexa"
-                  :value="color"
-                  @input="changeBackgroundColor"
+                  :model-value="color"
+                  @update:model-value="changeBackgroundColor"
                 ></v-color-picker>
               </v-menu>
 

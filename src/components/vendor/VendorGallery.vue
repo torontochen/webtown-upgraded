@@ -30,7 +30,7 @@
             :src="photo"
             :lazy-src="photo"
             aspect-ratio="1"
-            class="grey lighten-2"
+            class="bg-grey-lighten-2"
           >
            <!-- :src="`/${vendor.businessTitle}/${photo}`"
             :lazy-src="`/${vendor.businessTitle}/${photo}`" -->
@@ -115,7 +115,7 @@
                               At least one business photo is needed
                             </v-alert> -->
                           <v-slide-group show-arrows>
-                            <v-slide-item
+                            <v-slide-group-item
                               v-for="(photoToShow, index) in photosUpload"
                               :key="index"
                               v-slot:default="{ toggle }"
@@ -149,7 +149,7 @@
                                   </v-col>
                                 </v-row>
                               </v-card>
-                            </v-slide-item>
+                            </v-slide-group-item>
                           </v-slide-group>
                         </v-col>
                       </v-row>
